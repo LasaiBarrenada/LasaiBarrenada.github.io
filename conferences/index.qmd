@@ -1,0 +1,19 @@
+---
+title: "Conferences (in descending chronological order)"
+---
+**International Society of Ultrasound in Obstetrics and Gynecology (ISUOG) 2024**, Budapest, "Head-to-head comparisons of RMI and ADNEX model to diagnose ovarian malignancy: systematic review and meta-analysis <a href="XXX" target="_blank">Abstract</a> \| <a href="XXX" target="_blank">Presentation </a>
+
+**International Society of clinical biostatistics (ISCB) 2024**, Thesalonikki, "MULTICENTER FLEXIBLE CALIBRATION CURVES WITH BINARY OUTCOMES USING RANDOM EFFECTS META-ANALYSIS" <a href="XXXX" target="_blank">Poster</a>
+
+**Sociedad española de bioestadistica (SEB) 2024**, Barcelona, "The ADNEX model for ovarian cancer diagnosis: a systematic review and meta-analysis of external validation studies" <a href="https://kuleuven-my.sharepoint.com/:p:/g/personal/lasai_barrenadataleb_kuleuven_be/EY8z6aDdCplLvCuHluHtT2QBfeSjz2FpDoUqRHA9TXee5A?e=bs9g6U" target="_blank">Presentation</a>
+
+**International Society of Ultrasound in Obstetrics and Gynecology (ISUOG) 2023**, Seoul, "The ADNEX model for ovarian cancer diagnosis: a systematic review and meta-analysis of external validation studies" <a href="https://obgyn.onlinelibrary.wiley.com/doi/10.1002/uog.26336" target="_blank">Abstract</a> \| <a href="https://kuleuven-my.sharepoint.com/:p:/g/personal/lasai_barrenadataleb_kuleuven_be/EQsQ-VtbrJFIkrOBqwirOtEBuixwAV9e1cTbqocMs8teaQ?e=MvahdM" target="_blank">Presentation </a>
+
+<!-- Awarded with young investigator award and best in session of managing ovarian masses.  -->
+
+**International Society of clinical biostatistics (ISCB) 2023**, Milan, "Do we understand random forests?" <a href="https://kuleuven-my.sharepoint.com/:b:/g/personal/lasai_barrenadataleb_kuleuven_be/Efx8aZyEJgNMgPl3qMEZYEcBMP2Nu8aKS3GQBf3sbly9ow?e=j6xCd6" target="_blank">Poster</a>
+
+**Young Statisticians Meeting (YSM) 2023**, Leicester, "Do we understand random forests?" <a href="https://kuleuven-my.sharepoint.com/:b:/g/personal/lasai_barrenadataleb_kuleuven_be/Efx8aZyEJgNMgPl3qMEZYEcBMP2Nu8aKS3GQBf3sbly9ow?e=j6xCd6" target="_blank">Poster</a>
+
+
+<img src="map_plot.png" style="height: 100%; width: 100%; object-fit: contain"/>

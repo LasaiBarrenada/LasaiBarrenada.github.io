@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" version="1.0">
+  <info>
+    <title>Short Citation Style</title>
+    <id>http://www.zotero.org/styles/short-citation-style</id>
+    <author>
+      <name>Your Name</name>
+      <email>your.email@example.com</email>
+    </author>
+    <updated>2024-06-13</updated>
+    <category citation-format="author-date"/>
+    <category field="generic-base"/>
+  </info>
+
+  <macro name="author">
+    <names variable="author">
+      <name and="symbol" initialize-with=". " delimiter=", "/>
+    </names>
+  </macro>
+
+  <macro name="issued">
+    <date variable="issued">
+      <date-part name="year"/>
+    </date>
+  </macro>
+
+  <macro name="title">
+    <text variable="title" font-style="italic"/>
+  </macro>
+
+  <citation>
+    <layout prefix="(" suffix=")" delimiter=" ">
+      <text macro="author"/>
+      <text macro="issued"/>
+    </layout>
+  </citation>
+
+  <bibliography>
+    <layout delimiter=". " suffix=".">
+      <text macro="author"/>
+      <text macro="issued"/>
+      <group delimiter=". ">
+        <text variable="title" font-style="italic"/>
+        <text variable="container-title"/>
+      </group>
+      <group delimiter=" ">
+        <text variable="volume"/>
+        <text variable="issue" prefix="(" suffix=")"/>
+        <text variable="page"/>
+      </group>
+      <text variable="publisher"/>
+      <text variable="URL"/>
+    </layout>
+  </bibliography>
+</style>

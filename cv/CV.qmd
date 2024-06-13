@@ -1,0 +1,91 @@
+---
+title: CV
+format:
+  quarto-cv-pdf: default
+author: Lasai Barreñada
+date: last-modified
+# phone: 123-456-7890
+address: "Herestraat 49, Leuven 3000, Belgium"
+email: lasai.barrenadataleb@kuleuven.be
+fontsize: 11pt
+#fontfamily: ebgaramond-maths # default font LaTeX package https://tug.org/FontCatalogue/about.html
+#mainfont: Ubuntu # if you want to use a different locally installed font
+#CJKmainfont: Noto Sans CJK JP # locally installed Asian character font, must use with xelatex
+# github: LasaiBarrenada # github account
+orcid: 	0000-0001-8020-0210 # orcid identifier
+# osf: pgkjv # osf five character id
+twitter: BarrenadaLasai # twitter handle
+# web: quarto.org
+fontawesome: yes
+nocite: '@*'
+bibliography: 
+  peer: peer_bib.bib
+  other: other_bib.bib
+validate-yaml: false
+csl: apa-cv.csl
+---
+
+
+
+
+# Employment
+
+*KU Leuven*
+
+PhD Researcher in clinical prediction models (Leuven) \hfill 2022/10-
+
+*Basque Center for Applied Mathematics (BCAM)*
+
+Research technician in machine learning (Bilbao) \hfill 2021/12-2022/09
+
+*Spanish national statistical office (INE Spain)*
+
+Postgraduate internship (Madrid) \hfill 2020/10-2022/09
+
+*Publicis media*
+
+Data science internship (Madrid) \hfill 10/2019-05/2020
+
+# Education
+
+*KU Leuven*, PhD in Biomedical Sciences \hfill 2022-2026
+
+*Complutense university of Madrid (UCM)*, European Master in Official Statistics (EMOS) \hfill 2019-2021
+
+*University of Angers*, B.A. Marketing (Erasmus programme) \hfill 2017-2018
+
+*University of Granada*, B.A. Marketing \hfill 2015-2019
+
+# Publications
+
+::: {#refs-peer}
+:::
+
+# Technical Reports
+
+::: {#refs-other}
+:::
+
+# Conference presentations
+
+*Head-to-head comparisons of RMI and ADNEX models (presenation)*, ISUOG, Budapest \hfill 2024-09
+
+*Multicenter flexible calibration curves using random effects meta-analysis (poster)*, ISCB, Thesalonikki \hfill 2024-07
+
+*Drawing multicenter calibration curves (presentation)*, Sociedad Española de Bioestadistica (SEB) \hfill 2024-02
+
+*ADNEX model systematic review and meta-analysis (presentation)*, ISUOG, Seoul \hfill 2023-10
+
+*Do we understand random forests? (poster)*, ISCB, Milan \hfill 2023-08
+
+*Do we understand random forests? (poster)*, Young Statisticians Meeting (YSM), Leicester \hfill 2023-07
+
+# Awards
+
+*Young investigator award in gynaecology*, issued by ISUOG \hfill 2023
+
+*Young statisticians prize (YSP)*, issued by IAOS \hfill 2022
+
+<!-- # References -->
+
+<!-- Available upon request, though likely would include David Salgado, Ben Van Calster, Laure Wynants, Dirk Timmerman. -->

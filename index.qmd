@@ -1,0 +1,34 @@
+---
+about:
+  template: jolla
+  id: about-block
+  image: "img/my_image.jpg"
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/BarrenadaLasai
+    - icon: github
+      text: Github
+      href: https://github.com/LasaiBarrenada
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/lasaib
+    - icon: envelope
+      text: Email
+      href: "mailto:lasai.barrenadataleb@kuleuven.be"  
+---
+
+::: {#about-block}
+:::
+
+# Welcome to my website!
+
+My name is Lasai Barreñada, and I am a statistician currently pursuing my PhD at KU Leuven in the Department of Development and Regeneration. I am a part of the International Ovarian Tumour Analysis (IOTA) group, where I focus on examining heterogeneity in clinical prediction models.
+
+My research interests span multiple topics in prediction modeling, with a particular emphasis on development, validation, and assessment of risk of bias. Additionally, I have a keen interest in meta-research, research synthesis, and methodological work to understand the functioning of artificial intelligence algorithms.
+
+On this website, you will find a selection of my published works, including papers, conference posters, and other materials related to my interests. You will also find news and updates on my current research projects, as well as information on upcoming events and conferences where I will be speaking.
+
+I invite you to explore my website and learn more about my work. I am open to collaborations, so please feel free to contact me if you have any questions or would like to discuss potential projects.
+
+
