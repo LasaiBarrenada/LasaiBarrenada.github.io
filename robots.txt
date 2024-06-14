@@ -1,1 +1,1 @@
-Sitemap: https://LasaiBarrenada.github.io/Webpage_quarto/sitemap.xml
+Sitemap: https://LasaiBarrenada.github.io/sitemap.xml
