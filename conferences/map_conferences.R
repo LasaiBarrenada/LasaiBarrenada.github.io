@@ -10,7 +10,7 @@ library(maps)
 library(ggpubr)
 world <- map_data('world')
 
-conferences <- read.xlsx("conferences.xlsx")
+conferences <- read.xlsx("conferences/conferences.xlsx")
 geocoded_cities <- tidygeocoder::geocode(.tbl = conferences,city = Location)
 
 my_uni <- tidygeocoder::geocode(.tbl = data.frame(Location = "Leuven"), city = Location)
@@ -31,9 +31,9 @@ p <- ggplot(geocoded_cities) +
   xlab("")+ylab("")+ theme(axis.text = element_blank(),
                            axis.ticks = element_blank())
 
-ggsave("map_plot.png",plot = p,dpi = 600)
+ggsave("conferences/map_plot.png",plot = p,dpi = 600)
 
 library(magick)
-map <- image_read("map_plot.png")
+map <- image_read("conferences/map_plot.png")
 map <- image_trim(map)
 image_write(map, "map_plot.png",format = "png",quality = 100)

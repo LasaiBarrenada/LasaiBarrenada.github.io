@@ -1,19 +1,65 @@
 ---
-title: "Conferences (in descending chronological order)"
+title: "Conferences"
 ---
-**International Society of Ultrasound in Obstetrics and Gynecology (ISUOG) 2024**, Budapest, "Head-to-head comparisons of RMI and ADNEX model to diagnose ovarian malignancy: systematic review and meta-analysis <a href="XXX" target="_blank">Abstract</a> \| <a href="XXX" target="_blank">Presentation </a>
 
-**International Society of clinical biostatistics (ISCB) 2024**, Thesalonikki, "MULTICENTER FLEXIBLE CALIBRATION CURVES WITH BINARY OUTCOMES USING RANDOM EFFECTS META-ANALYSIS" <a href="XXXX" target="_blank">Poster</a>
+```{r echo = FALSE,results='asis',message=FALSE,warning=FALSE}
+library(openxlsx)
+library(gt)
+library(dplyr)
+conferences <- read.xlsx("conferences.xlsx")
+conferences <- conferences %>% arrange(-Year,-Month)
+# conferences %>% gt()
 
-**Sociedad española de bioestadistica (SEB) 2024**, Barcelona, "The ADNEX model for ovarian cancer diagnosis: a systematic review and meta-analysis of external validation studies" <a href="https://kuleuven-my.sharepoint.com/:p:/g/personal/lasai_barrenadataleb_kuleuven_be/EY8z6aDdCplLvCuHluHtT2QBfeSjz2FpDoUqRHA9TXee5A?e=bs9g6U" target="_blank">Presentation</a>
+# Function to generate Markdown for each row
+generate_markdown <- function(row) {
+  links <- paste0('[', row$Link_1_name, '](', row$Link_1, ')')
+  
+  if (!is.na(row$Link_2)) {
+    links <- paste0(links, ' | [', row$Link_2_name, '](', row$Link_2, ')')
+  }
+  
+  paste0(
+    "**", row$Conference, "** (", row$Code_Name," ",row$Year,")  \n",
+    row$Title,"  ",
+    links, "  \n\n---\n"
+  )
+}
 
-**International Society of Ultrasound in Obstetrics and Gynecology (ISUOG) 2023**, Seoul, "The ADNEX model for ovarian cancer diagnosis: a systematic review and meta-analysis of external validation studies" <a href="https://obgyn.onlinelibrary.wiley.com/doi/10.1002/uog.26336" target="_blank">Abstract</a> \| <a href="https://kuleuven-my.sharepoint.com/:p:/g/personal/lasai_barrenadataleb_kuleuven_be/EQsQ-VtbrJFIkrOBqwirOtEBuixwAV9e1cTbqocMs8teaQ?e=MvahdM" target="_blank">Presentation </a>
+# Apply the function to each row and concatenate the results
+markdown_content <- apply(conferences, 1, function(x) generate_markdown(as.list(x)))
+markdown_content <- paste(markdown_content, collapse = "\n")
 
-<!-- Awarded with young investigator award and best in session of managing ovarian masses.  -->
+# Print the Markdown content
+cat(markdown_content)
+```
+```{r map_leaflet, include = TRUE, echo = FALSE,message=FALSE,warning=FALSE}
+library(ggmap)
+library(ggplot2)
+library(dplyr)
+library(openxlsx)
+library(tidygeocoder)
+library(tidyverse)
+library(leaflet)
+library(sf)
+library(maps)
+library(ggpubr)
+library(readxl)
 
-**International Society of clinical biostatistics (ISCB) 2023**, Milan, "Do we understand random forests?" <a href="https://kuleuven-my.sharepoint.com/:b:/g/personal/lasai_barrenadataleb_kuleuven_be/Efx8aZyEJgNMgPl3qMEZYEcBMP2Nu8aKS3GQBf3sbly9ow?e=j6xCd6" target="_blank">Poster</a>
+world <- map_data('world')
 
-**Young Statisticians Meeting (YSM) 2023**, Leicester, "Do we understand random forests?" <a href="https://kuleuven-my.sharepoint.com/:b:/g/personal/lasai_barrenadataleb_kuleuven_be/Efx8aZyEJgNMgPl3qMEZYEcBMP2Nu8aKS3GQBf3sbly9ow?e=j6xCd6" target="_blank">Poster</a>
+conferences <- read_excel(path = "conferences.xlsx")
+geocoded_cities <- tidygeocoder::geocode(.tbl = conferences,city = Location)
+
+my_uni <- tidygeocoder::geocode(.tbl = data.frame(Location = "Leuven"), city = Location)
+
+map <- leaflet(data = geocoded_cities) %>%
+  addTiles() %>%
+  addCircleMarkers(~long, ~lat,popup = paste(geocoded_cities$Code_Name, geocoded_cities$Year,",",geocoded_cities$Location), color = "red") %>% 
+  addCircleMarkers(data = my_uni,~long, ~lat,popup = paste("KU Leuven"), color = "blue")
+
+map  
 
 
-<img src="map_plot.png" style="height: 100%; width: 100%; object-fit: contain"/>
+```
+
+<!-- <img src="map_plot.png" style="height: 100%; width: 100%; object-fit: contain"/> -->

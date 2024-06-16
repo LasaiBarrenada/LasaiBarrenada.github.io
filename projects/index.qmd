@@ -1,5 +1,5 @@
 ---
-title: Projects (in descending chronological order)
+title: Projects
 ---
 ### Understanding random forests and overfitting: a visualization and simulation study
 

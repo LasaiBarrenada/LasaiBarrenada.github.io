@@ -1,5 +1,5 @@
 ---
-title: CV
+title: cv
 format:
   quarto-cv-pdf: default
 author: Lasai Barreñada

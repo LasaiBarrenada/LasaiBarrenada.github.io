@@ -1,0 +1,35 @@
+---
+layout: page
+title: Publications
+---
+
+Complete list of publications in [google scholar](https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en) (including preprints):  
+
+
+<!-- https://pubmed.ncbi.nlm.nih.gov/?sort=jour&term=Barre%C3%B1ada+L&cauthor_id=38375077 -->
+
+---
+
+```{r ,results='asis', echo=FALSE}
+library(scholar)
+
+# Define the id for Lasai Barreñada
+id <- 'uPOL3NkAAAAJ'
+
+# Get his profile and print his name
+l <- get_profile(id)
+
+
+
+# Get his publications (a large data frame)
+s <- get_publications(id)
+
+format_publications("uPOL3NkAAAAJ", "L Barreñada") |> cat(sep='\n\n')
+
+```
+
+
+
+
+
+

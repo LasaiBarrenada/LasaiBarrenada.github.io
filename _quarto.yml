@@ -6,12 +6,12 @@ website:
   description: "Personal page for disseminating research work"   # A brief slogan (optional)
   image: img/my_image.jpg
   
-  favicon: img/kuleuven.png
+  favicon: img/logo_lb.png
   
   # start of the navigation bar at the top of the website
   navbar:
     pinned: true
-    logo: /img/kuleuven.png
+    logo: /img/logo_lb.png
     
     # your sub-pages
     left:
@@ -21,7 +21,8 @@ website:
         href: conferences/index.qmd
       - text: "CV"
         href: cv/index.qmd
-    
+      - text: "Publications"
+        href: Publications/index.qmd
     # your social media handles
     right:
       - icon: bank
@@ -29,7 +30,7 @@ website:
       - icon: twitter
         href: https://twitter.com/BarrenadaLasai
       - icon: linkedin
-        href: https://www.linkedin.com/lasaib
+        href: https://www.linkedin.com/in/lasaib/
       - icon: envelope
         aria-label: email
         href: "mailto:lasai.barrenadataleb@kuleuven.be"  
@@ -44,7 +45,7 @@ website:
     left: |
       <span class="faux-block">&#169; 2023 Marvin Schmitt CC BY-SA 4.0</span>
     right: |
-      <span class="faux-block"><a href="https://github.com/marvinschmitt/quarto-website-template/">View source on GitHub</a></span>
+      <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/">View source on GitHub</a></span>
 
 project:
   type: website

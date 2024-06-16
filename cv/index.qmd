@@ -7,7 +7,7 @@ execute:
 engine: knitr 
 resources:
   - "cv.pdf"
-cv:
+CV:
   pdf: "cv.pdf"
 ---
 
@@ -32,12 +32,12 @@ cv:
 
 ```{=html}
 <p class="text-center">
-  <a class="btn btn-primary btn-lg cv-download" href="`r rmarkdown::metadata$cv$pdf`" target="_blank">
+  <a class="btn btn-primary btn-lg cv-download" href="`r rmarkdown::metadata$CV$pdf`" target="_blank">
     <i class="fa-solid fa-file-arrow-down"></i>&ensp;Download current CV
   </a>
 </p>
 <div class="embed-container">
-  <iframe src="`r rmarkdown::metadata$cv$pdf`#toolbar=0" style="border: 0.5px;width: 100%;"></iframe>
+  <iframe src="`r rmarkdown::metadata$CV$pdf`#toolbar=0" style="border: 0.5px;width: 100%;"></iframe>
 </div>
 ```
 
