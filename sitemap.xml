@@ -1,27 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://LasaiBarrenada.github.io/Publications/index.html</loc>
-    <lastmod>2024-06-14T13:56:42.236Z</lastmod>
+    <loc>https://lasaibarrenada.github.io/speaking/index.html</loc>
+    <lastmod>2024-06-17T08:39:04.099Z</lastmod>
   </url>
   <url>
-    <loc>https://LasaiBarrenada.github.io/index.html</loc>
-    <lastmod>2024-06-14T10:49:16.972Z</lastmod>
+    <loc>https://lasaibarrenada.github.io/projects/index.html</loc>
+    <lastmod>2024-06-17T08:39:04.099Z</lastmod>
   </url>
   <url>
-    <loc>https://LasaiBarrenada.github.io/cv/index.html</loc>
-    <lastmod>2024-06-16T11:16:08.031Z</lastmod>
+    <loc>https://lasaibarrenada.github.io/impressum/index.html</loc>
+    <lastmod>2024-06-17T08:39:03.292Z</lastmod>
   </url>
   <url>
-    <loc>https://LasaiBarrenada.github.io/conferences/index.html</loc>
-    <lastmod>2024-06-14T14:05:15.166Z</lastmod>
+    <loc>https://lasaibarrenada.github.io/cv/index.html</loc>
+    <lastmod>2024-06-17T08:39:04.088Z</lastmod>
   </url>
   <url>
-    <loc>https://LasaiBarrenada.github.io/cv/LICENSE.html</loc>
+    <loc>https://lasaibarrenada.github.io/cv/LICENSE.html</loc>
     <lastmod>2024-06-13T14:53:20.736Z</lastmod>
   </url>
   <url>
-    <loc>https://LasaiBarrenada.github.io/projects/index.html</loc>
-    <lastmod>2024-06-14T14:05:04.546Z</lastmod>
+    <loc>https://lasaibarrenada.github.io/index.html</loc>
+    <lastmod>2024-06-17T08:39:04.098Z</lastmod>
+  </url>
+  <url>
+    <loc>https://lasaibarrenada.github.io/Publications/index.html</loc>
+    <lastmod>2024-06-14T13:56:42.236Z</lastmod>
   </url>
 </urlset>
