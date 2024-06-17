@@ -2,8 +2,22 @@
 .Rhistory
 .RData
 .Ruserdata
-.pptx
+
+
+.DS_Store
+
+
+dev/
+rsonnect/
+public/
+
+README.html
+
+content/top/impressum.md
+
+
 /.quarto/
 /_site/
-.DS_Store
-conferences/DRAWING MULTICENTER CALIBRATION CURVES w.pptx
+blog/mac-setup/index.ipynb
+blog/mac-setup/index.qmd
+blog/mac-setup/mac_setup_thumbnail.png

@@ -1,55 +1,15 @@
-# This file controls the settings for your Quarto template from www.marvinschmitt.com
-
-# website settings
-website:
-  title: "Lasai Barreñada"                                # Your name
-  description: "Personal page for disseminating research work"   # A brief slogan (optional)
-  image: img/my_image.jpg
-  
-  favicon: img/logo_lb.png
-  
-  # start of the navigation bar at the top of the website
-  navbar:
-    pinned: true
-    logo: /img/logo_lb.png
-    
-    # your sub-pages
-    left:
-      - text: "Projects"
-        href: projects/index.qmd
-      - text: "Conferences"
-        href: conferences/index.qmd
-      - text: "CV"
-        href: cv/index.qmd
-      - text: "Publications"
-        href: Publications/index.qmd
-    # your social media handles
-    right:
-      - icon: bank
-        href: https://www.kuleuven.be/wieiswie/en/person/00158158
-      - icon: twitter
-        href: https://twitter.com/BarrenadaLasai
-      - icon: linkedin
-        href: https://www.linkedin.com/in/lasaib/
-      - icon: envelope
-        aria-label: email
-        href: "mailto:lasai.barrenadataleb@kuleuven.be"  
-  
-  
-
-# Don't touch unless you know what you are doing :) ------------
-  search: 
-    location: navbar
-    type: textbox
-  page-footer: 
-    left: |
-      <span class="faux-block">&#169; 2023 Marvin Schmitt CC BY-SA 4.0</span>
-    right: |
-      <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/">View source on GitHub</a></span>
+authorname: "Lasai Barreñada"
+draft: false
 
 project:
   type: website
-  output-dir: docs
+  
+  resources:
+    - "img/**"
+    - "assets/**"
+    - "sitemap.xml"
+    - "_redirects"
+    - "speaking/pdf/**"
 
   preview: 
     port: 22222
@@ -57,18 +17,85 @@ project:
     watch-inputs: true
     navigate: true
 
+title-meta: "Lasai Barreñada"
+description-meta: "Bio-statistician | PhD researcher | Prediction models, Healthcare, Research"
+
+website:
+  title: "Lasai Barreñada"
+  description: "Bio-statistician | PhD researcher | Prediction models, Healthcare, Research"
+  site-url: https://lasaibarrenada.github.io/
+  image: img/website_thumbnail.png
+  
+  repo-url: "https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/"
+  repo-branch: main
+  
+  search: 
+    location: navbar
+    type: textbox
+  
+  navbar:
+    pinned: true
+    logo: /img/ms_icon.png
+    left:
+      - text: Projects
+        href: projects/index.qmd
+      - text: Speaking
+        href: speaking/index.qmd
+      - text: CV
+        href: cv/index.qmd
+      - text: Publications
+        href: Publications/index.qmd
+    right:
+      - icon: twitter
+        href: https://twitter.com/BarrenadaLasai
+      - icon: github
+        href: https://github.com/BarrenadaLasai
+      - icon: linkedin
+        href: https://www.linkedin.com/in/lasaib/
+      - icon: envelope
+        aria-label: email
+        href: "mailto:lasai.barrenadataleb@kuleuven.be"
+  
+  favicon: img/favicon.ico
+  
+  twitter-card: 
+    creator: "@BarrenadaLasai"
+    image: "/img/website_thumbnail.png"
+    
+  open-graph: 
+    image: "/img/website_thumbnail.png"
+    locale: en_US
+    
+  google-analytics: 
+    tracking-id: G-N36VLTEM79
+    storage: none
+  
+  page-footer: 
+    left: |
+      <span class="faux-block">{{< fa brands creative-commons >}} 2023 Marvin Schmitt</span>
+      <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/">{{< fa brands github >}} Source Code</a></span>
+    # center: |
+    #   <span class="faux-block"><a href="/impressum/index.html">Impressum</a></span>
+    right: |
+      <span class="faux-block"> Designed with {{< fa heart >}}</span>
+      <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span>
+  
 execute:
   freeze: true
+  
+filters:
+  - html/newpagelink.lua
 
 format:
   html:
+    include-in-header: html/seo.html
     fontsize: 1.1em
     theme: 
-      - pulse
+      - flatly
       - html/styles.scss
     toc: false
-    code-link: true
     anchor-sections: true
     fig-cap-location: margin
     reference-location: margin
     footnotes-hover: true
+    highlight-style: monokai

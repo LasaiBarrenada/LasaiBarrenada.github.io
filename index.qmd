@@ -1,37 +1,89 @@
 ---
-about:
-  template: jolla
-  id: about-block
-  image: "img/my_image.jpg"
-  links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/BarrenadaLasai
-    - icon: github
-      text: Github
-      href: https://github.com/LasaiBarrenada
-    - icon: linkedin
-      text: LinkedIn
-      href: https://www.linkedin.com/in/lasaib
-    - icon: envelope
-      text: Email
-      href: "mailto:lasai.barrenadataleb@kuleuven.be"
-    - icon: google
-      text: Scholar
-      href: https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en
+comments: false
+page-layout: full
+format:
+  html: 
+    margin-top: 0em
+    margin-bottom: 0em
+    minimal: true
+    smooth-scroll: true
+    fig-responsive: true
+# listing:
+#   id: blog-listing
+  # contents:   
+    # - "blog/functional-programming-r-basics/index.qmd"
+    # - "blog/website-tutorial-quarto/index.qmd"
+    # - "blog/agile-methods-for-academia/index.qmd"
+    # - "blog/ggsimplex-prerelease/index.qmd"
+    # - "blog/4-realizations-from-atomic-habits/index.qmd"
+  # sort: "date desc"
+  # type: grid
+  # max-items: 3
+  # grid-columns: 3
+  # fields: [image, date, title]
 ---
 
-::: {#about-block}
+::: column-screen
+```{=html}
+<link rel="stylesheet" href="html/landing_page_styles.css">
+
+<div class="gradient_bg">
+    <div class="hero section_padding">
+        <div class="hero_content">
+            <h1>Hi, I'm <span class="gradient_text">Lasai</span>.</h1>
+            <p>I am a medical statistician statistician.
+            I develop, validate and improve prediction models to help clinical decision making.
+            </p>
+            <p>
+            I am a second-year PhD student at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>IOTA</span></a>) group  supervised by <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Ben Van Calster</span></a>,  <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Laure Wynants</span></a> and  <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Dirk Timmerman</span></a>. I work in methodological and applied work to improve the performance of clinical predictions models across different hospitals with focus on <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>ADNEX</span></a>  model for ovarian cancer diagnosis. 
+            </p>
+            <p>If you want to collaborate with me drop me a message: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style='text-decoration: underline;
+  text-decoration-color: #007BFF;'>lasai.barrenadataleb@kuleuven.be</span></a></p>
+            
+
+        </div>
+        <div class="hero_image">
+            <img src="/img/marvin_headshot.png"/>
+        </div>
+        <div id="dot_container">
+        </div>
+    </div>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 150">
+  <defs>
+    <linearGradient id="blue-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:hsl(210, 100%, 50%); stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#007BFF; stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <g fill="url(#blue-gradient)" stroke="url(#blue-gradient)" stroke-width="1.5">
+    <!-- Points -->
+    <circle cx="50" cy="100" r="3" />
+    <circle cx="150" cy="80" r="3" />
+    <circle cx="250" cy="60" r="3" />
+    <circle cx="350" cy="90" r="3" />
+    <circle cx="450" cy="70" r="3" />
+    <circle cx="550" cy="50" r="3" />
+    <circle cx="650" cy="40" r="3" />
+    <circle cx="750" cy="30" r="3" />
+  </g>
+  
+
+
+  <!-- Regression Line -->
+  <path d="M50,100 C150,80 250,60 350,90 S750,30 750,30" 
+        fill="none" stroke="url(#blue-gradient)" stroke-width="2" />
+</svg>
+
+
+```
 :::
 
-# Welcome to my website!
+<!-- ::: {#news} -->
+<!-- ## News -->
 
-My name is Lasai Barreñada, and I am a statistician currently pursuing my PhD at KU Leuven in the Department of Development and Regeneration. I am a part of the International Ovarian Tumour Analysis (IOTA) group, where I focus on examining heterogeneity in clinical prediction models.
+<!-- ::: -->
 
-My research interests span multiple topics in prediction modeling, with a particular emphasis on development, validation, and assessment of risk of bias. Additionally, I have a keen interest in meta-research, research synthesis, and methodological work to understand the functioning of artificial intelligence algorithms.
+<!-- ## Featured Blog Posts -->
 
-On this website, you will find a selection of my published works, including papers, conference posters, and other materials related to my interests. You will also find news and updates on my current research projects, as well as information on upcoming events and conferences where I will be speaking.
-
-I invite you to explore my website and learn more about my work. I am open to collaborations, so please feel free to contact me if you have any questions or would like to discuss potential projects.
-
-
+<!-- ::: {#blog-listing} -->
+<!-- ::: -->  

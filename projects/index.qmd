@@ -1,7 +1,16 @@
 ---
 title: Projects
+comments: false
+toc: false
 ---
-### Understanding random forests and overfitting: a visualization and simulation study
+
+This page contains a brief overview of projects that I significantly shaped throughout the entire project life cycle.
+In academic terms, this mostly corresponds to first-author publications (single and shared).
+If you're interested in a full list of projects I have been involved in, please check out my [CV](../cv).
+
+----
+
+## Understanding random forests and overfitting: a visualization and simulation study
 
 <img src="RF_overfitting.png" style="height: 50%; width: 50%; object-fit: contain" onclick="window.open(&apos;https://arxiv.org/abs/2402.18612;, &apos;blank&apos;);"/>
 
@@ -10,9 +19,9 @@ title: Projects
 Random forests have become popular for clinical risk prediction modelling. In a case study on predicting ovarian malignancy, we observed training c-statistics close to 1. Although this suggests overfitting, performance was competitive on test data. We aimed to understand the behaviour of random forests by (1) visualizing data space in three real world case studies and (2) a simulation study. For the case studies, risk estimates were visualised using heatmaps in a 2-dimensional subspace. The simulation study included 48 logistic data generating mechanisms (DGM), varying the predictor distribution, the number of predictors, the correlation between predictors, the true c-statistic and the strength of true predictors. For each DGM, 1000 training datasets of size 200 or 4000 were simulated and RF models trained with minimum node size 2 or 20 using ranger package, resulting in 192 scenarios in total. The visualizations suggested that the model learned spikes of probability around events in the training set. A cluster of events created a bigger peak, isolated events local peaks. In the simulation study, median training c-statistics were between 0.97 and 1 unless there were 4 or 16 binary predictors with minimum node size 20. Median test c-statistics were higher with higher events per variable, higher minimum node size, and binary predictors. Median training slopes were always above 1, and were not correlated with median test slopes across scenarios (correlation -0.11). Median test slopes were higher with higher true c-statistic, higher minimum node size, and higher sample size. Random forests learn local probability peaks that often yield near perfect training c-statistics without strongly affecting c-statistics on test data. When the aim is probability estimation, the simulation results go against the common recommendation to use fully grown trees in random forest models.
 
 
+----
 
-
-### ADNEX risk prediction model for diagnosis of ovarian cancer: systematic review and meta-analysis of external validation studies
+## ADNEX risk prediction model for diagnosis of ovarian cancer: systematic review and meta-analysis of external validation studies
 
 <img src="ADNEX_SR.png" style="height: 100%; width: 100%; object-fit: contain" onclick="window.open(&apos;https://bmjmedicine.bmj.com/content/3/1/e000817;, &apos;blank&apos;);"/>
 
