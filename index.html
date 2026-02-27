@@ -8,7 +8,7 @@
 
 <meta name="description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 
-<title>Lasai Barreñada | Medical Statistician &amp; Researcher</title>
+<title>Lasai Barreñada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,11 +25,6 @@ ul.task-list li input[type="checkbox"] {
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
 <link href="./img/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
@@ -44,17 +39,6 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-contrib/academicons-1.9.4/all.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/academicons-1.9.4/size.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
-  "copy-button": false,
-  "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "textbox",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -84,11 +68,11 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <meta name="author" content="Lasai Barreñada">
 
 
-<meta property="og:title" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta property="og:title" content="Lasai Barreñada">
 <meta property="og:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
-<meta property="og:site_name" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta property="og:site_name" content="Lasai Barreñada">
 <meta property="og:locale" content="en_US">
-<meta name="twitter:title" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta name="twitter:title" content="Lasai Barreñada">
 <meta name="twitter:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta name="twitter:creator" content="@BarrenadaLasai">
 <meta name="twitter:card" content="summary_large_image">
@@ -105,10 +89,9 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
     <img src="./img/lb_logo_opt1.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Lasai Barreñada | Medical Statistician &amp; Researcher</span>
+    <span class="navbar-title">Lasai Barreñada</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
@@ -120,7 +103,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./speaking/speaking-page.html"> 
-<span class="menu-text">Speaking</span></a>
+<span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./cv/cv-page.html"> 
@@ -217,8 +200,13 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
   const COLOR = '0, 100, 210';   // site-blue RGB
   const N     = 60;              // number of particles
   const DIST  = 150;             // max connection distance
+  const MAX_DOTS = 10;           // regression drawn at this count
 
   let W, H, particles, raf;
+  let clickDots = [];            // user-placed points
+  let loessCurve = null;         // array of {x, y} for the fitted curve
+  let rSquared   = null;         // R² value
+  let hintOpacity = 0.65;        // hint text fade
 
   function init() {
     W = canvas.width  = bg.offsetWidth;
@@ -233,10 +221,98 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
     }));
   }
 
+  /* ── LOESS (locally weighted regression) ────────────────────── */
+  function tricube(d) {
+    return d < 1 ? Math.pow(1 - Math.pow(d, 3), 3) : 0;
+  }
+
+  function loessPredict(pts, xEval, span) {
+    span = span || 0.75;
+    const xs = pts.map(p => p.x);
+    const ys = pts.map(p => p.y);
+    const n  = xs.length;
+    const k  = Math.max(Math.floor(n * span), 2);
+
+    return xEval.map(x0 => {
+      // Distances from x0 to each data point
+      const dists = xs.map(xi => Math.abs(xi - x0));
+      // k-th smallest distance defines the bandwidth
+      const sorted = [...dists].sort((a, b) => a - b);
+      const h = sorted[k - 1] || 1e-10;
+
+      // Tricube weights
+      const w = dists.map(d => tricube(d / (h * 1.001)));
+
+      // Weighted linear regression: y = a + b*x
+      let sw = 0, swx = 0, swy = 0, swxx = 0, swxy = 0;
+      for (let i = 0; i < n; i++) {
+        sw   += w[i];
+        swx  += w[i] * xs[i];
+        swy  += w[i] * ys[i];
+        swxx += w[i] * xs[i] * xs[i];
+        swxy += w[i] * xs[i] * ys[i];
+      }
+      const det = sw * swxx - swx * swx;
+      if (Math.abs(det) < 1e-12) return { x: x0, y: swy / (sw || 1) };
+      const a = (swxx * swy - swx * swxy) / det;
+      const b = (sw * swxy - swx * swy) / det;
+      return { x: x0, y: a + b * x0 };
+    });
+  }
+
+  function computeLoess(pts) {
+    if (pts.length < 3) return;
+    const xMin = Math.min(...pts.map(p => p.x));
+    const xMax = Math.max(...pts.map(p => p.x));
+    if (xMax - xMin < 1) return;
+
+    // Evaluate the curve at many points for a smooth line
+    const nEval = 80;
+    const step  = (xMax - xMin) / nEval;
+    const xEval = Array.from({ length: nEval + 1 }, (_, i) => xMin + i * step);
+    loessCurve = loessPredict(pts, xEval, 0.75);
+
+    // R²: evaluate at data x-values
+    const fitted = loessPredict(pts, pts.map(p => p.x), 0.75);
+    const my = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+    let ssTot = 0, ssRes = 0;
+    for (let i = 0; i < pts.length; i++) {
+      ssTot += (pts[i].y - my) * (pts[i].y - my);
+      ssRes += (pts[i].y - fitted[i].y) * (pts[i].y - fitted[i].y);
+    }
+    rSquared = ssTot > 0 ? 1 - ssRes / ssTot : null;
+  }
+
+  /* ── Click handler ───────────────────────────────────────────── */
+  bg.addEventListener('click', (e) => {
+    // Don't intercept clicks on links or buttons
+    if (e.target.closest('a, button, iframe')) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (W / rect.width);
+    const y = (e.clientY - rect.top)  * (H / rect.height);
+
+    // 11th click → reset, start fresh
+    if (clickDots.length >= MAX_DOTS) {
+      clickDots = [];
+      loessCurve = null;
+      rSquared = null;
+    }
+
+    hintOpacity = 0;  // hide hint on first click
+    clickDots.push({ x, y, born: Date.now() });
+
+    // Compute LOESS at exactly 10 points
+    if (clickDots.length === MAX_DOTS) {
+      computeLoess(clickDots);
+    }
+  });
+
+  /* ── Animation loop ──────────────────────────────────────────── */
   function frame() {
     ctx.clearRect(0, 0, W, H);
 
-    // Move & bounce
+    // Move & bounce particles
     particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
@@ -261,13 +337,75 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
       }
     }
 
-    // Dots
+    // Background particles
     particles.forEach(p => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(${COLOR}, 0.28)`;
       ctx.fill();
     });
+
+    // ── User-placed dots ──────────────────────────────────────
+    const now = Date.now();
+    clickDots.forEach(d => {
+      const age = Math.min((now - d.born) / 250, 1); // 250ms pop-in
+      const r = 6 * age;
+      // White border
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, r + 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fill();
+      // Blue fill
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 100, 210, 0.85)';
+      ctx.fill();
+    });
+
+    // ── LOESS curve ────────────────────────────────────────────
+    if (loessCurve && loessCurve.length > 1) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(loessCurve[0].x, loessCurve[0].y);
+      for (let i = 1; i < loessCurve.length; i++) {
+        ctx.lineTo(loessCurve[i].x, loessCurve[i].y);
+      }
+      ctx.strokeStyle = 'rgba(0, 100, 210, 0.6)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── R² display ──────────────────────────────────────────────
+    if (rSquared !== null) {
+      ctx.save();
+      ctx.font = '600 14px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(0, 100, 210, 0.7)';
+      ctx.fillText('R\u00B2 = ' + rSquared.toFixed(3), W - 18, 28);
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(0, 70, 160, 0.5)';
+      ctx.fillText('This is basically my job :)', W - 18, 48);
+      ctx.restore();
+    }
+
+    // ── Hint / counter ──────────────────────────────────────────
+    if (hintOpacity > 0.01) {
+      ctx.save();
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = `rgba(0, 123, 255, ${hintOpacity})`;
+      ctx.fillText('Click anywhere to place data points', W - 18, 24);
+      ctx.restore();
+      hintOpacity *= 0.998; // very slow fade even without clicking
+    } else if (clickDots.length > 0 && clickDots.length < MAX_DOTS) {
+      ctx.save();
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(0, 70, 160, 0.4)';
+      ctx.fillText(clickDots.length + ' / ' + MAX_DOTS, W - 18, 24);
+      ctx.restore();
+    }
 
     raf = requestAnimationFrame(frame);
   }
@@ -280,7 +418,15 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 
   init();
   frame();
-  window.addEventListener('resize', init);
+  window.addEventListener('resize', () => {
+    init();
+    // Rescale click dots to new dimensions
+    // (cleared on resize to avoid confusion)
+    clickDots = [];
+    loessCurve = null;
+    rSquared = null;
+    hintOpacity = 0.65;
+  });
 })();
 </script>
 

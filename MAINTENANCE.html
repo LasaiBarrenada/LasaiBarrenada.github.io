@@ -8,7 +8,7 @@
 
 <meta name="description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 
-<title>maintenance – Lasai Barreñada | Medical Statistician &amp; Researcher</title>
+<title>maintenance – Lasai Barreñada</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -59,12 +59,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
 <link href="./img/favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -79,17 +75,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-contrib/academicons-1.9.4/all.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/academicons-1.9.4/size.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
-  "location": "navbar",
-  "copy-button": false,
-  "collapse-after": 3,
-  "panel-placement": "end",
-  "type": "textbox",
-  "limit": 50,
-  "keyboard-shortcut": [
-    "f",
-    "/",
-    "s"
-  ],
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -118,12 +103,12 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <meta name="author" content="Lasai Barreñada">
 
 
-<meta property="og:title" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta property="og:title" content="Lasai Barreñada">
 <meta property="og:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 <meta property="og:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
-<meta property="og:site_name" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta property="og:site_name" content="Lasai Barreñada">
 <meta property="og:locale" content="en_US">
-<meta name="twitter:title" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta name="twitter:title" content="Lasai Barreñada">
 <meta name="twitter:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 <meta name="twitter:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta name="twitter:creator" content="@BarrenadaLasai">
@@ -141,10 +126,9 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
     <img src="./img/lb_logo_opt1.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
-    <span class="navbar-title">Lasai Barreñada | Medical Statistician &amp; Researcher</span>
+    <span class="navbar-title">Lasai Barreñada</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
@@ -156,7 +140,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./speaking/speaking-page.html"> 
-<span class="menu-text">Speaking</span></a>
+<span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./cv/cv-page.html"> 
@@ -289,14 +273,18 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <td><code>html/landing_page_styles.css</code></td>
 </tr>
 <tr class="odd">
+<td>Change timeline styles (projects &amp; speaking)</td>
+<td><code>html/timeline.css</code></td>
+</tr>
+<tr class="even">
 <td>Change page footer text</td>
 <td><code>_quarto.yml</code> → <code>page-footer</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Update “last updated” date</td>
 <td><code>_variables.yml</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Edit the license page</td>
 <td><code>license/index.qmd</code></td>
 </tr>
@@ -360,12 +348,25 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <li>Recommended: square crop, at least 600×600 px.</li>
 <li>No code changes needed — the page references this filename directly.</li>
 </ol>
+</section>
+<section id="interactive-regression-easter-egg" class="level3">
+<h3 class="anchored" data-anchor-id="interactive-regression-easter-egg">Interactive regression Easter egg</h3>
+<p>The hero background canvas has an interactive feature on top of the particle animation:</p>
+<ol type="1">
+<li>A hint (“Click anywhere to place data points”) appears in the top-right in site-blue (<code>#007BFF</code>).</li>
+<li>Clicking on the background (not on links/buttons) places a blue dot. A counter (“3 / 10”) tracks progress.</li>
+<li>At <strong>10 dots</strong>, a <strong>LOESS curve</strong> (span = 0.75, tricube kernel) is fitted through the points and drawn as a solid blue line. The <strong>R²</strong> value and the message “This is basically my job :)” are displayed in the top-right.</li>
+<li>Clicking again (11th click) clears everything and the cycle restarts.</li>
+</ol>
+<p>Key parameters in the <code>&lt;script&gt;</code> block of <code>index.qmd</code>: - <code>MAX_DOTS</code> — number of points before the curve is drawn (default: 10) - <code>0.75</code> in <code>computeLoess()</code> — the LOESS span (smoothing parameter) - <code>hintOpacity</code> — initial opacity of the hint text (default: 0.65)</p>
+<p>Resizing the browser window clears dots and resets the hint.</p>
 <hr>
 </section>
 </section>
 <section id="projects-page-projectsprojects-page.qmd" class="level2">
 <h2 class="anchored" data-anchor-id="projects-page-projectsprojects-page.qmd">4. Projects Page — <code>projects/projects-page.qmd</code></h2>
 <p>The page is a vertical HTML timeline generated by an R chunk (<code>tl-projects</code>) that reads <code>projects/projects.xlsx</code>. This works the same way as the speaking page — the R code builds the HTML cards from the spreadsheet data.</p>
+<p>Both pages share the same timeline CSS from <code>html/timeline.css</code> (see §9). <strong>Year dividers</strong> are automatically inserted between entries from different years to visually separate them.</p>
 <p>Because the R output is inserted into Markdown before Pandoc processes it, <strong>no line of generated HTML may start with 4+ spaces</strong> (same constraint as the speaking page). Keep all <code>sprintf()</code> / <code>paste0()</code> templates at ≤ 3-space indentation.</p>
 <section id="add-a-new-project" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-new-project">Add a new project</h3>
@@ -442,18 +443,23 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>If <code>Link_1</code> is <strong>left blank</strong>, the project is displayed as <strong>Upcoming</strong> — grey hollow dot, grey card, and an “Upcoming” badge. Once published, fill in the links and the project switches to the normal blue style.</p>
+</section>
+<section id="award-links" class="level3">
+<h3 class="anchored" data-anchor-id="award-links">Award links</h3>
+<p>If any <code>Link_X_name</code> contains the word “Award” (case-insensitive), the link button is automatically rendered in a <strong>gold award style</strong> with a 🏆 icon. This is handled by the R code in <code>projects-page.qmd</code> and styled via <code>.tl-award</code> in <code>html/timeline.css</code>.</p>
 <p>Freeze is disabled on this page, so just edit the Excel and re-render — no need to delete cache folders.</p>
 <hr>
 </section>
 </section>
-<section id="speaking-page-speakingspeaking-page.qmd" class="level2">
-<h2 class="anchored" data-anchor-id="speaking-page-speakingspeaking-page.qmd">5. Speaking Page — <code>speaking/speaking-page.qmd</code></h2>
-<p>The page has two sections, both driven by R code that reads <code>conferences.xlsx</code>:</p>
+<section id="talks-page-speakingspeaking-page.qmd" class="level2">
+<h2 class="anchored" data-anchor-id="talks-page-speakingspeaking-page.qmd">5. Talks Page — <code>speaking/speaking-page.qmd</code></h2>
+<p>The page appears as <strong>“Talks”</strong> in the navbar (renamed from “Speaking”). The page has two sections:</p>
 <ol type="1">
-<li><strong>Timeline</strong> — an R chunk (<code>tl-speaking</code>) reads the Excel, builds HTML cards, and outputs them via <code>cat()</code> with <code>results='asis'</code>.</li>
-<li><strong>Map</strong> — an R chunk (<code>map-data</code>) geocodes conference cities and injects the coordinates as JSON for the D3 map.</li>
+<li><strong>Timeline</strong> — an R chunk (<code>tl-speaking</code>) reads the Excel, builds HTML cards, and outputs them via <code>cat()</code> with <code>results='asis'</code>. Shares timeline CSS with the projects page via <code>html/timeline.css</code>. <strong>Year dividers</strong> are automatically inserted between entries from different years.</li>
+<li><strong>Map</strong> — an R chunk (<code>map-data</code>) geocodes conference cities and injects the coordinates as JSON for the <strong>Leaflet</strong> interactive map.</li>
 </ol>
-<p>Both the projects and speaking timelines are <strong>generated by R</strong>. Because the R output is inserted into Markdown before Pandoc processes it, <strong>no line of generated HTML may start with 4+ spaces</strong> — Pandoc would treat it as a code block and escape the tags. Keep all <code>sprintf()</code> / <code>paste0()</code> templates at ≤ 3-space indentation.</p>
+<p>The map uses <strong>Leaflet.js</strong> with <strong>CartoDB Voyager</strong> tiles. Conference locations are shown as red circle markers and affiliated institutions (KU Leuven, UMC Utrecht, Memorial Sloan Kettering) as blue circle markers with pulsing rings. Clicking any marker opens a styled popup. The map works on both desktop and mobile with native touch support.</p>
+<p>Because the R output is inserted into Markdown before Pandoc processes it, <strong>no line of generated HTML may start with 4+ spaces</strong> — Pandoc would treat it as a code block and escape the tags. Keep all <code>sprintf()</code> / <code>paste0()</code> templates at ≤ 3-space indentation.</p>
 <section id="add-a-new-talk-or-poster" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-new-talk-or-poster">Add a new talk or poster</h3>
 <p>Open <code>speaking/conferences.xlsx</code> and add a new row. The columns are:</p>
@@ -528,6 +534,15 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
+</section>
+<section id="add-or-change-an-affiliated-institution-on-the-map" class="level3">
+<h3 class="anchored" data-anchor-id="add-or-change-an-affiliated-institution-on-the-map">Add or change an affiliated institution on the map</h3>
+<p>The list of institutions is defined in the <code>map-data</code> R chunk inside <code>speaking-page.qmd</code>:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>uni_coords <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">name  =</span> <span class="fu">c</span>(<span class="st">"KU Leuven"</span>, <span class="st">"UMC Utrecht"</span>, <span class="st">"Memorial Sloan Kettering"</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">city  =</span> <span class="fu">c</span>(<span class="st">"Leuven"</span>,    <span class="st">"Utrecht"</span>,     <span class="st">"New York"</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Add or remove rows as needed. The geocoding will resolve city names automatically.</p>
 <p>Freeze is disabled on this page, so just edit the Excel and re-render — no need to delete cache folders. Note that the map geocoding will re-run each time, which requires an internet connection.</p>
 <hr>
 </section>
@@ -546,17 +561,17 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="author-name-deduplication" class="level3">
 <h3 class="anchored" data-anchor-id="author-name-deduplication">Author name deduplication</h3>
 <p>The pipeline automatically handles accent variants (e.g.&nbsp;<code>M Martinez-Garcia</code> ≡ <code>M Martínez-García</code>). For cases that cannot be resolved automatically — typically Dutch/Belgian particle names or abbreviated compound surnames — a <code>manual_corrections</code> vector is defined near the top of the R chunk:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>manual_corrections <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G Collins"</span>       <span class="ot">=</span> <span class="st">"GS Collins"</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BV Calster"</span>      <span class="ot">=</span> <span class="st">"B Van Calster"</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BD Moor"</span>         <span class="ot">=</span> <span class="st">"B De Moor"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JYJ Verbakel"</span>    <span class="ot">=</span> <span class="st">"JY Verbakel"</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JF Calatrava"</span>    <span class="ot">=</span> <span class="st">"J Fernández Calatrava"</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JCGS de Cueto"</span>   <span class="ot">=</span> <span class="st">"JC Gálvez Sainz de Cueto"</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Rén Armañanzas"</span>  <span class="ot">=</span> <span class="st">"R Armañanzas"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>manual_corrections <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G Collins"</span>       <span class="ot">=</span> <span class="st">"GS Collins"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BV Calster"</span>      <span class="ot">=</span> <span class="st">"B Van Calster"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BD Moor"</span>         <span class="ot">=</span> <span class="st">"B De Moor"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JYJ Verbakel"</span>    <span class="ot">=</span> <span class="st">"JY Verbakel"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JF Calatrava"</span>    <span class="ot">=</span> <span class="st">"J Fernández Calatrava"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JCGS de Cueto"</span>   <span class="ot">=</span> <span class="st">"JC Gálvez Sainz de Cueto"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Rén Armañanzas"</span>  <span class="ot">=</span> <span class="st">"R Armañanzas"</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>If a new co-author appears under two different name formats, add a new entry here:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Garbled form"</span>  <span class="ot">=</span> <span class="st">"Canonical form"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Garbled form"</span>  <span class="ot">=</span> <span class="st">"Canonical form"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="publication-deduplication-preprint-journal" class="level3">
 <h3 class="anchored" data-anchor-id="publication-deduplication-preprint-journal">Publication deduplication (preprint + journal)</h3>
@@ -600,38 +615,38 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <ol type="1">
 <li><strong><code>cv-page.qmd</code></strong> — Add an entry using the Quarto div pattern:</li>
 </ol>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>:::: {.cv-entry}</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-title}</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>Institution Name</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-date}</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>MM/YYYY – MM/YYYY</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>::::</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-detail}</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>Role description, City</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>:::: {.cv-entry}</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-title}</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Institution Name</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-date}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>MM/YYYY – MM/YYYY</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>::: {.cv-entry-detail}</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>Role description, City</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>:::</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="2" type="1">
 <li><strong><code>cv/cv.qmd</code></strong> — Add the corresponding entry using LaTeX <code>\hfill</code> for dates:</li>
 </ol>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>**Institution Name**</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Role description (City) \hfill MM/YYYY–MM/YYYY</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>**Institution Name**</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>Role description (City) \hfill MM/YYYY–MM/YYYY</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then re-render <code>cv/cv.qmd</code> to regenerate the PDF.</p>
 </section>
 <section id="add-a-publication-to-the-cv" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-publication-to-the-cv">Add a publication to the CV</h3>
 <p>Publications on the HTML page are rendered automatically from <code>cv/peer_bib.bib</code> using Quarto’s bibliography support (<code>nocite: '@*'</code>). Add the BibTeX entry to the bib file and it will appear on both the HTML page and in the PDF.</p>
 <p><strong>BibTeX entry format example:</strong></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">barrenada2025example</span>,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>  = {Barreñada, Lasai and Van Calster, Ben},</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>   = {Title of the paper},</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span> = {Journal Name},</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>    = {2025},</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">volume</span>  = {10},</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pages</span>   = {123--130},</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span>     = {10.xxxx/xxxxx}</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">barrenada2025example</span>,</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>  = {Barreñada, Lasai and Van Calster, Ben},</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span>   = {Title of the paper},</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">journal</span> = {Journal Name},</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span>    = {2025},</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">volume</span>  = {10},</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">pages</span>   = {123--130},</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">doi</span>     = {10.xxxx/xxxxx}</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="replace-the-cv-pdf-only" class="level3">
 <h3 class="anchored" data-anchor-id="replace-the-cv-pdf-only">Replace the CV PDF only</h3>
@@ -648,20 +663,21 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="site-wide-settings-_quarto.yml" class="level2">
 <h2 class="anchored" data-anchor-id="site-wide-settings-_quarto.yml">8. Site-wide Settings — <code>_quarto.yml</code></h2>
+<p>Search is <strong>disabled</strong> (<code>search: false</code>). The website title is set to <code>"Lasai Barreñada"</code> (short form — the full “Medical Statistician &amp; Researcher” description is in <code>description-meta</code> for SEO only). The navbar tab for talks is labelled <strong>“Talks”</strong> (the page file remains in the <code>speaking/</code> folder).</p>
 <section id="change-your-name-or-description-appears-in-browser-tab-seo" class="level3">
 <h3 class="anchored" data-anchor-id="change-your-name-or-description-appears-in-browser-tab-seo">Change your name or description (appears in browser tab / SEO)</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">title-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your Name"</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">description-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your description"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">title-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your Name"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">description-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your description"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="add-a-new-page-to-the-navbar" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-new-page-to-the-navbar">Add a new page to the navbar</h3>
 <p>Add an entry under <code>website: navbar: left:</code>:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">text</span><span class="kw">:</span><span class="at"> New Page</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">href</span><span class="kw">:</span><span class="at"> folder/new-page.qmd</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">-</span><span class="at"> </span><span class="fu">text</span><span class="kw">:</span><span class="at"> New Page</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">href</span><span class="kw">:</span><span class="at"> folder/new-page.qmd</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Then create <code>folder/new-page.qmd</code> with at minimum a YAML header:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> New Page</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">title</span><span class="kw">:</span><span class="at"> New Page</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="update-social-links-github-twitterbluesky-orcid" class="level3">
 <h3 class="anchored" data-anchor-id="update-social-links-github-twitterbluesky-orcid">Update social links (GitHub, Twitter/Bluesky, ORCID…)</h3>
@@ -689,19 +705,27 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td><code>html/styles.scss</code></td>
-<td>Global font (Inter for body and headings), link colours, spacing — applied to all pages</td>
+<td>Global font (Inter for body and headings), link colours, spacing, <strong>navbar responsive sizing</strong> — applied to all pages</td>
 </tr>
 <tr class="even">
+<td><code>html/timeline.css</code></td>
+<td>Shared timeline styles for Projects and Speaking pages (cards, dots, dates, links, badges, award styling, expand/collapse, mobile breakpoints)</td>
+</tr>
+<tr class="odd">
 <td><code>html/landing_page_styles.css</code></td>
 <td>Hero section layout on the landing page</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>html/seo.html</code></td>
 <td>Meta tags injected into every page <code>&lt;head&gt;</code></td>
 </tr>
 </tbody>
 </table>
+<section id="navbar-responsive-behaviour" class="level3">
+<h3 class="anchored" data-anchor-id="navbar-responsive-behaviour">Navbar responsive behaviour</h3>
+<p>The navbar logo scales down on mobile screens (max-height 28px below 992px). The hamburger toggle is pushed to the right and the logo stays flush left. These rules are defined in <code>html/styles.scss</code> inside a <code>@media (max-width: 991.98px)</code> block.</p>
 <hr>
+</section>
 </section>
 <section id="images-and-branding" class="level2">
 <h2 class="anchored" data-anchor-id="images-and-branding">10. Images and Branding</h2>
@@ -734,6 +758,18 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <td>Social preview image (Twitter/Open Graph)</td>
 </tr>
 <tr class="odd">
+<td><code>img/logo_kuleuven.svg</code></td>
+<td>KU Leuven logo (spare, not currently used on site)</td>
+</tr>
+<tr class="even">
+<td><code>img/logo_umcutrecht.svg</code></td>
+<td>UMC Utrecht logo (spare, not currently used on site)</td>
+</tr>
+<tr class="odd">
+<td><code>img/logo_msk.jpeg</code></td>
+<td>Memorial Sloan Kettering logo (spare, not currently used on site)</td>
+</tr>
+<tr class="even">
 <td><code>projects/*.png</code></td>
 <td>Project thumbnail images referenced in the projects page</td>
 </tr>
@@ -741,7 +777,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </table>
 <section id="replace-the-navbar-logo" class="level3">
 <h3 class="anchored" data-anchor-id="replace-the-navbar-logo">Replace the navbar logo</h3>
-<p>Overwrite <code>img/lb_logo_opt1.svg</code> (or create a new file and update the <code>logo:</code> path in <code>_quarto.yml</code>). The SVG <strong>must</strong> include explicit <code>width</code> and <code>height</code> attributes — without them, some browsers collapse it to zero size. The navbar CSS constrains the logo to max 44px tall.</p>
+<p>Overwrite <code>img/lb_logo_opt1.svg</code> (or create a new file and update the <code>logo:</code> path in <code>_quarto.yml</code>). The SVG <strong>must</strong> include explicit <code>width</code> and <code>height</code> attributes — without them, some browsers collapse it to zero size. The navbar CSS constrains the logo to max 44px tall (28px on mobile).</p>
 </section>
 <section id="replace-the-favicon" class="level3">
 <h3 class="anchored" data-anchor-id="replace-the-favicon">Replace the favicon</h3>
@@ -763,7 +799,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="variables-file-_variables.yml" class="level2">
 <h2 class="anchored" data-anchor-id="variables-file-_variables.yml">12. Variables File — <code>_variables.yml</code></h2>
 <p>Small global variables used across the site (e.g.&nbsp;the “last updated” date in the footer). Edit directly:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_updated</span><span class="kw">:</span><span class="at"> </span><span class="st">"February 2026"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_updated</span><span class="kw">:</span><span class="at"> </span><span class="st">"February 2026"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 
 
 </section>
