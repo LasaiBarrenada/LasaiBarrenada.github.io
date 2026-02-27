@@ -30,7 +30,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./img/favicon.ico" rel="icon">
+<link href="./img/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -102,7 +102,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="./index.html" class="navbar-brand navbar-brand-logo">
-    <img src="./img/ms_icon.png" alt="" class="navbar-logo">
+    <img src="./img/lb_logo_opt1.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Lasai Barreñada | Medical Statistician &amp; Researcher</span>
@@ -188,16 +188,16 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <link rel="stylesheet" href="html/landing_page_styles.css">
 
 <div class="gradient_bg">
+    <canvas id="hero-canvas"></canvas>
     <div class="hero section_padding">
         <div class="hero_content">
             <h1>Hi, I'm <span class="gradient_text">Lasai</span>.</h1>
             <p>I'm a medical statistician dedicated to developing, validating, and improving clinical prediction models to aid medical decision-making.
             </p>
             <p>
-            I'm a fourth-year PhD student at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">IOTA</span></a>) group  supervised by <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Ben Van Calster</span></a>,  <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Laure Wynants</span></a> and  <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Dirk Timmerman</span></a>. I work in methodological and applied work to improve the performance of clinical predictions models across different hospitals with focus on <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">ADNEX</span></a>  model for ovarian cancer diagnosis. 
+            I'm a final-year PhD student at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">IOTA</span></a>) group, supervised by <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Ben Van Calster</span></a>, <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Laure Wynants</span></a>, and <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">Dirk Timmerman</span></a>. My work combines methodological and applied research to improve the calibration and transportability of clinical prediction models, with a focus on the <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style="text-decoration: underline;text-decoration-color: #007BFF;">ADNEX</span></a> model for ovarian cancer diagnosis.
             </p>
-            <p>If you want to collaborate with me or ask anything about my work drop me a message: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style="text-decoration: underline;
-  text-decoration-color: #007BFF;">lasai.barrenadataleb@kuleuven.be</span></a></p>
+            <p>If you'd like to collaborate or have questions about my work, feel free to reach out: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style="text-decoration: underline;text-decoration-color: #007BFF;">lasai.barrenadataleb@kuleuven.be</span></a></p>
 
 
         </div>
@@ -207,31 +207,82 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
         <div id="dot_container">
         </div>
     </div>
-<svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 800 150">
-  <defs>
-    <lineargradient id="blue-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:hsl(210, 100%, 50%); stop-opacity:1"></stop>
-      <stop offset="100%" style="stop-color:#007BFF; stop-opacity:1"></stop>
-    </lineargradient>
-  </defs>
-  <g fill="url(#blue-gradient)" stroke="url(#blue-gradient)" stroke-width="1.5">
-    <!-- Points -->
-    <circle cx="50" cy="100" r="3"></circle>
-    <circle cx="150" cy="80" r="3"></circle>
-    <circle cx="250" cy="60" r="3"></circle>
-    <circle cx="350" cy="90" r="3"></circle>
-    <circle cx="450" cy="70" r="3"></circle>
-    <circle cx="550" cy="50" r="3"></circle>
-    <circle cx="650" cy="40" r="3"></circle>
-    <circle cx="750" cy="30" r="3"></circle>
-  </g>
-  
 
+<script>
+(function () {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx    = canvas.getContext('2d');
+  const bg     = document.querySelector('.gradient_bg');
 
-  <!-- Regression Line -->
-  <path d="M50,100 C150,80 250,60 350,90 S750,30 750,30" fill="none" stroke="url(#blue-gradient)" stroke-width="2"></path>
-</svg>
+  const COLOR = '0, 100, 210';   // site-blue RGB
+  const N     = 60;              // number of particles
+  const DIST  = 150;             // max connection distance
 
+  let W, H, particles, raf;
+
+  function init() {
+    W = canvas.width  = bg.offsetWidth;
+    H = canvas.height = bg.offsetHeight;
+
+    particles = Array.from({ length: N }, () => ({
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: (Math.random() - 0.5) * 0.45,
+      r:  Math.random() * 2 + 1.5
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Move & bounce
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    });
+
+    // Connecting lines
+    for (let i = 0; i < N - 1; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(${COLOR}, ${(1 - d / DIST) * 0.18})`;
+          ctx.lineWidth   = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Dots
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${COLOR}, 0.28)`;
+      ctx.fill();
+    });
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  // Pause when tab is hidden to save resources
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else frame();
+  });
+
+  init();
+  frame();
+  window.addEventListener('resize', init);
+})();
+</script>
 
 </div>
 <!-- ::: {#news} -->
@@ -339,8 +390,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2026 Lasai Barreñada | Template by Marvin Schmitt </span> <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/"><i class="fa-brands fa-github" aria-label="github"></i> Source Code</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    </div>
+<p><span class="faux-block"><a href="./license/index.html">License</a></span></p>
+</div>
     <div class="nav-footer-right">
 <p><span class="faux-block">Last updated: January 2026</span> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
 </div>

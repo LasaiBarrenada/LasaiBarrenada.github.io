@@ -8,7 +8,7 @@
 
 <meta name="description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 
-<title>Curriculum vitae – Lasai Barreñada | Medical Statistician &amp; Researcher</title>
+<title>Curriculum Vitae – Lasai Barreñada | Medical Statistician &amp; Researcher</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,7 +21,27 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -30,7 +50,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../img/favicon.ico" rel="icon">
+<link href="../img/favicon.svg" rel="icon" type="image/svg+xml">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
@@ -84,19 +104,19 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <meta name="author" content="Lasai Barreñada">
 
 
-<meta property="og:title" content="Curriculum vitae – Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta property="og:title" content="Curriculum Vitae – Lasai Barreñada | Medical Statistician &amp; Researcher">
 <meta property="og:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 <meta property="og:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta property="og:site_name" content="Lasai Barreñada | Medical Statistician &amp; Researcher">
 <meta property="og:locale" content="en_US">
-<meta name="twitter:title" content="Curriculum vitae – Lasai Barreñada | Medical Statistician &amp; Researcher">
+<meta name="twitter:title" content="Curriculum Vitae – Lasai Barreñada | Medical Statistician &amp; Researcher">
 <meta name="twitter:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
 <meta name="twitter:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta name="twitter:creator" content="@BarrenadaLasai">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -104,7 +124,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
     <a href="../index.html" class="navbar-brand navbar-brand-logo">
-    <img src="../img/ms_icon.png" alt="" class="navbar-logo">
+    <img src="../img/lb_logo_opt1.svg" alt="" class="navbar-logo">
     </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Lasai Barreñada | Medical Statistician &amp; Researcher</span>
@@ -179,13 +199,15 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Curriculum vitae</h1>
+<h1 class="title">Curriculum Vitae</h1>
 </div>
 
 
@@ -202,35 +224,417 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </header>
 
 
-<div class="cell">
-<style type="text/css">
-.embed-container {
-    position: relative;
-    padding-bottom: 129%;
-    height: 0;
-    overflow: hidden;
-    max-width: 100%;
+<style>
+/* Download button */
+.cv-download-row {
+  text-align: center;
+  margin-bottom: 2rem;
 }
-.embed-container iframe,
-.embed-container object,
-.embed-container embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+
+/* CV entry: title left, date right */
+.cv-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.15rem;
+}
+.cv-entry-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.cv-entry-date {
+  white-space: nowrap;
+  color: #007BFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.cv-entry-detail {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding-left: 0.1rem;
+}
+
+/* Section styling */
+.cv-section h2 {
+  border-bottom: 2px solid #007BFF;
+  padding-bottom: 0.3rem;
+  margin-top: 2rem;
+}
+
+/* Skill tags */
+.cv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.cv-tag {
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 15px;
+  background: #f0f7ff;
+  color: #007BFF;
+  border: 1px solid #cce0ff;
+}
+
+/* List styling for memberships/languages */
+.cv-list {
+  list-style: none;
+  padding-left: 0;
+}
+.cv-list li {
+  padding: 0.2rem 0;
+  font-size: 0.93rem;
+}
+.cv-list li::before {
+  content: '–';
+  color: #007BFF;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+/* Conference entries */
+.cv-conf {
+  margin-bottom: 0.6rem;
+}
+.cv-conf-title {
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+.cv-conf-venue {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Peer review section */
+.cv-prose {
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+/* Publications */
+#refs {
+  font-size: 0.9rem;
 }
 </style>
-</div>
-<p class="text-center">
-  <a class="btn btn-primary btn-lg cv-download" href="cv.pdf" target="_blank">
-    <i class="fa-solid fa-file-arrow-down"></i> Download current CV
+<div class="cv-download-row">
+  <a class="btn btn-primary btn-lg" href="cv.pdf" target="_blank">
+    <i class="fa-solid fa-file-arrow-down"></i> Download PDF
   </a>
-</p>
-<div class="embed-container">
-  <iframe src="cv.pdf#toolbar=0" style="border: 0.5px;width: 100%;"></iframe>
 </div>
-<p>Last updated: 2026-02-21</p>
+<div class="cv-section">
+<section id="professional-experience" class="level2">
+<h2 class="anchored" data-anchor-id="professional-experience">Professional Experience</h2>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>KU Leuven</p>
+</div>
+<div class="cv-entry-date">
+<p>10/2022 – Present</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>PhD Researcher in clinical prediction models, Leuven</p>
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Memorial Sloan Kettering Cancer Center</p>
+</div>
+<div class="cv-entry-date">
+<p>02/2025 – 06/2025</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Visiting PhD Researcher, New York</p>
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Julius Center – UMC Utrecht</p>
+</div>
+<div class="cv-entry-date">
+<p>10/2024 – 02/2025</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Visiting PhD Researcher, Utrecht</p>
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Basque Center for Applied Mathematics (BCAM)</p>
+</div>
+<div class="cv-entry-date">
+<p>12/2021 – 09/2022</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Research Technician in Machine Learning, Bilbao</p>
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Spanish National Statistical Office (INE Spain)</p>
+</div>
+<div class="cv-entry-date">
+<p>10/2020 – 09/2021</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Postgraduate Internship, Madrid</p>
+</div>
+</section>
+<section id="education" class="level2">
+<h2 class="anchored" data-anchor-id="education">Education</h2>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>KU Leuven — PhD in Biomedical Sciences</p>
+</div>
+<div class="cv-entry-date">
+<p>2022 – 2026 (expected)</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Complutense University of Madrid (UCM) — European Master in Official Statistics (EMOS)</p>
+</div>
+<div class="cv-entry-date">
+<p>2019 – 2021</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>University of Granada — B.A. Marketing</p>
+</div>
+<div class="cv-entry-date">
+<p>2015 – 2019</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+
+</div>
+</section>
+<section id="publications" class="level2">
+<h2 class="anchored" data-anchor-id="publications">Publications</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-barrenadaClusteredFlexibleCalibration2025a" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Barreñada, L., Campo, B. D. C., Wynants, L. &amp; Calster, B. V. <a href="https://doi.org/10.1017/rsm.2025.10046">Clustered flexible calibration plots for binary outcomes using random effects modeling</a>. <em>Res Synth Methods</em> <strong>In press</strong>, 1–22 (2025).</div>
+</div>
+<div id="ref-vancalsterEvaluationPerformanceMeasures2025" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Van Calster, B. <em>et al.</em> <a href="https://doi.org/10.1016/j.landig.2025.100916">Evaluation of performance measures in predictive artificial intelligence models to support medical decisions: Overview and guidance</a>. <em>The Lancet Digital Health</em> <strong>In press</strong>, (2025).</div>
+</div>
+<div id="ref-MORO2025629.e1" class="csl-entry" role="listitem">
+<div class="csl-left-margin">3. </div><div class="csl-right-inline">Moro, F. <em>et al.</em> <a href="https://doi.org/10.1016/j.ajog.2025.07.017">External validation of ultrasound-based models for differentiating between benign and malignant adnexal masses: A nationwide prospective multicenter study (IOTA phase 6)</a>. <em>American Journal of Obstetrics and Gynecology</em> <strong>233</strong>, 629.e1–629.e13 (2025).</div>
+</div>
+<div id="ref-barrenadaHeadtoheadComparisonRMI2025" class="csl-entry" role="listitem">
+<div class="csl-left-margin">4. </div><div class="csl-right-inline">Barreñada, L. <em>et al.</em> <a href="https://doi.org/10.1136/bmjopen-2025-104141">Head-to-head comparison of the <span>RMI</span> and <span>ADNEX</span> models to estimate the risk of ovarian malignancy: A systematic review and meta-analysis of external validation studies</a>. <em><span>BMJ</span> Open</em> <strong>15</strong>, e104141 (2025).</div>
+</div>
+<div id="ref-ramirezzegarraStandardizationSonographicMeasurement2025" class="csl-entry" role="listitem">
+<div class="csl-left-margin">5. </div><div class="csl-right-inline">Ramirez Zegarra, R. <em>et al.</em> <a href="https://doi.org/10.1016/j.ejogrb.2025.114520">Standardization of the sonographic measurement of the head to perineum distance: A pilot study comparing techniques with and without perineal compression</a>. <em>European Journal of Obstetrics &amp; Gynecology and Reproductive Biology</em> <strong>312</strong>, 114520 (2025).</div>
+</div>
+<div id="ref-barreñada2025fundamentalproblemriskprediction" class="csl-entry" role="listitem">
+<div class="csl-left-margin">6. </div><div class="csl-right-inline">Barreñada, L. <em>et al.</em> <a href="https://arxiv.org/abs/2506.17141">The fundamental problem of risk prediction for individuals: Health AI, uncertainty, and personalized medicine</a>. vol. Preprint (2025).</div>
+</div>
+<div id="ref-10.1159/000545850" class="csl-entry" role="listitem">
+<div class="csl-left-margin">7. </div><div class="csl-right-inline">Geysels, A. <em>et al.</em> <a href="https://doi.org/10.1159/000545850">Artificial intelligence applied to ultrasound diagnosis of pelvic gynecological tumors: A systematic review and meta-analysis</a>. <em>Gynecologic and Obstetric Investigation</em> <strong>91</strong>, 115–136 (2025).</div>
+</div>
+<div id="ref-martinez-garciaExtendingLearningUsing2025" class="csl-entry" role="listitem">
+<div class="csl-left-margin">8. </div><div class="csl-right-inline">Martínez-García, M., García-Gutierrez, S., Barreñada, L., Inza, I. &amp; Lozano, J. A. <a href="https://doi.org/10.1016/j.neucom.2024.128869">Extending the learning using privileged information paradigm to logistic regression</a>. <em>Neurocomputing</em> <strong>615</strong>, 128869 (2025).</div>
+</div>
+<div id="ref-barrenadaUnderstandingOverfittingRandom2024" class="csl-entry" role="listitem">
+<div class="csl-left-margin">9. </div><div class="csl-right-inline">Barreñada, L., Dhiman, P., Timmerman, D., Boulesteix, A.-L. &amp; Van Calster, B. <a href="https://doi.org/10.1186/s41512-024-00177-1">Understanding overfitting in random forest for probability estimation: A visualization and simulation study</a>. <em>Diagnostic and Prognostic Research</em> <strong>8</strong>, 14 (2024).</div>
+</div>
+<div id="ref-barrenadaADNEXRiskPrediction2024" class="csl-entry" role="listitem">
+<div class="csl-left-margin">10. </div><div class="csl-right-inline">Barreñada, L. <em>et al.</em> <a href="https://doi.org/10.1136/bmjmed-2023-000817"><span>ADNEX</span> risk prediction model for diagnosis of ovarian cancer: Systematic review and meta-analysis of external validation studies</a>. <em>bmjmed</em> <strong>3</strong>, e000817 (2024).</div>
+</div>
+<div id="ref-barrenadaTimelinessReductionIndustrial2022" class="csl-entry" role="listitem">
+<div class="csl-left-margin">11. </div><div class="csl-right-inline">Barreñada, L., Gálvez Sainz de Cueto, J. C. &amp; Fernández Calatrava, J. <a href="https://doi.org/10.3233/SJI-220086">Timeliness reduction on industrial turnover index based on machine learning algorithms</a>. <em>Statistical Journal of the <span>IAOS</span></em> <strong>38</strong>, 1195–1205 (2022).</div>
+</div>
+</div>
+</section>
+<section id="peer-review" class="level2">
+<h2 class="anchored" data-anchor-id="peer-review">Peer Review</h2>
+<div class="cv-prose">
+<p>Conducted various peer reviews for <strong>Statistics in Medicine</strong>, <strong>Ultrasound in Obstetrics and Gynecology</strong>, <strong>International Journal of Gynecological Cancer</strong>, <strong>Heliyon</strong>, <strong>npj Precision Oncology</strong>, <strong>Nature Communications Medicine</strong>, and <strong>Diagnostic and Prognostic Research</strong>.</p>
+</div>
+</section>
+<section id="conference-presentations" class="level2">
+<h2 class="anchored" data-anchor-id="conference-presentations">Conference Presentations</h2>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Problem of Individual Risk Estimation for Health AI (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>01/2026</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>SEB · Bilbao</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Updating the ADNEX model for surgically and conservatively managed patients (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>09/2025</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ISUOG · Cancún</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Combining calibration plots (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>04/2025</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>MEMTAB · Birmingham</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Problem of Individual Risk Estimation for Health AI (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>03/2025</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ENAR · New Orleans</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Head-to-head comparisons of RMI and ADNEX models (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>09/2024</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ISUOG · Budapest</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Multicenter flexible calibration curves using random effects (Poster)</p>
+</div>
+<div class="cv-entry-date">
+<p>07/2024</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ISCB · Thessaloniki</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Drawing multicenter calibration curves (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>02/2024</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>SEB · Barcelona</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>ADNEX model systematic review and meta-analysis (Talk)</p>
+</div>
+<div class="cv-entry-date">
+<p>10/2023</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ISUOG · Seoul</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Do we understand random forests? (Poster)</p>
+</div>
+<div class="cv-entry-date">
+<p>08/2023</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>ISCB · Milan</p>
+</div>
+<div class="cv-entry">
+<div class="cv-conf-title">
+<p>Do we understand random forests? (Poster)</p>
+</div>
+<div class="cv-entry-date">
+<p>07/2023</p>
+</div>
+</div>
+<div class="cv-conf-venue">
+<p>YSM · Leicester</p>
+</div>
+</section>
+<section id="awards-prizes" class="level2">
+<h2 class="anchored" data-anchor-id="awards-prizes">Awards &amp; Prizes</h2>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Young Investigator Award in Gynaecology</p>
+</div>
+<div class="cv-entry-date">
+<p>2023</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Issued by ISUOG</p>
+</div>
+<div class="cv-entry">
+<div class="cv-entry-title">
+<p>Young Statisticians Prize (YSP) — 2nd place</p>
+</div>
+<div class="cv-entry-date">
+<p>2022</p>
+</div>
+</div>
+<div class="cv-entry-detail">
+<p>Issued by IAOS</p>
+</div>
+</section>
+<section id="skills" class="level2">
+<h2 class="anchored" data-anchor-id="skills">Skills</h2>
+<div class="cv-tags">
+  <span class="cv-tag">Clinical Prediction Models</span>
+  <span class="cv-tag">Meta-analysis</span>
+  <span class="cv-tag">Machine Learning</span>
+  <span class="cv-tag">Statistical Analysis</span>
+  <span class="cv-tag">Data Science</span>
+  <span class="cv-tag">Biomedical Research</span>
+  <span class="cv-tag">R</span>
+  <span class="cv-tag">Python</span>
+</div>
+</section>
+<section id="professional-memberships" class="level2">
+<h2 class="anchored" data-anchor-id="professional-memberships">Professional Memberships</h2>
+<ul>
+<li>STRATOS early career adjunct member</li>
+<li>International Society of Ultrasound in Obstetrics and Gynecology (ISUOG)</li>
+<li>International Ovarian Tumour Analysis group (IOTA)</li>
+<li>International Biometric Society (IBS)</li>
+<li>International Society For Clinical Biostatistics (ISCB)</li>
+</ul>
+</section>
+<section id="languages" class="level2">
+<h2 class="anchored" data-anchor-id="languages">Languages</h2>
+<ul>
+<li><strong>Spanish</strong>: Native</li>
+<li><strong>Basque</strong>: Native</li>
+<li><strong>English</strong>: Full Working Proficiency</li>
+<li><strong>French</strong>: Full Working Proficiency</li>
+</ul>
+</section>
+</div>
+<p>Last updated: 2026-02-27</p>
 
 
 
@@ -662,8 +1066,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p><span class="faux-block"><i class="fa-brands fa-creative-commons" aria-label="creative-commons"></i> 2026 Lasai Barreñada | Template by Marvin Schmitt </span> <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/"><i class="fa-brands fa-github" aria-label="github"></i> Source Code</a></span></p>
 </div>   
     <div class="nav-footer-center">
-      &nbsp;
-    </div>
+<p><span class="faux-block"><a href="../license/index.html">License</a></span></p>
+</div>
     <div class="nav-footer-right">
 <p><span class="faux-block">Last updated: January 2026</span> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
 </div>
