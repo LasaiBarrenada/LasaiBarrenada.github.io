@@ -335,10 +335,13 @@ AGENTS.md                    # This file</code></pre>
 <li>Navbar responsive block at <code>@media (max-width: 991.98px)</code>:
 <ul>
 <li>Logo shrinks to 28px</li>
-<li>Container padding set to 0.75rem each side</li>
+<li>Container-fluid uses <code>flex-wrap: wrap</code> — <strong>must stay <code>wrap</code></strong> so the collapse menu drops to a new row; <code>nowrap</code> causes the mobile menu to overlap</li>
 <li><code>.navbar-brand</code>: <code>order:0</code>, <code>margin-right:auto</code>, <code>flex-shrink:0</code></li>
 <li><code>.navbar-toggler</code>: <code>order:1</code>, <code>margin-left:0.5rem</code>, <code>flex-shrink:0</code></li>
+<li><code>.navbar-collapse</code>: <code>order:2</code>, <code>flex-basis:100%</code> — ensures full-width second row</li>
+<li>Social icons get <code>flex-wrap: wrap</code> on mobile to avoid horizontal overflow</li>
 <li>⚠️ Do NOT add <code>margin-left: auto</code> to the toggler — it conflicts with <code>margin-right: auto</code> on the brand and causes overlap.</li>
+<li>⚠️ Do NOT change <code>flex-wrap: wrap</code> to <code>nowrap</code> on the container-fluid — it breaks the mobile menu.</li>
 </ul></li>
 </ul>
 <hr>
@@ -374,14 +377,18 @@ AGENTS.md                    # This file</code></pre>
 <td><code>margin-left: auto</code> on toggler conflicts with <code>margin-right: auto</code> on brand — use only the brand’s auto margin</td>
 </tr>
 <tr class="odd">
+<td>Mobile menu overlaps content</td>
+<td>Container-fluid must use <code>flex-wrap: wrap</code> (not <code>nowrap</code>) — the collapse div needs to drop to a second row</td>
+</tr>
+<tr class="even">
 <td>D3 tooltips on mobile</td>
 <td>The Publications network uses <code>mouseover</code> — no touch support</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Logo SVG needs explicit dimensions</td>
 <td>SVGs without <code>width</code>/<code>height</code> attributes collapse to zero in some browsers</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Map geocoding needs internet</td>
 <td>The <code>map-data</code> chunk in speaking-page uses <code>tidygeocoder</code> — requires network access on render</td>
 </tr>

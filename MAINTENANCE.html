@@ -589,6 +589,16 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="the-network-only-shows-co-authors-with-2-shared-papers" class="level3">
 <h3 class="anchored" data-anchor-id="the-network-only-shows-co-authors-with-2-shared-papers">The network only shows co-authors with ≥ 2 shared papers</h3>
 <p>This is controlled by the <code>filter(n_papers &gt;= 2)</code> line in the R chunk. Change <code>2</code> to any other threshold if needed.</p>
+</section>
+<section id="visual-enhancements-d3" class="level3">
+<h3 class="anchored" data-anchor-id="visual-enhancements-d3">Visual enhancements (D3)</h3>
+<p>The network uses several visual techniques implemented in the <code>&lt;script&gt;</code> block:</p>
+<ul>
+<li><strong>Focus + dim</strong>: Hovering or clicking a node highlights it and its connected links/nodes; everything else fades to 12% opacity (<code>DIM_OPACITY</code>). When a node is selected (clicked), hover on other nodes does not change the focus — only clicking a new node or the background changes it.</li>
+<li><strong>Gradient nodes</strong>: Each node uses an SVG radial gradient (lighter centre, darker edge) defined in <code>&lt;defs&gt;</code>. The centre node also has a glow filter (<code>feGaussianBlur</code> + <code>feMerge</code>); coauthor nodes have a drop shadow (<code>feDropShadow</code>).</li>
+<li><strong>Curved links</strong>: Links are <code>&lt;path&gt;</code> elements with quadratic Bézier curves instead of straight <code>&lt;line&gt;</code> elements. Adjacent links alternate curve direction (<code>sign = i % 2</code>) so they don’t overlap.</li>
+<li><strong>Entrance animation</strong>: Nodes start at <code>r = 0</code> and scale in with <code>d3.easeBackOut</code> (slight overshoot); links and labels fade in. The animation fires 400 ms after page load to let the simulation settle first.</li>
+</ul>
 <hr>
 </section>
 </section>
@@ -733,6 +743,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="navbar-responsive-behaviour" class="level3">
 <h3 class="anchored" data-anchor-id="navbar-responsive-behaviour">Navbar responsive behaviour</h3>
 <p>The navbar logo scales down on mobile screens (max-height 28px below 992px). The hamburger toggle is pushed to the right and the logo stays flush left. These rules are defined in <code>html/styles.scss</code> inside a <code>@media (max-width: 991.98px)</code> block.</p>
+<p><strong>Important:</strong> the container-fluid must use <code>flex-wrap: wrap</code> (not <code>nowrap</code>) so that the Bootstrap collapse div can drop to a full-width second row beneath the logo + hamburger. With <code>nowrap</code>, the expanded mobile menu overlaps instead of stacking. The collapse gets <code>order: 2; flex-basis: 100%</code> and the social-icon row gets <code>flex-wrap: wrap</code> to avoid horizontal overflow.</p>
 <hr>
 </section>
 </section>
