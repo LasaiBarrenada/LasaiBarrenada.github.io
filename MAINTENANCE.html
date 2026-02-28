@@ -1245,8 +1245,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <p><span class="faux-block"><a href="./license/index.html">License</a></span></p>
 </div>
     <div class="nav-footer-right">
-<p><span class="faux-block">Last updated: January 2026</span> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
-</div>
+<span class="faux-block">Last updated:
+<script>document.write(new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}))</script>
+<p> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
+</span></div>
   </div>
 </footer>
 

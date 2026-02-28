@@ -46,7 +46,7 @@
     "href": "license/index.html#acknowledgements",
     "title": "License",
     "section": "Acknowledgements",
-    "text": "Acknowledgements\nThe website template was originally created by Marvin Schmitt and adapted for this site. Built with Quarto."
+    "text": "Acknowledgements\nThe website template was originally created by Marvin Schmitt and adapted for this site. Built with Quarto. Polished with the assistance of Claude by Anthropic (Opus 4 & Sonnet) via Posit Assistant in RStudio."
   },
   {
     "objectID": "cv/LICENSE.html",
