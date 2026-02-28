@@ -178,6 +178,17 @@
   margin-top: 0.6rem;
 }
 
+/* Highlight animation (triggered from map link) */
+@keyframes tl-flash {
+  0%   { box-shadow: 0 0 0 0 rgba(0,123,255,0.5); }
+  40%  { box-shadow: 0 0 0 8px rgba(0,123,255,0.15); }
+  100% { box-shadow: 0 0 0 0 rgba(0,123,255,0); }
+}
+.tl-entry.tl-highlight .tl-card {
+  border-color: #007BFF;
+  animation: tl-flash 2s ease-out;
+}
+
 /* Year divider */
 .tl-year-divider {
   position: relative;

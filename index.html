@@ -170,8 +170,35 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <div class="column-screen">
 <link rel="stylesheet" href="html/landing_page_styles.css">
 
+<style>
+#random-btn {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  z-index: 20;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(0,123,255,0.35);
+  border-radius: 20px;
+  color: rgba(0,100,210,0.75);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+#random-btn:hover {
+  background: rgba(0,123,255,0.12);
+  border-color: rgba(0,123,255,0.65);
+  color: rgba(0,100,210,1);
+}
+</style>
+
 <div class="gradient_bg">
     <canvas id="hero-canvas"></canvas>
+    <button id="random-btn" title="Generate random data">⟳ Random data</button>
     <div class="hero section_padding">
         <div class="hero_content">
             <h1>Hi, I'm <span class="gradient_text">Lasai</span>.</h1>
@@ -409,6 +436,25 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 
     raf = requestAnimationFrame(frame);
   }
+
+  /* ── Random data button ──────────────────────────────────────── */
+  document.getElementById('random-btn').addEventListener('click', () => {
+    clickDots = [];
+    loessCurve = null;
+    rSquared = null;
+    hintOpacity = 0;
+
+    const margin = 0.12; // keep dots away from edges
+    const now = Date.now();
+    for (let i = 0; i < MAX_DOTS; i++) {
+      clickDots.push({
+        x: W * (margin + Math.random() * (1 - 2 * margin)),
+        y: H * (margin + Math.random() * (1 - 2 * margin)),
+        born: now - 250  // skip the pop-in animation
+      });
+    }
+    computeLoess(clickDots);
+  });
 
   // Pause when tab is hidden to save resources
   document.addEventListener('visibilitychange', () => {
