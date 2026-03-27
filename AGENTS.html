@@ -98,8 +98,6 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </script>
-<!--<meta name="description" content="?meta:website.description">-->
-
 <meta name="author" content="Lasai Barreñada">
 
 
@@ -150,35 +148,39 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
     <a class="nav-link" href="./Publications/publications-page.html"> 
 <span class="menu-text">Publications</span></a>
   </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./software/software-page.html"> 
+<span class="menu-text">Software</span></a>
+  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="https://scholar.google.com/citations?user=uPOL3NkAAAAJ&amp;hl=en"> 
+    <a class="nav-link" href="https://scholar.google.com/citations?user=uPOL3NkAAAAJ&amp;hl=en" target="_blank"> 
 <span class="menu-text"><i class="ai  ai-google-scholar" aria-label="google-scholar"></i></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://orcid.org/0000-0001-8020-0210"> 
+    <a class="nav-link" href="https://orcid.org/0000-0001-8020-0210" target="_blank"> 
 <span class="menu-text"><i class="ai  ai-orcid" aria-label="orcid"></i></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://www.webofscience.com/wos/author/record/ACY-2331-2022"> 
+    <a class="nav-link" href="https://www.webofscience.com/wos/author/record/ACY-2331-2022" target="_blank"> 
 <span class="menu-text"><i class="ai  ai-researcherid" aria-label="researcherid"></i></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://bsky.app/profile/lasaibarrenada.bsky.social"> <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://bsky.app/profile/lasaibarrenada.bsky.social" target="_blank"> <i class="bi bi-twitter" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://github.com/BarrenadaLasai"> 
+    <a class="nav-link" href="https://github.com/LasaiBarrenada" target="_blank"> 
 <span class="menu-text"><i class="fa-brands fa-github" aria-label="github"></i></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://osf.io/pgkjv/"> 
+    <a class="nav-link" href="https://osf.io/pgkjv/" target="_blank"> 
 <span class="menu-text"><i class="ai  ai-osf" aria-label="osf"></i></span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="https://www.linkedin.com/in/lasaib/"> 
+    <a class="nav-link" href="https://www.linkedin.com/in/lasaib/" target="_blank"> 
 <span class="menu-text"><i class="fa-brands fa-linkedin" aria-label="linkedin"></i></span></a>
   </li>  
   <li class="nav-item compact">
@@ -213,6 +215,10 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="before-you-do-anything" class="level2">
 <h2 class="anchored" data-anchor-id="before-you-do-anything">Before you do anything</h2>
 <p><strong>Always read <code>MAINTENANCE.md</code> before touching any file.</strong> It is the authoritative guide to how every part of the site works, and it is kept up to date after every session. This AGENTS.md is a quick-start summary; MAINTENANCE.md has the full detail.</p>
+</section>
+<section id="after-every-change" class="level2">
+<h2 class="anchored" data-anchor-id="after-every-change">After every change</h2>
+<p><strong>Always update both <code>MAINTENANCE.md</code> and <code>AGENTS.md</code> at the end of every session (or after any meaningful change).</strong> Both files must stay in sync with the actual state of the site. If you add, remove, or modify any feature, page, style rule, or gotcha, document it in both files before finishing.</p>
 <hr>
 </section>
 <section id="project-structure" class="level2">
@@ -228,6 +234,8 @@ speaking/
   conferences.xlsx           # Data source for talks timeline and map
 Publications/
   publications-page.qmd      # Co-authorship network (D3) from Google Scholar
+software/
+  software-page.qmd          # Software page — GitHub (client JS) + OSF (R build-time)
 cv/
   cv-page.qmd                # HTML CV page (freeze:true)
   cv.qmd                     # PDF CV source (quarto-cv-pdf format)
@@ -236,6 +244,7 @@ cv/
 html/
   styles.scss                # Global SCSS: fonts, colors, navbar responsive rules
   timeline.css               # Shared timeline CSS for projects + speaking pages
+  software.css               # Card grid CSS for the software page
   landing_page_styles.css    # Hero section layout
   seo.html                   # Meta tags injected into every page &lt;head&gt;
 img/
@@ -246,6 +255,7 @@ img/
   logo_kuleuven.svg          # KU Leuven logo (spare, not used on site)
   logo_umcutrecht.svg        # UMC Utrecht logo (spare, not used on site)
   logo_msk.jpeg              # Memorial Sloan Kettering logo (spare, not used on site)
+404.qmd                      # Custom 404 page — styled HTML with {NA} R theme + home button
 license/index.qmd            # License page (MIT code + copyright content)
 MAINTENANCE.md               # Full maintenance guide — always read this first
 AGENTS.md                    # This file</code></pre>
@@ -255,7 +265,7 @@ AGENTS.md                    # This file</code></pre>
 <h2 class="anchored" data-anchor-id="key-site-behaviours">Key site behaviours</h2>
 <section id="freeze" class="level3">
 <h3 class="anchored" data-anchor-id="freeze">Freeze</h3>
-<p><code>execute: freeze: true</code> globally — R code is cached in <code>_freeze/</code> and only re-runs when the cache is deleted. <strong>Exceptions:</strong> <code>projects-page.qmd</code> and <code>speaking-page.qmd</code> both have <code>freeze: false</code> — they always re-execute on render. The Publications page (<code>_freeze/Publications/</code>) must be manually cleared when a new paper appears on Google Scholar.</p>
+<p><code>execute: freeze: true</code> globally — R code is cached in <code>_freeze/</code> and only re-runs when the cache is deleted. <strong>Exceptions:</strong> <code>projects-page.qmd</code>, <code>speaking-page.qmd</code>, and <code>software-page.qmd</code> all have <code>freeze: false</code> — they always re-execute on render. The Publications page (<code>_freeze/Publications/</code>) must be manually cleared when a new paper appears on Google Scholar.</p>
 </section>
 <section id="deployment" class="level3">
 <h3 class="anchored" data-anchor-id="deployment">Deployment</h3>
@@ -272,7 +282,7 @@ AGENTS.md                    # This file</code></pre>
 <ul>
 <li>Logo: <code>img/lb_logo_opt1.svg</code>, max-height 44px desktop / 28px mobile</li>
 <li>Title: <code>"Lasai Barreñada"</code> (short — description is in <code>description-meta</code> for SEO only)</li>
-<li>Tabs (left): Home, Projects, <strong>Talks</strong> (file is in <code>speaking/</code>), CV, Publications</li>
+<li>Tabs (left): Home, Projects, <strong>Talks</strong> (file is in <code>speaking/</code>), CV, Publications, Software</li>
 <li>Social icons (right): GitHub, LinkedIn, ORCID, Google Scholar, ResearchGate, Bluesky, email, RSS</li>
 <li>Mobile: logo flush left, hamburger flush right — controlled by <code>@media (max-width: 991.98px)</code> in <code>styles.scss</code></li>
 </ul>
@@ -318,6 +328,27 @@ AGENTS.md                    # This file</code></pre>
 <li>Preprint/journal deduplication: Jaccard similarity ≥ 0.28 drops the preprint.</li>
 <li>Cache in <code>_freeze/Publications/</code> — delete to force re-fetch from Google Scholar.</li>
 <li>⚠️ D3 tooltips use <code>mouseover</code> — they do NOT work on mobile touch devices.</li>
+</ul>
+<hr>
+</section>
+<section id="software-page-softwaresoftware-page.qmd" class="level2">
+<h2 class="anchored" data-anchor-id="software-page-softwaresoftware-page.qmd">Software page (<code>software/software-page.qmd</code>)</h2>
+<ul>
+<li>Two sections — GitHub is client-side JS, OSF is fetched at build time by R:
+<ol type="1">
+<li><strong>GitHub</strong> repos (username <code>LasaiBarrenada</code>) via the GitHub REST API (client-side JS).</li>
+<li><strong>OSF</strong> projects (user ID <code>pgkjv</code>) via the OSF API v2 (R chunk <code>osf-projects</code>, because the OSF API does not support CORS).</li>
+</ol></li>
+<li>Page has <code>freeze: false</code> so OSF data refreshes on every render.</li>
+<li>Both sections use a responsive 2-column card grid (<code>html/software.css</code>).</li>
+<li><strong>GitHub cards</strong> show: repo name (linked), description, language with colour dot, star count, fork badge, topic tags, and relative “Updated X ago” timestamp.</li>
+<li><strong>OSF cards</strong> show: project title (linked), “OSF” badge (dark blue <code>#214370</code>), category label, description, tags, related paper links, child components (fetched via <code>/nodes/{id}/children/</code>, shown in a shaded “Components” box), and absolute date (“Updated Mar 2026”). Only top-level projects are shown (child components filtered out by <code>root.data.id === node.id</code>). Sorted by most recently modified.</li>
+<li><strong>Related papers on OSF cards</strong>: looked up in two ways — (1) via an <code>OSF_ID</code> column in <code>projects/projects.xlsx</code> (preferred, avoids duplication), or (2) via the <code>osf_extra_papers</code> named list in the R chunk (for papers not in the spreadsheet). Both sources are merged; multiple papers per project are supported.</li>
+<li><strong>Excluded repos</strong> are listed in the <code>EXCLUDE_REPOS</code> array: <code>LasaiBarrenada.github.io</code>, <code>LasaiBarrenada</code> (profile config), <code>web_resources</code>.</li>
+<li>Forked repos are hidden. External repos the user contributes to are listed in <code>CONTRIB_REPOS</code> as <code>owner/repo</code> strings (currently <code>BavoDC/CalibrationCurves</code>, <code>thomas-sounack/TRIPOD-Code</code>) — fetched individually and shown with a “Contributor” badge.</li>
+<li>Archived repos are automatically filtered out.</li>
+<li>Graceful fallback for both APIs: if either fails (rate limit, network), a message with a direct link to the respective profile is shown.</li>
+<li>⚠️ The GitHub public API allows 60 requests/hour unauthenticated. OSF has no strict documented limit. Both sufficient for a personal site.</li>
 </ul>
 <hr>
 </section>

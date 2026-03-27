@@ -1,0 +1,278 @@
+/* ── Software page — card grid for GitHub repos ────────────────── */
+
+.sw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.2rem;
+  margin-top: 1.5rem;
+}
+
+.sw-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1.2rem;
+  background: #fff;
+  transition: box-shadow 0.2s, border-color 0.2s;
+  min-width: 0; /* allow grid items to shrink so text-overflow: ellipsis works */
+}
+
+.sw-card:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  border-color: #007BFF;
+}
+
+/* Header: repo name + stars */
+.sw-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.sw-repo-name {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: #007BFF;
+  text-decoration: none;
+  word-break: break-word;
+}
+
+.sw-repo-name:hover {
+  text-decoration: underline;
+}
+
+.sw-stars {
+  font-size: 0.82rem;
+  color: #666;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Contributor badge */
+.sw-contrib-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  color: #007BFF;
+  background: #e8f0fe;
+  border-radius: 1rem;
+  padding: 0.1rem 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Description */
+.sw-card-desc {
+  font-size: 0.88rem;
+  color: #555;
+  margin: 0.4rem 0 0.6rem;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* Topics */
+.sw-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.sw-topic {
+  font-size: 0.7rem;
+  color: #007BFF;
+  background: #e8f0fe;
+  border-radius: 1rem;
+  padding: 0.15rem 0.55rem;
+  white-space: nowrap;
+}
+
+/* Footer meta: language + updated */
+.sw-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #888;
+  padding-top: 0.6rem;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+.sw-lang {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.sw-lang-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.sw-lang-name {
+  font-size: 0.8rem;
+}
+
+.sw-updated {
+  font-size: 0.8rem;
+}
+
+/* Loading spinner */
+#sw-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #888;
+}
+
+.sw-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #dee2e6;
+  border-top-color: #007BFF;
+  border-radius: 50%;
+  animation: sw-spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+@keyframes sw-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error fallback */
+#sw-error {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+#sw-error a {
+  color: #007BFF;
+}
+
+/* ── Section headings (GitHub / OSF divider) ────────────────── */
+.sw-section-heading {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 0.2rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e9ecef;
+  color: #333;
+}
+
+/* ── OSF badge ──────────────────────────────────────────────── */
+.sw-osf-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  background: #214370;
+  border-radius: 1rem;
+  padding: 0.1rem 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+/* OSF category label */
+.sw-osf-category {
+  display: inline-block;
+  font-size: 0.68rem;
+  color: #666;
+  background: #f0f0f0;
+  border-radius: 1rem;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+/* OSF topic tag colour variant */
+.sw-topic-osf {
+  color: #214370;
+  background: #e0eaf5;
+}
+
+/* OSF card hover accent */
+.sw-card-osf:hover {
+  border-color: #214370;
+}
+
+/* OSF child components */
+.sw-children {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #214370;
+}
+
+.sw-children-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #888;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+.sw-child-link {
+  font-size: 0.82rem;
+  color: #214370;
+  text-decoration: none;
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.sw-child-link:hover {
+  text-decoration: underline;
+}
+
+.sw-child-cat {
+  font-size: 0.68rem;
+  color: #888;
+  flex-shrink: 0;
+}
+
+/* Related paper links */
+.sw-papers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 0.6rem;
+}
+
+.sw-paper-link {
+  font-size: 0.82rem;
+  color: #214370;
+  text-decoration: none;
+  line-height: 1.4;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sw-paper-link:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .sw-grid {
+    grid-template-columns: 1fr;
+  }
+}
