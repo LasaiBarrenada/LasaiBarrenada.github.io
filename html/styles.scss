@@ -1,5 +1,10 @@
 /*-- scss:defaults --*/
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&display=swap');
+
+$font-family-sans-serif: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$headings-font-family:   "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+
 /* From https://github.com/andrewheiss/ath-quarto/blob/main/html/ath.scss */
 
 $white:    #ffffff !default;
@@ -64,6 +69,11 @@ $btn-code-copy-color-active: $myblue !default;
 
 /*-- scss:rules --*/
 
+/* Extra breathing room between navbar and page content */
+#title-block-header {
+  margin-top: 2rem;
+}
+
 main {
   margin-top: 0;
   margin-bottom: 0;
@@ -109,6 +119,57 @@ pre.text, pre.sourceCode, .cell-output pre {
 .navbar-title {
   color: #fff;
   z-index: 10;
+}
+
+.navbar-logo {
+  max-height: 44px !important;
+  margin-right: 0.3rem !important;
+}
+
+.navbar-brand {
+  gap: 0.1rem;
+}
+
+@media (max-width: 991.98px) {
+  /* 991.98px = Bootstrap lg breakpoint – where Quarto collapses the navbar */
+  .navbar-logo {
+    max-height: 28px !important;
+  }
+
+  /* Logo flush left, hamburger flush right.
+     flex-wrap: wrap lets the collapse drop to a second row. */
+  .navbar > .container-fluid {
+    flex-wrap: wrap;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  .navbar-brand {
+    order: 0;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    flex-shrink: 0;
+  }
+
+  .navbar-toggler {
+    order: 1;
+    margin-left: 0.5rem;
+    margin-right: 0 !important;
+    flex-shrink: 0;
+  }
+
+  /* Collapse content takes full width on its own row */
+  .navbar-collapse {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  /* Let social icons wrap instead of staying in a single row */
+  .navbar-nav.navbar-nav-scroll.ms-auto {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 }
 
 .quarto-grid-item img.thumbnail-image {

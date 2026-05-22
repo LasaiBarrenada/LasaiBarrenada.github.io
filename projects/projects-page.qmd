@@ -1,0 +1,105 @@
+---
+title: Projects
+comments: false
+toc: false
+execute:
+  freeze: false
+---
+
+This page contains a brief overview of projects that I significantly shaped throughout the entire project life cycle.
+If you're interested in a full list of projects I have been involved in, please check out my [CV](../cv).
+
+```{=html}
+<link rel="stylesheet" href="/html/timeline.css">
+```
+
+```{r tl-projects, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(openxlsx)
+library(dplyr)
+
+projects <- read.xlsx("projects.xlsx") |>
+  arrange(-Year, -Month)
+
+month_abb <- c("Jan","Feb","Mar","Apr","May","Jun",
+               "Jul","Aug","Sep","Oct","Nov","Dec")
+
+html_entry <- function(row) {
+  mon <- if (!is.na(row$Month)) month_abb[as.integer(row$Month)] else ""
+  upcoming <- is.na(row$Link_1)
+
+  # Title — link to first URL if available
+  title_html <- if (!upcoming) {
+    sprintf('<a href="%s" target="_blank">%s</a>', row$Link_1, row$Title)
+  } else {
+    row$Title
+  }
+
+  # Upcoming badge
+  badge_html <- if (upcoming) '<span class="tl-type-upcoming">Upcoming</span>\n' else ""
+
+  # Entry class
+  entry_cls <- if (upcoming) ' tl-upcoming' else ''
+
+  # Links
+  link_tags <- ""
+  for (k in 1:3) {
+    nm  <- row[[paste0("Link_", k, "_name")]]
+    url <- row[[paste0("Link_", k)]]
+    if (!is.na(nm) && !is.na(url)) {
+      cls <- if (grepl("award", nm, ignore.case = TRUE)) ' class="tl-award"' else ''
+      link_tags <- paste0(link_tags,
+        sprintf('<a href="%s" target="_blank"%s>%s</a>', url, cls, nm))
+    }
+  }
+  if (nchar(link_tags) > 0)
+    link_tags <- paste0('<div class="tl-links">', link_tags, '</div>')
+
+  # Summary
+  summary_html <- ""
+  if (!is.na(row$Summary) && nchar(row$Summary) > 0) {
+    summary_html <- sprintf(
+      '<button class="tl-toggle" onclick="toggleSummary(this)">Summary</button>\n<div class="tl-summary">%s</div>',
+      row$Summary)
+  }
+
+  sprintf(
+'<div class="tl-entry%s">
+<div class="tl-date">%s<br>%s</div>
+<div class="tl-card">
+%s<div class="tl-title">%s</div>
+<div class="tl-venue">%s</div>
+%s
+%s
+</div>
+</div>',
+    entry_cls, mon, row$Year,
+    badge_html, title_html, row$Venue,
+    link_tags, summary_html
+  )
+}
+
+raw_entries <- apply(projects, 1, function(x) html_entry(as.list(x)))
+
+# Insert year dividers when the year changes
+years <- projects$Year
+output <- character()
+prev_year <- NULL
+for (i in seq_along(raw_entries)) {
+  yr <- years[i]
+  if (is.null(prev_year) || yr != prev_year) {
+    output <- c(output, sprintf('<div class="tl-year-divider"><span>%s</span></div>', yr))
+    prev_year <- yr
+  }
+  output <- c(output, raw_entries[i])
+}
+
+cat('<div class="tl-wrapper">\n', paste(output, collapse = "\n"), '\n</div>\n')
+cat('<script>
+function toggleSummary(btn) {
+  const summary = btn.nextElementSibling;
+  const isOpen  = summary.classList.contains("open");
+  summary.classList.toggle("open", !isOpen);
+  btn.classList.toggle("open", !isOpen);
+}
+</script>\n')
+```

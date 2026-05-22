@@ -1,1 +1,10 @@
 % TODO: Add custom LaTeX header directives here
+\usepackage{xcolor}
+\usepackage{sectsty}
+\usepackage{titlesec}
+\usepackage{ebgaramond} % Use Garamond font
+\definecolor{myblue}{HTML}{007BFF}
+\titleformat{\section}
+  {\normalfont\Large\bfseries\color{myblue}\ebgaramond} % format for sections
+  {\thesection}{1em}{\MakeUppercase}% uppercase section titles
+  

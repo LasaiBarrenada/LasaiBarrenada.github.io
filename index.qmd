@@ -27,53 +27,311 @@ format:
 ```{=html}
 <link rel="stylesheet" href="html/landing_page_styles.css">
 
+<style>
+#random-btn {
+  position: absolute;
+  top: 56px;
+  right: 16px;
+  z-index: 20;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(0,123,255,0.35);
+  border-radius: 20px;
+  color: rgba(0,100,210,0.75);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  letter-spacing: 0.02em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+#random-btn:hover {
+  background: rgba(0,123,255,0.12);
+  border-color: rgba(0,123,255,0.65);
+  color: rgba(0,100,210,1);
+}
+</style>
+
 <div class="gradient_bg">
+    <canvas id="hero-canvas"></canvas>
+    <button id="random-btn" title="Generate random data">⟳ Random data</button>
     <div class="hero section_padding">
         <div class="hero_content">
             <h1>Hi, I'm <span class="gradient_text">Lasai</span>.</h1>
-            <p>I am a medical statistician statistician.
-            I develop, validate and improve prediction models to help clinical decision making.
+            <p>I'm a medical statistician dedicated to developing, validating, and improving clinical prediction models to aid medical decision-making.
             </p>
             <p>
-            I am a second-year PhD student at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>IOTA</span></a>) group  supervised by <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Ben Van Calster</span></a>,  <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Laure Wynants</span></a> and  <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Dirk Timmerman</span></a>. I work in methodological and applied work to improve the performance of clinical predictions models across different hospitals with focus on <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>ADNEX</span></a>  model for ovarian cancer diagnosis. 
+            I'm a final-year PhD student at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>IOTA</span></a>) group, supervised by <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Ben Van Calster</span></a>, <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Laure Wynants</span></a>, and <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Dirk Timmerman</span></a>. My work combines methodological and applied research to improve the calibration and transportability of clinical prediction models, with a focus on the <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>ADNEX</span></a> model for ovarian cancer diagnosis.
             </p>
-            <p>If you want to collaborate with me drop me a message: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style='text-decoration: underline;
-  text-decoration-color: #007BFF;'>lasai.barrenadataleb@kuleuven.be</span></a></p>
-            
+            <p>If you'd like to collaborate or have questions about my work, feel free to reach out: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>lasai.barrenadataleb@kuleuven.be</span></a></p>
+
 
         </div>
         <div class="hero_image">
-            <img src="/img/marvin_headshot.png"/>
+            <img src="/img/lasai_headshot.png"/>
         </div>
         <div id="dot_container">
         </div>
     </div>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 150">
-  <defs>
-    <linearGradient id="blue-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:hsl(210, 100%, 50%); stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#007BFF; stop-opacity:1" />
-    </linearGradient>
-  </defs>
-  <g fill="url(#blue-gradient)" stroke="url(#blue-gradient)" stroke-width="1.5">
-    <!-- Points -->
-    <circle cx="50" cy="100" r="3" />
-    <circle cx="150" cy="80" r="3" />
-    <circle cx="250" cy="60" r="3" />
-    <circle cx="350" cy="90" r="3" />
-    <circle cx="450" cy="70" r="3" />
-    <circle cx="550" cy="50" r="3" />
-    <circle cx="650" cy="40" r="3" />
-    <circle cx="750" cy="30" r="3" />
-  </g>
-  
 
+<script>
+(function () {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx    = canvas.getContext('2d');
+  const bg     = document.querySelector('.gradient_bg');
 
-  <!-- Regression Line -->
-  <path d="M50,100 C150,80 250,60 350,90 S750,30 750,30" 
-        fill="none" stroke="url(#blue-gradient)" stroke-width="2" />
-</svg>
+  const COLOR = '0, 100, 210';   // site-blue RGB
+  const N     = 60;              // number of particles
+  const DIST  = 150;             // max connection distance
+  const MAX_DOTS = 10;           // regression drawn at this count
 
+  let W, H, particles, raf;
+  let clickDots = [];            // user-placed points
+  let loessCurve = null;         // array of {x, y} for the fitted curve
+  let rSquared   = null;         // R² value
+  let hintOpacity = 0.65;        // hint text fade
+
+  function init() {
+    W = canvas.width  = bg.offsetWidth;
+    H = canvas.height = bg.offsetHeight;
+
+    particles = Array.from({ length: N }, () => ({
+      x:  Math.random() * W,
+      y:  Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: (Math.random() - 0.5) * 0.45,
+      r:  Math.random() * 2 + 1.5
+    }));
+  }
+
+  /* ── LOESS (locally weighted regression) ────────────────────── */
+  function tricube(d) {
+    return d < 1 ? Math.pow(1 - Math.pow(d, 3), 3) : 0;
+  }
+
+  function loessPredict(pts, xEval, span) {
+    span = span || 0.75;
+    const xs = pts.map(p => p.x);
+    const ys = pts.map(p => p.y);
+    const n  = xs.length;
+    const k  = Math.max(Math.floor(n * span), 2);
+
+    return xEval.map(x0 => {
+      // Distances from x0 to each data point
+      const dists = xs.map(xi => Math.abs(xi - x0));
+      // k-th smallest distance defines the bandwidth
+      const sorted = [...dists].sort((a, b) => a - b);
+      const h = sorted[k - 1] || 1e-10;
+
+      // Tricube weights
+      const w = dists.map(d => tricube(d / (h * 1.001)));
+
+      // Weighted linear regression: y = a + b*x
+      let sw = 0, swx = 0, swy = 0, swxx = 0, swxy = 0;
+      for (let i = 0; i < n; i++) {
+        sw   += w[i];
+        swx  += w[i] * xs[i];
+        swy  += w[i] * ys[i];
+        swxx += w[i] * xs[i] * xs[i];
+        swxy += w[i] * xs[i] * ys[i];
+      }
+      const det = sw * swxx - swx * swx;
+      if (Math.abs(det) < 1e-12) return { x: x0, y: swy / (sw || 1) };
+      const a = (swxx * swy - swx * swxy) / det;
+      const b = (sw * swxy - swx * swy) / det;
+      return { x: x0, y: a + b * x0 };
+    });
+  }
+
+  function computeLoess(pts) {
+    if (pts.length < 3) return;
+    const xMin = Math.min(...pts.map(p => p.x));
+    const xMax = Math.max(...pts.map(p => p.x));
+    if (xMax - xMin < 1) return;
+
+    // Evaluate the curve at many points for a smooth line
+    const nEval = 80;
+    const step  = (xMax - xMin) / nEval;
+    const xEval = Array.from({ length: nEval + 1 }, (_, i) => xMin + i * step);
+    loessCurve = loessPredict(pts, xEval, 0.75);
+
+    // R²: evaluate at data x-values
+    const fitted = loessPredict(pts, pts.map(p => p.x), 0.75);
+    const my = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+    let ssTot = 0, ssRes = 0;
+    for (let i = 0; i < pts.length; i++) {
+      ssTot += (pts[i].y - my) * (pts[i].y - my);
+      ssRes += (pts[i].y - fitted[i].y) * (pts[i].y - fitted[i].y);
+    }
+    rSquared = ssTot > 0 ? 1 - ssRes / ssTot : null;
+  }
+
+  /* ── Click handler ───────────────────────────────────────────── */
+  bg.addEventListener('click', (e) => {
+    // Don't intercept clicks on links or buttons
+    if (e.target.closest('a, button, iframe')) return;
+
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left) * (W / rect.width);
+    const y = (e.clientY - rect.top)  * (H / rect.height);
+
+    // 11th click → reset, start fresh
+    if (clickDots.length >= MAX_DOTS) {
+      clickDots = [];
+      loessCurve = null;
+      rSquared = null;
+    }
+
+    hintOpacity = 0;  // hide hint on first click
+    clickDots.push({ x, y, born: Date.now() });
+
+    // Compute LOESS at exactly 10 points
+    if (clickDots.length === MAX_DOTS) {
+      computeLoess(clickDots);
+    }
+  });
+
+  /* ── Animation loop ──────────────────────────────────────────── */
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Move & bounce particles
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    });
+
+    // Connecting lines
+    for (let i = 0; i < N - 1; i++) {
+      for (let j = i + 1; j < N; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        if (d < DIST) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = `rgba(${COLOR}, ${(1 - d / DIST) * 0.18})`;
+          ctx.lineWidth   = 1;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Background particles
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${COLOR}, 0.28)`;
+      ctx.fill();
+    });
+
+    // ── User-placed dots ──────────────────────────────────────
+    const now = Date.now();
+    clickDots.forEach(d => {
+      const age = Math.min((now - d.born) / 250, 1); // 250ms pop-in
+      const r = 6 * age;
+      // White border
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, r + 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fill();
+      // Blue fill
+      ctx.beginPath();
+      ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0, 100, 210, 0.85)';
+      ctx.fill();
+    });
+
+    // ── LOESS curve ────────────────────────────────────────────
+    if (loessCurve && loessCurve.length > 1) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(loessCurve[0].x, loessCurve[0].y);
+      for (let i = 1; i < loessCurve.length; i++) {
+        ctx.lineTo(loessCurve[i].x, loessCurve[i].y);
+      }
+      ctx.strokeStyle = 'rgba(0, 100, 210, 0.6)';
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // ── R² display ──────────────────────────────────────────────
+    if (rSquared !== null) {
+      ctx.save();
+      ctx.font = '600 14px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(0, 100, 210, 0.7)';
+      ctx.fillText('R\u00B2 = ' + rSquared.toFixed(3), W - 18, 28);
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(0, 70, 160, 0.5)';
+      ctx.fillText('This is basically my job :)', W - 18, 48);
+      ctx.restore();
+    }
+
+    // ── Hint / counter ──────────────────────────────────────────
+    if (hintOpacity > 0.01) {
+      ctx.save();
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = `rgba(0, 123, 255, ${hintOpacity})`;
+      ctx.fillText('Click anywhere to place data points', W - 18, 24);
+      ctx.restore();
+      hintOpacity *= 0.998; // very slow fade even without clicking
+    } else if (clickDots.length > 0 && clickDots.length < MAX_DOTS) {
+      ctx.save();
+      ctx.font = '400 13px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = 'rgba(0, 70, 160, 0.4)';
+      ctx.fillText(clickDots.length + ' / ' + MAX_DOTS, W - 18, 24);
+      ctx.restore();
+    }
+
+    raf = requestAnimationFrame(frame);
+  }
+
+  /* ── Random data button ──────────────────────────────────────── */
+  document.getElementById('random-btn').addEventListener('click', () => {
+    clickDots = [];
+    loessCurve = null;
+    rSquared = null;
+    hintOpacity = 0;
+
+    const margin = 0.12; // keep dots away from edges
+    const now = Date.now();
+    for (let i = 0; i < MAX_DOTS; i++) {
+      clickDots.push({
+        x: W * (margin + Math.random() * (1 - 2 * margin)),
+        y: H * (margin + Math.random() * (1 - 2 * margin)),
+        born: now - 250  // skip the pop-in animation
+      });
+    }
+    computeLoess(clickDots);
+  });
+
+  // Pause when tab is hidden to save resources
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) cancelAnimationFrame(raf);
+    else frame();
+  });
+
+  init();
+  frame();
+  window.addEventListener('resize', () => {
+    init();
+    // Rescale click dots to new dimensions
+    // (cleared on resize to avoid confusion)
+    clickDots = [];
+    loessCurve = null;
+    rSquared = null;
+    hintOpacity = 0.65;
+  });
+})();
+</script>
 
 ```
 :::

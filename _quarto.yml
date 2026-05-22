@@ -6,8 +6,6 @@ project:
   
   resources:
     - "img/**"
-    - "assets/**"
-    - "sitemap.xml"
     - "_redirects"
     - "speaking/pdf/**"
 
@@ -29,34 +27,49 @@ website:
   repo-url: "https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/"
   repo-branch: main
   
-  search: 
-    location: navbar
-    type: textbox
+  search: false
   
   navbar:
     pinned: true
-    logo: /img/ms_icon.png
+    logo: /img/lb_logo_opt1.svg
     left:
       - text: Projects
-        href: projects/index.qmd
-      - text: Speaking
-        href: speaking/index.qmd
+        href: projects/projects-page.qmd
+      - text: Talks
+        href: speaking/speaking-page.qmd
       - text: CV
-        href: cv/index.qmd
+        href: cv/cv-page.qmd
       - text: Publications
-        href: Publications/index.qmd
+        href: Publications/publications-page.qmd
+      - text: Software
+        href: software/software-page.qmd
     right:
-      - icon: twitter
-        href: https://twitter.com/BarrenadaLasai
-      - icon: github
-        href: https://github.com/BarrenadaLasai
-      - icon: linkedin
+      - text: "{{< ai google-scholar >}}"
+        href: https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en
+        target: _blank
+      - text: "{{< ai orcid >}}"
+        href: https://orcid.org/0000-0001-8020-0210
+        target: _blank
+      - text: "{{< ai researcherid >}}"   # Academicons (Web of Science)
+        href: https://www.webofscience.com/wos/author/record/ACY-2331-2022
+        target: _blank
+      - icon: twitter # Font Awesome (Built-in)
+        href: https://bsky.app/profile/lasaibarrenada.bsky.social
+        target: _blank
+      - text: "{{< fa brands github >}}"  # Font Awesome (Built-in)
+        href: https://github.com/LasaiBarrenada
+        target: _blank
+      - text: "{{< ai osf >}}"
+        href: https://osf.io/pgkjv/
+        target: _blank
+      - text: "{{< fa brands linkedin >}}"# Font Awesome (Built-in)
         href: https://www.linkedin.com/in/lasaib/
+        target: _blank
       - icon: envelope
         aria-label: email
         href: "mailto:lasai.barrenadataleb@kuleuven.be"
   
-  favicon: img/favicon.ico
+  favicon: img/favicon.svg
   
   twitter-card: 
     creator: "@BarrenadaLasai"
@@ -67,24 +80,24 @@ website:
     locale: en_US
     
   google-analytics: 
-    tracking-id: G-N36VLTEM79
-    storage: none
+    tracking-id: G-3X228H9QKP
+    storage: cookies
   
   page-footer: 
     left: |
-      <span class="faux-block">{{< fa brands creative-commons >}} 2023 Marvin Schmitt</span>
+      <span class="faux-block">{{< fa brands creative-commons >}} 2026 Lasai Barreñada | Template by Marvin Schmitt </span>
       <span class="faux-block"><a href="https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/">{{< fa brands github >}} Source Code</a></span>
-    # center: |
-    #   <span class="faux-block"><a href="/impressum/index.html">Impressum</a></span>
+    center: |
+      <span class="faux-block"><a href="/license/index.html">License</a></span>
     right: |
-      <span class="faux-block"> Designed with {{< fa heart >}}</span>
+      <span class="faux-block">Last updated: <script>document.write(new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}))</script></span>
       <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span>
-  
 execute:
   freeze: true
   
 filters:
   - html/newpagelink.lua
+  - academicons
 
 format:
   html:

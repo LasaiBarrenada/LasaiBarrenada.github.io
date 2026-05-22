@@ -1,0 +1,380 @@
+---
+title: Software & Code
+comments: false
+toc: false
+freeze: false
+---
+
+A collection of open-source software and research repositories I have developed or contributed to,
+hosted on [GitHub](https://github.com/LasaiBarrenada) and
+[OSF](https://osf.io/user/pgkjv).
+
+---
+
+```{=html}
+<link rel="stylesheet" href="/html/software.css">
+
+<div id="sw-container">
+<div id="sw-loading">
+<div class="sw-spinner"></div>
+<p>Loading repositories from GitHub…</p>
+</div>
+<div id="sw-grid" class="sw-grid"></div>
+<div id="sw-error" style="display:none;"></div>
+</div>
+
+<script>
+(function () {
+  /* ── Configuration ──────────────────────────────────────────── */
+  var USERNAME      = 'LasaiBarrenada';
+  var EXCLUDE_REPOS = [
+    'LasaiBarrenada.github.io', 'LasaiBarrenada', 'web_resources',
+    'quarto_mc_template', 'academicpages.github.io',
+    'BD_Colegios_Email', 'Disenos-de-registro', 'NTTS2021_Hackathon_UCM'
+  ];
+
+  /* GitHub language colours (most common in academic work) */
+  var LANG_COLORS = {
+    'R':                '#198CE7',
+    'Python':           '#3572A5',
+    'JavaScript':       '#f1e05a',
+    'TypeScript':       '#3178c6',
+    'HTML':             '#e34c26',
+    'CSS':              '#563d7c',
+    'TeX':              '#3D6117',
+    'Shell':            '#89e051',
+    'Jupyter Notebook': '#DA5B0B',
+    'C++':              '#f34b7d',
+    'C':                '#555555',
+    'Stata':            '#1a5f91',
+    'SAS':              '#B34936',
+    'MATLAB':           '#e16737'
+  };
+
+  /* ── Helpers ────────────────────────────────────────────────── */
+  function timeAgo(dateStr) {
+    var seconds = Math.floor((Date.now() - new Date(dateStr).getTime()) / 1000);
+    var intervals = [
+      { label: 'year',  s: 31536000 },
+      { label: 'month', s: 2592000  },
+      { label: 'week',  s: 604800   },
+      { label: 'day',   s: 86400    },
+      { label: 'hour',  s: 3600     }
+    ];
+    for (var i = 0; i < intervals.length; i++) {
+      var count = Math.floor(seconds / intervals[i].s);
+      if (count >= 1) return count + ' ' + intervals[i].label + (count > 1 ? 's' : '') + ' ago';
+    }
+    return 'just now';
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* Repos the user contributes to but doesn't own (upstream owner/repo).
+     These are fetched individually and shown with a "Contributor" badge. */
+  var CONTRIB_REPOS = [
+    'BavoDC/CalibrationCurves',
+    'thomas-sounack/TRIPOD-Code',
+    'benvancalster/PerfMeasuresOverview',
+  ];
+
+  /* ── Build a single card ────────────────────────────────────── */
+  function buildCard(repo, isContrib) {
+    var langHtml = '';
+    if (repo.language) {
+      var col = LANG_COLORS[repo.language] || '#999';
+      langHtml = '<span class="sw-lang">' +
+        '<span class="sw-lang-dot" style="background:' + col + '"></span>' +
+        '<span class="sw-lang-name">' + escapeHtml(repo.language) + '</span>' +
+        '</span>';
+    }
+
+    var starsHtml = repo.stargazers_count > 0
+      ? '<span class="sw-stars">\u2B50 ' + repo.stargazers_count + '</span>'
+      : '';
+
+    var badgeHtml = isContrib
+      ? '<span class="sw-contrib-badge">Contributor</span>\n'
+      : '';
+
+    var desc = repo.description
+      ? escapeHtml(repo.description)
+      : '<em>No description provided.</em>';
+
+    var topicsHtml = '';
+    if (repo.topics && repo.topics.length > 0) {
+      topicsHtml = '<div class="sw-topics">' +
+        repo.topics.map(function (t) {
+          return '<span class="sw-topic">' + escapeHtml(t) + '</span>';
+        }).join('') +
+        '</div>';
+    }
+
+    return '<div class="sw-card">' +
+      '<div class="sw-card-header">' +
+        '<a href="' + repo.html_url + '" target="_blank" class="sw-repo-name">' +
+          escapeHtml(repo.full_name || repo.name) + '</a>' +
+        starsHtml +
+      '</div>' +
+      badgeHtml +
+      '<p class="sw-card-desc">' + desc + '</p>' +
+      topicsHtml +
+      '<div class="sw-card-meta">' +
+        langHtml +
+        '<span class="sw-updated">Updated ' + timeAgo(repo.pushed_at) + '</span>' +
+      '</div>' +
+    '</div>';
+  }
+
+  /* ── Fetch helpers ──────────────────────────────────────────── */
+  var API = 'https://api.github.com';
+  var HEADERS = { 'Accept': 'application/vnd.github.v3+json' };
+
+  function fetchJSON(url) {
+    return fetch(url, { headers: HEADERS }).then(function (res) {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    });
+  }
+
+  /* ── Fetch owned repos + contributed repos, then render ─────── */
+  Promise.all([
+    fetchJSON(API + '/users/' + USERNAME + '/repos?type=owner&sort=pushed&per_page=100'),
+    Promise.all(CONTRIB_REPOS.map(function (slug) {
+      return fetchJSON(API + '/repos/' + slug).catch(function () { return null; });
+    }))
+  ])
+  .then(function (results) {
+    document.getElementById('sw-loading').style.display = 'none';
+
+    /* Own repos: exclude forks, archived, and blacklisted */
+    var owned = results[0].filter(function (r) {
+      return !r.fork && !r.archived && EXCLUDE_REPOS.indexOf(r.name) === -1;
+    });
+
+    /* Contributed repos: drop any that failed to fetch */
+    var contrib = results[1].filter(function (r) { return r !== null && !r.archived; });
+
+    var all = owned.map(function (r) { return { repo: r, contrib: false }; })
+      .concat(contrib.map(function (r) { return { repo: r, contrib: true }; }));
+
+    all.sort(function (a, b) { return b.repo.stargazers_count - a.repo.stargazers_count; });
+
+    var cards = all.map(function (d) { return buildCard(d.repo, d.contrib); });
+
+    if (cards.length === 0) {
+      document.getElementById('sw-grid').innerHTML =
+        '<p>No public repositories found.</p>';
+      return;
+    }
+
+    document.getElementById('sw-grid').innerHTML = cards.join('');
+  })
+  .catch(function (err) {
+    document.getElementById('sw-loading').style.display = 'none';
+    var el = document.getElementById('sw-error');
+    el.style.display = 'block';
+    console.error('GitHub repos fetch failed:', err);
+    var isRateLimit = err && err.message && err.message.indexOf('403') !== -1;
+    el.innerHTML = isRateLimit
+      ? '<p>GitHub API rate limit reached &mdash; please try again in a few minutes.</p>'
+        + '<p><a href="https://github.com/' + USERNAME + '" target="_blank">'
+        + 'View my repositories on GitHub \u2192</a></p>'
+      : '<p>Could not load repositories from GitHub.</p>'
+        + '<p><a href="https://github.com/' + USERNAME + '" target="_blank">'
+        + 'View my repositories on GitHub \u2192</a></p>';
+  });
+})();
+</script>
+
+```
+
+```{r}
+#| label: osf-projects
+#| echo: false
+#| results: asis
+
+cat('<h2 class="sw-section-heading">OSF Projects</h2>\n')
+cat('<div class="sw-grid" id="osf-grid">\n')
+
+library(jsonlite)
+library(openxlsx)
+
+# Read projects spreadsheet for paper links (matched via OSF_ID column)
+proj_df <- tryCatch(
+  read.xlsx("../projects/projects.xlsx"),
+  error = function(e) NULL
+)
+
+esc <- function(x) {
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;",  x, fixed = TRUE)
+  x <- gsub(">", "&gt;",  x, fixed = TRUE)
+  x <- gsub('"', "&quot;", x, fixed = TRUE)
+  x
+}
+
+
+format_date <- function(date_str) {
+  d <- as.POSIXct(date_str, format = "%Y-%m-%dT%H:%M:%OS", tz = "UTC")
+  format(d, "%b %Y")
+}
+
+# Extra papers for OSF projects NOT in projects.xlsx.
+# Add entries as: "osf_node_id" = list(list(title = "...", url = "..."), ...)
+osf_extra_papers <- list(
+  "pyv38" = list(list(title = "Artificial Intelligence Applied to Ultrasound Diagnosis of Pelvic Gynecological Tumors: A Systematic Review and Meta-Analysis", url = "https://doi.org/10.1159/000545850")),
+    "jtsvd" = list(list(title = "Head-to-head comparison of the RMI and ADNEX models to estimate the risk of ovarian malignancy: a systematic review and meta-analysis of external validation studies", url = "https://doi.org/10.1136/bmjopen-2025-104141"))
+)
+
+cat_labels <- c(
+  "project" = "Project", "data" = "Data", "software" = "Software",
+  "methods and measures" = "Methods", "other" = "Other"
+)
+
+cat_icons <- c(
+  "project" = "&#128193;", "data" = "&#128202;", "software" = "&#128187;",
+  "methods and measures" = "&#128296;", "other" = "&#128194;"
+)
+
+fetch_children <- function(node_id) {
+  tryCatch(
+    fromJSON(
+      sprintf("https://api.osf.io/v2/nodes/%s/children/?format=json&page%%5Bsize%%5D=100",
+              node_id),
+      simplifyVector = FALSE
+    )$data,
+    error = function(e) list()
+  )
+}
+
+osf_raw <- tryCatch(
+  fromJSON(
+    "https://api.osf.io/v2/users/pgkjv/nodes/?format=json&page%5Bsize%5D=100",
+    simplifyVector = FALSE
+  ),
+  error = function(e) NULL
+)
+
+if (!is.null(osf_raw) && length(osf_raw$data) > 0) {
+  nodes <- osf_raw$data
+
+  # Keep only top-level public projects (root id == node id)
+  nodes <- Filter(function(n) {
+    root_id <- n$relationships$root$data$id
+    !is.null(root_id) && root_id == n$id && isTRUE(n$attributes$public)
+  }, nodes)
+
+  # Sort by date_created descending, but display date_modified on the card
+  created_dates <- vapply(nodes, function(n) n$attributes$date_created, "")
+  nodes <- nodes[order(created_dates, decreasing = TRUE)]
+
+  for (n in nodes) {
+    a   <- n$attributes
+    url <- n$links$html
+    ttl <- esc(a$title)
+
+    desc <- if (!is.null(a$description) && nzchar(a$description)) {
+      esc(a$description)
+    } else {
+      "<em>No description provided.</em>"
+    }
+
+    cat_lbl <- if (!is.null(a$category) && a$category %in% names(cat_labels)) {
+      cat_labels[a$category]
+    } else ""
+    cat_html <- if (nzchar(cat_lbl)) {
+      sprintf(' <span class="sw-osf-category">%s</span>', esc(cat_lbl))
+    } else ""
+
+    tags_html <- ""
+    if (!is.null(a$tags) && length(a$tags) > 0) {
+      spans <- vapply(a$tags, function(t) {
+        sprintf('<span class="sw-topic sw-topic-osf">%s</span>', esc(t))
+      }, "")
+      tags_html <- sprintf('<div class="sw-topics">%s</div>', paste(spans, collapse = ""))
+    }
+
+    # Look up related paper(s): first from projects.xlsx, then extras
+    all_paper_links <- character(0)
+
+    if (!is.null(proj_df) && "OSF_ID" %in% names(proj_df)) {
+      matches <- proj_df[which(proj_df$OSF_ID == n$id), , drop = FALSE]
+      if (nrow(matches) > 0) {
+        all_paper_links <- c(all_paper_links, vapply(seq_len(nrow(matches)), function(i) {
+          row <- matches[i, ]
+          if (!is.na(row$Link_1) && !is.na(row$Title)) {
+            sprintf('<a href="%s" target="_blank" class="sw-paper-link" title="%s">&#128196; %s</a>',
+                    esc(row$Link_1), esc(row$Title), esc(row$Title))
+          } else ""
+        }, ""))
+      }
+    }
+
+    if (n$id %in% names(osf_extra_papers)) {
+      for (p in osf_extra_papers[[n$id]]) {
+        all_paper_links <- c(all_paper_links,
+          sprintf('<a href="%s" target="_blank" class="sw-paper-link" title="%s">&#128196; %s</a>',
+                  esc(p$url), esc(p$title), esc(p$title)))
+      }
+    }
+
+    all_paper_links <- all_paper_links[nzchar(all_paper_links)]
+    paper_html <- if (length(all_paper_links) > 0) {
+      sprintf('<div class="sw-papers">%s</div>', paste(all_paper_links, collapse = "\n"))
+    } else ""
+
+    # Fetch and render child components
+    children <- fetch_children(n$id)
+    children_html <- ""
+    if (length(children) > 0) {
+      child_items <- vapply(children, function(ch) {
+        ch_title <- esc(ch$attributes$title)
+        ch_url   <- ch$links$html
+        ch_cat   <- if (!is.null(ch$attributes$category)) ch$attributes$category else "other"
+        icon     <- if (ch_cat %in% names(cat_icons)) cat_icons[ch_cat] else "&#128194;"
+        lbl      <- if (ch_cat %in% names(cat_labels)) cat_labels[ch_cat] else ch_cat
+        sprintf(
+          '<a href="%s" target="_blank" class="sw-child-link">%s %s <span class="sw-child-cat">%s</span></a>',
+          ch_url, icon, ch_title, esc(lbl)
+        )
+      }, "")
+      children_html <- sprintf(
+        '<div class="sw-children"><span class="sw-children-label">Components</span>%s</div>',
+        paste(child_items, collapse = "\n")
+      )
+    }
+
+    cat(sprintf(
+'<div class="sw-card sw-card-osf">
+<div class="sw-card-header">
+<a href="%s" target="_blank" class="sw-repo-name">%s</a>
+</div>
+<span class="sw-osf-badge">OSF</span>%s
+<p class="sw-card-desc">%s</p>
+%s
+%s
+%s
+<div class="sw-card-meta">
+<span class="sw-updated">Updated %s</span>
+</div>
+</div>\n',
+      url, ttl, cat_html, desc, tags_html, paper_html, children_html,
+      format_date(a$date_modified)
+    ))
+  }
+} else {
+  cat('<div id="osf-error" style="text-align:center;padding:2rem 1rem;color:#666;',
+      'background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6;">',
+      '<p>Could not load projects from OSF.</p>',
+      '<p><a href="https://osf.io/user/pgkjv" target="_blank" ',
+      'style="color:#007BFF;">View my projects on OSF &#8594;</a></p></div>\n',
+      sep = "")
+}
+
+cat('</div>\n')
+```

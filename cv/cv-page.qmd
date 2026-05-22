@@ -1,0 +1,411 @@
+---
+title: Curriculum Vitae
+comments: false
+toc: true
+engine: knitr
+execute:
+  freeze: true
+resources:
+  - "cv.pdf"
+nocite: '@*'
+bibliography: peer_bib.bib
+csl: nature.csl
+---
+
+```{=html}
+<style>
+/* Download button */
+.cv-download-row {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* CV entry: title left, date right */
+.cv-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.15rem;
+}
+.cv-entry-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.cv-entry-date {
+  white-space: nowrap;
+  color: #007BFF;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.cv-entry-detail {
+  color: #555;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  padding-left: 0.1rem;
+}
+
+/* Section styling */
+.cv-section h2 {
+  border-bottom: 2px solid #007BFF;
+  padding-bottom: 0.3rem;
+  margin-top: 2rem;
+}
+
+/* Skill tags */
+.cv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+.cv-tag {
+  font-size: 0.85rem;
+  padding: 4px 12px;
+  border-radius: 15px;
+  background: #f0f7ff;
+  color: #007BFF;
+  border: 1px solid #cce0ff;
+}
+
+/* List styling for memberships/languages */
+.cv-list {
+  list-style: none;
+  padding-left: 0;
+}
+.cv-list li {
+  padding: 0.2rem 0;
+  font-size: 0.93rem;
+}
+.cv-list li::before {
+  content: '–';
+  color: #007BFF;
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+/* Conference entries */
+.cv-conf {
+  margin-bottom: 0.6rem;
+}
+.cv-conf-title {
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+.cv-conf-venue {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Peer review section */
+.cv-prose {
+  font-size: 0.93rem;
+  line-height: 1.6;
+}
+
+/* Publications */
+#refs {
+  font-size: 0.9rem;
+}
+</style>
+```
+
+```{=html}
+<div class="cv-download-row">
+  <a class="btn btn-primary btn-lg" href="cv.pdf" target="_blank">
+    <i class="fa-solid fa-file-arrow-down"></i>&ensp;Download PDF
+  </a>
+</div>
+```
+
+::: {.cv-section}
+
+## Professional Experience
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+KU Leuven
+:::
+::: {.cv-entry-date}
+10/2022 – Present
+:::
+::::
+::: {.cv-entry-detail}
+PhD Researcher in clinical prediction models, Leuven
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Memorial Sloan Kettering Cancer Center
+:::
+::: {.cv-entry-date}
+02/2025 – 06/2025
+:::
+::::
+::: {.cv-entry-detail}
+Visiting PhD Researcher, New York
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Julius Center – UMC Utrecht
+:::
+::: {.cv-entry-date}
+10/2024 – 02/2025
+:::
+::::
+::: {.cv-entry-detail}
+Visiting PhD Researcher, Utrecht
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Basque Center for Applied Mathematics (BCAM)
+:::
+::: {.cv-entry-date}
+12/2021 – 09/2022
+:::
+::::
+::: {.cv-entry-detail}
+Research Technician in Machine Learning, Bilbao
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Spanish National Statistical Office (INE Spain)
+:::
+::: {.cv-entry-date}
+10/2020 – 09/2021
+:::
+::::
+::: {.cv-entry-detail}
+Postgraduate Internship, Madrid
+:::
+
+## Education
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+KU Leuven — PhD in Biomedical Sciences
+:::
+::: {.cv-entry-date}
+2022 – 2026 (expected)
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Complutense University of Madrid (UCM) — European Master in Official Statistics (EMOS)
+:::
+::: {.cv-entry-date}
+2019 – 2021
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+University of Granada — B.A. Marketing
+:::
+::: {.cv-entry-date}
+2015 – 2019
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
+## Publications
+
+::: {#refs}
+:::
+
+## Peer Review
+
+::: {.cv-prose}
+Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj Precision Oncology**, **Nature Communications Medicine**, and **Diagnostic and Prognostic Research**.
+:::
+
+## Conference Presentations
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Problem of Individual Risk Estimation for Health AI (Talk)
+:::
+::: {.cv-entry-date}
+01/2026
+:::
+::::
+::: {.cv-conf-venue}
+SEB · Bilbao
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Updating the ADNEX model for surgically and conservatively managed patients (Talk)
+:::
+::: {.cv-entry-date}
+09/2025
+:::
+::::
+::: {.cv-conf-venue}
+ISUOG · Cancún
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Combining calibration plots (Talk)
+:::
+::: {.cv-entry-date}
+04/2025
+:::
+::::
+::: {.cv-conf-venue}
+MEMTAB · Birmingham
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Problem of Individual Risk Estimation for Health AI (Talk)
+:::
+::: {.cv-entry-date}
+03/2025
+:::
+::::
+::: {.cv-conf-venue}
+ENAR · New Orleans
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Head-to-head comparisons of RMI and ADNEX models (Talk)
+:::
+::: {.cv-entry-date}
+09/2024
+:::
+::::
+::: {.cv-conf-venue}
+ISUOG · Budapest
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Multicenter flexible calibration curves using random effects (Poster)
+:::
+::: {.cv-entry-date}
+07/2024
+:::
+::::
+::: {.cv-conf-venue}
+ISCB · Thessaloniki
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Drawing multicenter calibration curves (Talk)
+:::
+::: {.cv-entry-date}
+02/2024
+:::
+::::
+::: {.cv-conf-venue}
+SEB · Barcelona
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+ADNEX model systematic review and meta-analysis (Talk)
+:::
+::: {.cv-entry-date}
+10/2023
+:::
+::::
+::: {.cv-conf-venue}
+ISUOG · Seoul
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Do we understand random forests? (Poster)
+:::
+::: {.cv-entry-date}
+08/2023
+:::
+::::
+::: {.cv-conf-venue}
+ISCB · Milan
+:::
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Do we understand random forests? (Poster)
+:::
+::: {.cv-entry-date}
+07/2023
+:::
+::::
+::: {.cv-conf-venue}
+YSM · Leicester
+:::
+
+## Awards & Prizes
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Young Investigator Award in Gynaecology
+:::
+::: {.cv-entry-date}
+2023
+:::
+::::
+::: {.cv-entry-detail}
+Issued by ISUOG
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+Young Statisticians Prize (YSP) — 2nd place
+:::
+::: {.cv-entry-date}
+2022
+:::
+::::
+::: {.cv-entry-detail}
+Issued by IAOS
+:::
+
+## Skills
+
+```{=html}
+<div class="cv-tags">
+  <span class="cv-tag">Clinical Prediction Models</span>
+  <span class="cv-tag">Meta-analysis</span>
+  <span class="cv-tag">Machine Learning</span>
+  <span class="cv-tag">Statistical Analysis</span>
+  <span class="cv-tag">Data Science</span>
+  <span class="cv-tag">Biomedical Research</span>
+  <span class="cv-tag">R</span>
+  <span class="cv-tag">Python</span>
+</div>
+```
+
+## Professional Memberships
+
+- STRATOS early career adjunct member
+- International Society of Ultrasound in Obstetrics and Gynecology (ISUOG)
+- International Ovarian Tumour Analysis group (IOTA)
+- International Biometric Society (IBS)
+- International Society For Clinical Biostatistics (ISCB)
+
+## Languages
+
+- **Spanish**: Native
+- **Basque**: Native
+- **English**: Full Working Proficiency
+- **French**: Full Working Proficiency
+
+:::
+
+Last updated: `r Sys.Date()`

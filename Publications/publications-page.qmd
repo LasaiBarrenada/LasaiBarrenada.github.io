@@ -1,0 +1,569 @@
+---
+layout: page
+title: Publications
+---
+
+A complete and up-to-date list of my publications is available on [Google Scholar](https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en), including preprints.
+The network below shows my main collaborators based on shared publications indexed by Google Scholar.
+
+---
+
+## Co-authorship network
+
+```{r graph-data, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(scholar)
+library(dplyr)
+library(stringr)
+library(jsonlite)
+
+id <- 'uPOL3NkAAAAJ'
+pubs <- get_publications(id)
+
+# ── Fetch full author lists for truncated papers ──────────────────────────────
+# Google Scholar truncates long author lists with "...". We fetch the full
+# list via get_complete_authors() and fall back to the truncated string on error.
+pubs$author_full <- pubs$author
+trunc_idx <- grep("\\.\\.\\.", pubs$author)
+for (i in trunc_idx) {
+  full <- tryCatch(
+    get_complete_authors(id, pubs$pubid[i]),
+    error = function(e) NA_character_
+  )
+  if (!is.na(full) && nchar(trimws(full)) > 0) pubs$author_full[i] <- full
+  Sys.sleep(0.3)
+}
+
+# ── Publication deduplication ─────────────────────────────────────────────────
+# Google Scholar sometimes indexes both a preprint and its published version.
+# We detect these by computing Jaccard title similarity between each
+# preprint/working-paper and every published paper, then dropping the preprint
+# when a close match (≥ 0.28) exists.
+
+norm_title <- function(t) {
+  t <- tolower(iconv(t, from = "UTF-8", to = "ASCII//TRANSLIT"))
+  t <- gsub("[^a-z0-9 ]", " ", t)
+  trimws(gsub("\\s+", " ", t))
+}
+
+title_tokens <- strsplit(sapply(pubs$title, norm_title), " ")
+
+jaccard_sim <- function(a, b) {
+  a <- unique(a); b <- unique(b)
+  length(intersect(a, b)) / length(union(a, b))
+}
+
+preprint_pat <- regex(
+  "arxiv|biorxiv|medrxiv|preprint|working paper|statistics spain",
+  ignore_case = TRUE
+)
+is_preprint   <- str_detect(pubs$journal, preprint_pat)
+published_idx <- which(!is_preprint)
+preprint_idx  <- which(is_preprint)
+
+# Drop any preprint whose best title match with a published paper is ≥ 0.28
+drop_rows <- Filter(function(i) {
+  sims <- sapply(published_idx, function(j) jaccard_sim(title_tokens[[i]], title_tokens[[j]]))
+  max(sims, na.rm = TRUE) >= 0.28
+}, preprint_idx)
+
+clean_pubs <- pubs[!seq_len(nrow(pubs)) %in% drop_rows, ]
+
+# ── Name deduplication ────────────────────────────────────────────────────────
+# Some authors appear under multiple name forms:
+#   - Accent variants:  "M Martinez-Garcia" / "M Martínez-García"
+#   - Initial variants: "G Collins" / "GS Collins"
+#   - Abbreviation:     "JF Calatrava" / "J Fernández Calatrava"
+#                       "JCGS de Cueto" / "JC Gálvez Sainz de Cueto"
+#
+# Strategy:
+#   1. Apply manual corrections for cases that can't be resolved automatically.
+#   2. Normalise accents (iconv) and lowercase to create a matching key.
+#   3. Within each key-group keep the first-seen canonical form.
+
+manual_corrections <- c(
+  # Initial/abbreviation variants (can't be resolved by accent normalisation)
+  "G Collins"        = "GS Collins",
+  "JF Calatrava"     = "J Fernández Calatrava",
+  "JCGS de Cueto"    = "JC Gálvez Sainz de Cueto",
+  "JYJ Verbakel"     = "JY Verbakel",
+  # Dutch/Belgian particle names — get_complete_authors absorbs "Van"/"De"
+  # into initials: "B Van Calster" → "BV Calster", "B De Moor" → "BD Moor"
+  "BV Calster"       = "B Van Calster",
+  "BD Moor"          = "B De Moor",
+  # Encoding artefact in the COVID preprint full-author scrape
+  "Rén Armañanzas"   = "R Armañanzas"
+)
+
+normalize_key <- function(x) {
+  x <- iconv(x, from = "UTF-8", to = "ASCII//TRANSLIT")
+  tolower(trimws(x))
+}
+
+# Parse raw author strings (from deduplicated publication list, full author lists)
+raw_names <- clean_pubs$author_full |>
+  str_split(",\\s*") |>
+  unlist() |>
+  str_trim() |>
+  (\(x) x[!str_detect(x, regex("barre[nñ]", ignore_case = TRUE))])() |>
+  (\(x) x[!str_detect(x, "^\\.+$|^…$")])() |>
+  (\(x) x[nchar(x) > 1])()
+
+# Apply manual corrections
+raw_names <- ifelse(
+  raw_names %in% names(manual_corrections),
+  manual_corrections[raw_names],
+  raw_names
+)
+
+# Build canonical name map (first-seen wins within each normalised group)
+canonical_map <- data.frame(
+  original   = unique(raw_names),
+  key        = normalize_key(unique(raw_names)),
+  stringsAsFactors = FALSE
+) |>
+  group_by(key) |>
+  summarise(canonical = first(original), .groups = "drop")
+
+name_lookup <- setNames(canonical_map$canonical, canonical_map$key)
+canonical_names <- name_lookup[normalize_key(raw_names)]
+
+# ── Build nodes and links ─────────────────────────────────────────────────────
+coauthors <- sort(table(canonical_names), decreasing = TRUE) |>
+  as.data.frame(stringsAsFactors = FALSE) |>
+  setNames(c("id", "n_papers")) |>
+  mutate(n_papers = as.integer(n_papers)) |>
+  filter(n_papers >= 2)
+
+nodes <- bind_rows(
+  data.frame(id = "Lasai Barreñada", group = "self",     n_papers = NA_integer_, stringsAsFactors = FALSE),
+  data.frame(id = coauthors$id,      group = "coauthor", n_papers = coauthors$n_papers, stringsAsFactors = FALSE)
+)
+
+links <- data.frame(
+  source = "Lasai Barreñada",
+  target = coauthors$id,
+  value  = coauthors$n_papers,
+  stringsAsFactors = FALSE
+)
+
+# ── Build per-author publication list (for click panel) ───────────────────────
+pubs_by_author <- list()
+
+for (i in seq_len(nrow(clean_pubs))) {
+  paper_authors <- clean_pubs$author_full[i] |>
+    str_split(",\\s*") |>
+    unlist() |>
+    str_trim() |>
+    (\(x) x[!str_detect(x, regex("barre[nñ]", ignore_case = TRUE))])() |>
+    (\(x) x[!str_detect(x, "^\\.+$|^…$")])() |>
+    (\(x) x[nchar(x) > 1])()
+
+  paper_authors <- ifelse(
+    paper_authors %in% names(manual_corrections),
+    manual_corrections[paper_authors],
+    paper_authors
+  )
+
+  canonical_authors <- unique(name_lookup[normalize_key(paper_authors)])
+  canonical_authors <- canonical_authors[!is.na(canonical_authors)]
+
+  scholar_url <- paste0(
+    "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=",
+    id, "&citation_for_view=", id, ":", clean_pubs$pubid[i]
+  )
+  paper_info <- list(title = clean_pubs$title[i], url = scholar_url)
+
+  for (author in canonical_authors) {
+    pubs_by_author[[author]] <- c(pubs_by_author[[author]], list(paper_info))
+  }
+}
+
+# Add Lasai's own full publication list (shown when the centre node is clicked)
+pubs_by_author[["Lasai Barreñada"]] <- lapply(seq_len(nrow(clean_pubs)), function(i) {
+  list(
+    title = clean_pubs$title[i],
+    url   = paste0(
+      "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=",
+      id, "&citation_for_view=", id, ":", clean_pubs$pubid[i]
+    )
+  )
+})
+
+cat(sprintf(
+  "<script>\nconst graphNodes = %s;\nconst graphLinks = %s;\nconst pubsByAuthor = %s;\n</script>",
+  toJSON(nodes,          auto_unbox = TRUE),
+  toJSON(links,          auto_unbox = TRUE),
+  toJSON(pubs_by_author, auto_unbox = TRUE)
+))
+```
+
+```{=html}
+<div id="graph-container" style="position: relative; width: 100%; margin: 1em 0 0.5em;">
+  <div id="coauthor-graph"></div>
+  <div id="graph-tooltip" style="
+    position: absolute;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 7px 11px;
+    font-size: 13px;
+    line-height: 1.5;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 220px;
+    z-index: 10;
+  "></div>
+</div>
+
+<!-- Publication panel (shown on node click) -->
+<div id="pub-panel" style="
+  display: none;
+  margin-bottom: 2em;
+  border: 1px solid #c4d8ed;
+  border-radius: 6px;
+  background: #f4f8fd;
+  padding: 0.9em 1.2em;
+  font-size: 13.5px;
+  line-height: 1.6;
+  animation: fadeIn 0.18s ease;
+">
+  <style>@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }</style>
+  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.5em;">
+    <span style="font-weight:600; font-size:14px; color:#1a6eaa;">
+      Publications with <span id="panel-author"></span>
+    </span>
+    <button onclick="document.getElementById('pub-panel').style.display='none'; window._clearSelectedNode && window._clearSelectedNode();"
+      style="background:none; border:none; cursor:pointer; font-size:18px; color:#999; line-height:1; padding:0 2px;">×</button>
+  </div>
+  <ul id="panel-list" style="margin:0; padding-left:1.3em;"></ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+
+<script>
+(function () {
+  const W = 860, H = 540;
+  const DIM_OPACITY = 0.12;
+  const FOCUS_MS = 300;
+
+  const container = document.getElementById("graph-container");
+  const tooltip   = d3.select("#graph-tooltip");
+
+  const svg = d3.select("#coauthor-graph")
+    .append("svg")
+    .attr("viewBox", `0 0 ${W} ${H}`)
+    .attr("width", "100%")
+    .style("background", "#f4f8fd")
+    .style("border-radius", "8px");
+
+  // ── SVG Defs: radial gradients + filters ──────────────────────────────
+  const defs = svg.append("defs");
+
+  // Drop shadow for coauthor nodes
+  const shadow = defs.append("filter")
+    .attr("id", "node-shadow")
+    .attr("x", "-40%").attr("y", "-40%")
+    .attr("width", "180%").attr("height", "180%");
+  shadow.append("feDropShadow")
+    .attr("dx", 0).attr("dy", 1)
+    .attr("stdDeviation", 3)
+    .attr("flood-color", "rgba(0,0,0,0.18)");
+
+  // Glow filter for centre node
+  const glow = defs.append("filter")
+    .attr("id", "center-glow")
+    .attr("x", "-50%").attr("y", "-50%")
+    .attr("width", "200%").attr("height", "200%");
+  glow.append("feGaussianBlur")
+    .attr("in", "SourceGraphic")
+    .attr("stdDeviation", 4)
+    .attr("result", "blur");
+  glow.append("feMerge")
+    .selectAll("feMergeNode")
+    .data(["blur", "SourceGraphic"])
+    .join("feMergeNode")
+    .attr("in", d => d);
+
+  // ── Scales ────────────────────────────────────────────────────────────
+  const maxP = d3.max(graphNodes.filter(d => d.group !== "self"), d => d.n_papers) || 1;
+
+  const colorScale = d3.scaleLinear()
+    .domain([1, maxP])
+    .range(["#93c4e8", "#1a6eaa"]);
+
+  const rScale = d3.scaleSqrt()
+    .domain([1, maxP])
+    .range([8, 20]);
+
+  const CENTER_R = 32;
+
+  function surname(name) {
+    const m = name.match(/^[A-Z.]+\s+(.*)/);
+    return m ? m[1] : name;
+  }
+
+  // ── Data ──────────────────────────────────────────────────────────────
+  const nodes = graphNodes.map(d => ({ ...d }));
+  const links = graphLinks.map(d => ({ ...d }));
+
+  const center = nodes.find(d => d.group === "self");
+  center.fx = W / 2;
+  center.fy = H / 2;
+
+  // Create a radial gradient per node (lighter centre → base colour edge)
+  nodes.forEach((d, i) => {
+    const base = d.group === "self" ? "#007BFF" : colorScale(d.n_papers);
+    const light = d3.color(base).brighter(0.6).formatHex();
+    const grad = defs.append("radialGradient")
+      .attr("id", `node-grad-${i}`)
+      .attr("cx", "35%").attr("cy", "35%").attr("r", "65%");
+    grad.append("stop").attr("offset", "0%").attr("stop-color", light);
+    grad.append("stop").attr("offset", "100%").attr("stop-color", base);
+  });
+
+  // ── Simulation ────────────────────────────────────────────────────────
+  const sim = d3.forceSimulation(nodes)
+    .force("link",      d3.forceLink(links).id(d => d.id)
+                          .distance(d => 95 + (maxP - d.value) * 18))
+    .force("charge",    d3.forceManyBody().strength(-260))
+    .force("center",    d3.forceCenter(W / 2, H / 2))
+    .force("collision", d3.forceCollide(d =>
+      d.group === "self" ? CENTER_R + 14 : rScale(d.n_papers) + 14));
+
+  // ── Selection / focus state ───────────────────────────────────────────
+  let selectedNode = null;
+  let mouseDownXY  = null;
+
+  function getConnected(d) {
+    const ids = new Set([d.id]);
+    links.forEach(l => {
+      const s = typeof l.source === "object" ? l.source.id : l.source;
+      const t = typeof l.target === "object" ? l.target.id : l.target;
+      if (s === d.id) ids.add(t);
+      if (t === d.id) ids.add(s);
+    });
+    return ids;
+  }
+
+  function applyFocus(focusNode) {
+    const conn = getConnected(focusNode);
+    nodeSel.transition().duration(FOCUS_MS)
+      .style("opacity", n => conn.has(n.id) ? 1 : DIM_OPACITY);
+    linkSel.transition().duration(FOCUS_MS)
+      .style("opacity", l => {
+        const s = typeof l.source === "object" ? l.source.id : l.source;
+        const t = typeof l.target === "object" ? l.target.id : l.target;
+        return (s === focusNode.id || t === focusNode.id) ? 0.75 : DIM_OPACITY;
+      });
+    labelSel.transition().duration(FOCUS_MS)
+      .style("opacity", n => conn.has(n.id) ? 1 : DIM_OPACITY);
+  }
+
+  function restoreFull() {
+    nodeSel.transition().duration(FOCUS_MS).style("opacity", 1);
+    linkSel.transition().duration(FOCUS_MS).style("opacity", 0.75);
+    labelSel.transition().duration(FOCUS_MS).style("opacity", 1);
+  }
+
+  function clearSelection() {
+    if (selectedNode) {
+      nodeSel.filter(n => n.id === selectedNode.id)
+        .attr("stroke", "#fff").attr("stroke-width", 2);
+      selectedNode = null;
+    }
+    document.getElementById("pub-panel").style.display = "none";
+    restoreFull();
+  }
+
+  window._clearSelectedNode = clearSelection;
+
+  function showPanel(d) {
+    const papers = pubsByAuthor[d.id] || [];
+    document.getElementById("panel-author").textContent = d.id;
+    document.getElementById("panel-list").innerHTML = papers
+      .map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${p.title}</a></li>`)
+      .join("");
+    const panel = document.getElementById("pub-panel");
+    panel.style.display = "block";
+    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // ── Links (curved paths) ──────────────────────────────────────────────
+  const linkSel = svg.append("g")
+    .selectAll("path")
+    .data(links)
+    .join("path")
+      .attr("fill", "none")
+      .attr("stroke", "#c4d8ed")
+      .attr("stroke-width", d => Math.sqrt(d.value) * 1.8)
+      .style("opacity", 0);
+
+  function linkPath(d, i) {
+    const sx = d.source.x, sy = d.source.y;
+    const tx = d.target.x, ty = d.target.y;
+    const dx = tx - sx, dy = ty - sy;
+    const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+    const sign = i % 2 === 0 ? 1 : -1;
+    const off  = dist * 0.1 * sign;
+    const mx = (sx + tx) / 2 + (-dy / dist) * off;
+    const my = (sy + ty) / 2 + ( dx / dist) * off;
+    return `M ${sx},${sy} Q ${mx},${my} ${tx},${ty}`;
+  }
+
+  // ── Nodes ─────────────────────────────────────────────────────────────
+  const nodeSel = svg.append("g")
+    .selectAll("circle")
+    .data(nodes)
+    .join("circle")
+      .attr("r", 0)
+      .attr("fill",         (d, i) => `url(#node-grad-${i})`)
+      .attr("stroke",       "#fff")
+      .attr("stroke-width", 2)
+      .attr("filter", d => d.group === "self" ? "url(#center-glow)" : "url(#node-shadow)")
+      .style("cursor", "pointer")
+    .on("mouseover", function (event, d) {
+      if (selectedNode && selectedNode.id === d.id) return;
+      d3.select(this).attr("stroke", "#ffcc00").attr("stroke-width", 3);
+      if (!selectedNode) applyFocus(d);
+      const [x, y] = d3.pointer(event, container);
+      if (d.group === "self") {
+        tooltip
+          .html(`<strong>Lasai Barreñada</strong><br/><em style="color:#888;font-size:11px">Click to see all publications</em>`)
+          .style("opacity", 1)
+          .style("left", (x + 14) + "px")
+          .style("top",  (y - 52) + "px");
+      } else {
+        tooltip
+          .html(`<strong>${d.id}</strong><br/>
+                 ${d.n_papers} shared publication${d.n_papers > 1 ? "s" : ""}<br/>
+                 <em style="color:#888;font-size:11px">Click to see papers</em>`)
+          .style("opacity", 1)
+          .style("left", (x + 14) + "px")
+          .style("top",  (y - 52) + "px");
+      }
+    })
+    .on("mouseout", function (event, d) {
+      tooltip.style("opacity", 0);
+      if (selectedNode && selectedNode.id === d.id) return;
+      d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+      if (selectedNode) applyFocus(selectedNode);
+      else restoreFull();
+    })
+    .on("mousedown.clicktrack", (event) => {
+      mouseDownXY = [event.clientX, event.clientY];
+    })
+    .on("click", function (event, d) {
+      if (mouseDownXY) {
+        const moved = Math.hypot(
+          event.clientX - mouseDownXY[0],
+          event.clientY - mouseDownXY[1]
+        );
+        mouseDownXY = null;
+        if (moved > 5) return;
+      }
+      event.stopPropagation();
+
+      if (selectedNode && selectedNode.id === d.id) { clearSelection(); return; }
+
+      if (selectedNode) {
+        nodeSel.filter(n => n.id === selectedNode.id)
+          .attr("stroke", "#fff").attr("stroke-width", 2);
+      }
+
+      selectedNode = d;
+      d3.select(this).attr("stroke", "#ffcc00").attr("stroke-width", 3);
+      applyFocus(d);
+      showPanel(d);
+    })
+    .call(drag(sim));
+
+  svg.on("click", () => clearSelection());
+
+  // ── Labels ────────────────────────────────────────────────────────────
+  const labelSel = svg.append("g")
+    .attr("pointer-events", "none")
+    .selectAll("text")
+    .data(nodes)
+    .join("text")
+      .text(d => d.group === "self" ? "Lasai" : surname(d.id))
+      .attr("text-anchor", "middle")
+      .attr("font-size",   d => d.group === "self" ? "13px" : "10px")
+      .attr("font-weight", d => d.group === "self" ? "bold" : "normal")
+      .attr("fill",        d => d.group === "self" ? "#fff" : "#333")
+      .style("opacity", 0);
+
+  // ── Tick ──────────────────────────────────────────────────────────────
+  sim.on("tick", () => {
+    nodes.forEach(d => {
+      if (d.group !== "self") {
+        const r = rScale(d.n_papers) + 16;
+        d.x = Math.max(r, Math.min(W - r, d.x));
+        d.y = Math.max(r, Math.min(H - r, d.y));
+      }
+    });
+    linkSel.attr("d", linkPath);
+    nodeSel
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
+    labelSel
+      .attr("x", d => d.x)
+      .attr("y", d => d.group === "self"
+        ? d.y + 4.5
+        : d.y - rScale(d.n_papers) - 4);
+  });
+
+  // ── Entrance animation ────────────────────────────────────────────────
+  setTimeout(() => {
+    linkSel.transition().duration(600).ease(d3.easeCubicOut)
+      .style("opacity", 0.75);
+    nodeSel.transition().duration(700).ease(d3.easeBackOut.overshoot(0.6))
+      .attr("r", d => d.group === "self" ? CENTER_R : rScale(d.n_papers));
+    labelSel.transition().duration(700).delay(200).ease(d3.easeCubicOut)
+      .style("opacity", 1);
+  }, 400);
+
+  // ── Drag ──────────────────────────────────────────────────────────────
+  function drag(simulation) {
+    return d3.drag()
+      .on("start", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        if (d.group !== "self") { d.fx = d.x; d.fy = d.y; }
+      })
+      .on("drag", (event, d) => {
+        if (d.group !== "self") { d.fx = event.x; d.fy = event.y; }
+      })
+      .on("end", (event, d) => {
+        if (!event.active) simulation.alphaTarget(0);
+        if (d.group !== "self") { d.fx = null; d.fy = null; }
+      });
+  }
+
+  // ── Legend ─────────────────────────────────────────────────────────────
+  const legend = svg.append("g").attr("transform", `translate(14, ${H - 78})`);
+
+  legend.append("rect")
+    .attr("width", 178).attr("height", 68).attr("rx", 5)
+    .attr("fill", "#fff").attr("fill-opacity", 0.9);
+
+  legend.append("circle").attr("cx", 14).attr("cy", 20).attr("r", 8)
+    .attr("fill", "#93c4e8");
+  legend.append("text").attr("x", 28).attr("y", 24)
+    .text("2 shared papers").attr("font-size", "11px").attr("fill", "#444");
+
+  legend.append("circle").attr("cx", 14).attr("cy", 46).attr("r", 12)
+    .attr("fill", "#1a6eaa");
+  legend.append("text").attr("x", 28).attr("y", 50)
+    .text("Many shared papers").attr("font-size", "11px").attr("fill", "#444");
+
+  svg.append("text")
+    .attr("x", W - 10).attr("y", H - 10)
+    .attr("text-anchor", "end")
+    .attr("font-size", "11px").attr("fill", "#aaa")
+    .text("Drag to rearrange · click any node to see publications");
+})();
+</script>
+```
+
+

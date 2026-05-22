@@ -1,0 +1,351 @@
+---
+title: Talks & Posters
+comments: false
+toc: false
+execute:
+  freeze: false
+---
+
+Here's a list of my selected public speaking occasions including poster and oral presentations at international conferences.
+If available, you'll also find slides, related papers, and recordings.
+
+```{=html}
+<link rel="stylesheet" href="/html/timeline.css">
+```
+
+```{r tl-speaking, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(openxlsx)
+library(dplyr)
+
+conferences <- read.xlsx("conferences.xlsx") |>
+  arrange(-Year, -Month)
+
+month_abb <- c("Jan","Feb","Mar","Apr","May","Jun",
+               "Jul","Aug","Sep","Oct","Nov","Dec")
+
+html_entry <- function(row) {
+  # Type
+  type_cls <- if (is.na(row$Type))                            "upcoming"
+              else if (grepl("oral", row$Type, ignore.case=TRUE)) "talk"
+              else                                                 "poster"
+  type_lbl <- c(talk = "Talk", poster = "Poster", upcoming = "Upcoming")[type_cls]
+
+  # Date
+  mon <- if (!is.na(row$Month)) month_abb[as.integer(row$Month)] else ""
+
+  # Title
+  title <- if (!is.na(row$Title)) row$Title else "Upcoming presentation"
+
+  # Venue: acronym · city
+  venue <- paste0(row$Code_Name, " &middot; ", row$Location)
+
+  # Links — skip NA or labels flagged with "(NA)"
+  link_tags <- ""
+  for (k in 1:2) {
+    nm  <- row[[paste0("Link_", k, "_name")]]
+    url <- row[[paste0("Link_", k)]]
+    if (!is.na(nm) && !is.na(url) && !grepl("\\(NA\\)", nm, ignore.case = TRUE)) {
+      link_tags <- paste0(link_tags,
+        sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', url, nm))
+    }
+  }
+  if (nchar(link_tags) > 0)
+    link_tags <- paste0('<div class="tl-links">', link_tags, '</div>')
+
+  entry_cls <- if (type_cls == "upcoming") ' tl-upcoming' else ''
+
+  # Unique ID for map linking
+  entry_id <- tolower(gsub("[^a-zA-Z0-9]+", "-", paste0("talk-", row$Code_Name, "-", row$Year)))
+
+  sprintf(
+    '<div class="tl-entry%s" id="%s">
+<div class="tl-date">%s<br>%s</div>
+<div class="tl-card">
+<span class="tl-type tl-type-%s">%s</span>
+<div class="tl-title">%s</div>
+<div class="tl-venue">%s</div>
+%s
+</div>
+</div>',
+    entry_cls, entry_id, mon, row$Year,
+    type_cls, type_lbl,
+    title, venue, link_tags
+  )
+}
+
+raw_entries <- apply(conferences, 1, function(x) html_entry(as.list(x)))
+
+# Insert year dividers when the year changes
+years <- conferences$Year
+output <- character()
+prev_year <- NULL
+for (i in seq_along(raw_entries)) {
+  yr <- years[i]
+  if (is.null(prev_year) || yr != prev_year) {
+    output <- c(output, sprintf('<div class="tl-year-divider"><span>%s</span></div>', yr))
+    prev_year <- yr
+  }
+  output <- c(output, raw_entries[i])
+}
+
+cat('<div class="tl-wrapper">\n', paste(output, collapse = "\n"), '\n</div>\n')
+cat('<script>
+function toggleSummary(btn) {
+  const summary = btn.nextElementSibling;
+  const isOpen  = summary.classList.contains("open");
+  summary.classList.toggle("open", !isOpen);
+  btn.classList.toggle("open", !isOpen);
+}
+</script>\n')
+```
+
+---
+
+## My scientific adventure
+
+```{r map-data, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(readxl)
+library(dplyr)
+library(tidygeocoder)
+library(jsonlite)
+
+conferences <- read_excel(path = "conferences.xlsx")
+
+conf_coords <- tidygeocoder::geocode(.tbl = conferences, city = Location) |>
+  filter(!is.na(lat)) |>
+  select(Code_Name, Year, Location, lat, long)
+
+uni_coords <- data.frame(
+  name  = c("KU Leuven", "UMC Utrecht", "Memorial Sloan Kettering"),
+  city  = c("Leuven",    "Utrecht",     "New York")
+) |>
+  tidygeocoder::geocode(city = city) |>
+  select(name, lat, long)
+
+cat(sprintf(
+  "<script>\nconst conferenceData = %s;\nconst universityData = %s;\n</script>",
+  toJSON(conf_coords, auto_unbox = TRUE),
+  toJSON(uni_coords,  auto_unbox = TRUE)
+))
+```
+
+```{=html}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+#travel-map {
+  height: 520px;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0,40,100,0.10);
+  margin: 1.5em 0;
+  z-index: 0;
+}
+
+/* Popup styling */
+.map-popup .leaflet-popup-content-wrapper {
+  border-radius: 8px;
+  box-shadow: 0 4px 18px rgba(0,40,100,0.15);
+  font-family: Inter, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 0;
+}
+.map-popup .leaflet-popup-content {
+  margin: 10px 14px;
+}
+.map-popup .leaflet-popup-tip {
+  box-shadow: 0 3px 8px rgba(0,40,100,0.10);
+}
+.popup-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: #1a1a2e;
+}
+.popup-detail {
+  color: #666;
+  font-size: 12.5px;
+  margin-top: 2px;
+}
+.popup-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-top: 4px;
+}
+.popup-badge-conf { background: #fce8e8; color: #c0392b; }
+.popup-badge-uni  { background: #e0eeff; color: #0062cc; }
+
+.popup-scroll-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #007BFF;
+  text-decoration: none;
+  cursor: pointer;
+}
+.popup-scroll-link:hover { text-decoration: underline; }
+
+/* Pulsing ring for university markers */
+@keyframes leaflet-pulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  100% { transform: scale(2.8); opacity: 0;   }
+}
+.uni-pulse-ring {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 123, 255, 0.35);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: leaflet-pulse 2s ease-out infinite;
+  pointer-events: none;
+}
+
+/* Legend */
+.map-legend {
+  background: rgba(255,255,255,0.93);
+  backdrop-filter: blur(6px);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  color: #555;
+  line-height: 2;
+  box-shadow: 0 2px 10px rgba(0,40,100,0.10);
+  border: 1px solid #e0e8f0;
+}
+.map-legend i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+</style>
+
+<div id="travel-map"></div>
+
+<script>
+(function () {
+  /* ── Map ────────────────────────────────────────────────────────── */
+  const map = L.map('travel-map', {
+    center: [38, 8],
+    zoom: 3,
+    minZoom: 2,
+    maxBoundsViscosity: 1.0,
+    maxBounds: [[-85, -180], [85, 180]],
+    zoomControl: true,
+    scrollWheelZoom: true,
+    worldCopyJump: false
+  });
+
+  /* CartoDB Voyager — warm, detailed, with labels */
+  L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 18
+    }
+  ).addTo(map);
+
+  /* ── Scroll-to-timeline helper ──────────────────────────────────── */
+  function entryId(codeName, year) {
+    return 'talk-' + (codeName + '-' + year).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  }
+
+  function scrollToEntry(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('tl-highlight');
+    setTimeout(() => el.classList.remove('tl-highlight'), 2000);
+  }
+
+  /* Make scrollToEntry accessible from popup links */
+  window._scrollToEntry = scrollToEntry;
+
+  /* ── Conference markers ─────────────────────────────────────────── */
+  conferenceData.forEach(d => {
+    const id = entryId(d.Code_Name, d.Year);
+
+    L.circleMarker([+d.lat, +d.long], {
+      radius: 7,
+      fillColor: '#e05555',
+      color: '#fff',
+      weight: 2,
+      fillOpacity: 0.88
+    })
+    .bindPopup(
+      '<div class="popup-name">' + d.Code_Name + ' ' + d.Year + '</div>' +
+      '<div class="popup-detail">' + d.Location + '</div>' +
+      '<a href="#" class="popup-scroll-link" onclick="window._scrollToEntry(\'' + id + '\'); return false;">Show in timeline ↓</a>',
+      { className: 'map-popup', maxWidth: 200 }
+    )
+    .addTo(map);
+  });
+
+  /* ── University markers (with pulse) ────────────────────────────── */
+  universityData.forEach(d => {
+    /* Pulsing ring */
+    L.marker([+d.lat, +d.long], {
+      icon: L.divIcon({
+        className: '',
+        html: '<div class="uni-pulse-ring"></div>',
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      }),
+      interactive: false
+    }).addTo(map);
+
+    /* Solid dot */
+    L.circleMarker([+d.lat, +d.long], {
+      radius: 9,
+      fillColor: '#007BFF',
+      color: '#fff',
+      weight: 2.5,
+      fillOpacity: 0.92
+    })
+    .bindPopup(
+      '<div class="popup-name">' + d.name + '</div>' +
+      (d.name !== 'KU Leuven' ? '<div class="popup-detail">Visiting Researcher</div>' : '') +
+      '<span class="popup-badge popup-badge-uni">Affiliated institution</span>',
+      { className: 'map-popup', maxWidth: 200 }
+    )
+    .addTo(map);
+  });
+
+  /* ── Fit bounds to all points ───────────────────────────────────── */
+  const allPts = [
+    ...conferenceData.map(d => [+d.lat, +d.long]),
+    ...universityData.map(d => [+d.lat, +d.long])
+  ];
+  if (allPts.length > 0) {
+    map.fitBounds(allPts, { padding: [40, 40], maxZoom: 5 });
+  }
+
+  /* ── Legend ──────────────────────────────────────────────────────── */
+  const legend = L.control({ position: 'bottomleft' });
+  legend.onAdd = function () {
+    const div = L.DomUtil.create('div', 'map-legend');
+    div.innerHTML =
+      '<i style="background:#e05555;"></i> Conference<br>' +
+      '<i style="background:#007BFF;"></i> Affiliated institution';
+    return div;
+  };
+  legend.addTo(map);
+})();
+</script>
+```

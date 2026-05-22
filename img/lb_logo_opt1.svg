@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" width="120" height="48">
+  <!-- R console prompt ">" -->
+  <text x="2" y="34" font-family="'Courier New', monospace" font-size="26" font-weight="700" fill="#4dabff" opacity="0.85">&gt;</text>
+
+  <!-- "LB" initials -->
+  <text x="24" y="34" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="700" fill="#ffffff" letter-spacing="-0.5">LB</text>
+
+  <!-- Sigmoid / calibration curve underline -->
+  <path d="M 24 43 C 38 43, 42 38, 52 32 S 64 22, 78 22"
+        fill="none" stroke="#4dabff" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+</svg>

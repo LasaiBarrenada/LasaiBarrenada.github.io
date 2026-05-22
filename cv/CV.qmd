@@ -1,90 +1,134 @@
 ---
-title: cv
+title: CV
 format:
   quarto-cv-pdf: default
-author: Lasai Barreñada
+author: 
+  Lasai Barreñada
 date: last-modified
 # phone: 123-456-7890
 address: "Herestraat 49, Leuven 3000, Belgium"
 email: lasai.barrenadataleb@kuleuven.be
-fontsize: 11pt
-#fontfamily: ebgaramond-maths # default font LaTeX package https://tug.org/FontCatalogue/about.html
-#mainfont: Ubuntu # if you want to use a different locally installed font
+fontsize: 10pt
+fontfamily: ebgaramond-maths # default font LaTeX package https://tug.org/FontCatalogue/about.html
+# mainfont: Ubuntu # if you want to use a different locally installed font
 #CJKmainfont: Noto Sans CJK JP # locally installed Asian character font, must use with xelatex
 # github: LasaiBarrenada # github account
-orcid: 	0000-0001-8020-0210 # orcid identifier
+orcid: 0000-0001-8020-0210 # orcid identifier
 # osf: pgkjv # osf five character id
-twitter: BarrenadaLasai # twitter handle
-# web: quarto.org
+# twitter: BarrenadaLasai # twitter handle
+web: lasaibarrenada.github.io
 fontawesome: yes
 nocite: '@*'
 bibliography: 
   peer: peer_bib.bib
   other: other_bib.bib
 validate-yaml: false
-csl: apa-cv.csl
+csl: nature.csl
+profile: "PhD researcher in clinical prediction models at KU Leuven."
 ---
 
+# Professional Experience
+
+**KU Leuven**
+
+PhD Researcher in clinical prediction models (Leuven) \hfill 10/2022-Current
+
+**Memorial Sloan Kettering Cancer Center**
+
+Visiting PhD Researcher (New York) \hfill 02/2025-06/2025
+
+**Julius center - UMC Utrecht**
+
+Visiting PhD Researcher (Utrecht) \hfill 10/2024-02/2025
 
 
+**Basque Center for Applied Mathematics (BCAM)**
 
-# Employment
+Research Technician in Machine Learning (Bilbao) \hfill 12/2021-09/2022
 
-*KU Leuven*
+**Spanish National Statistical Office (INE Spain)**
 
-PhD Researcher in clinical prediction models (Leuven) \hfill 2022/10-
+Postgraduate Internship (Madrid) \hfill 10/2020-09/2021
 
-*Basque Center for Applied Mathematics (BCAM)*
+<!-- **Publicis Media** -->
 
-Research technician in machine learning (Bilbao) \hfill 2021/12-2022/09
-
-*Spanish national statistical office (INE Spain)*
-
-Postgraduate internship (Madrid) \hfill 2020/10-2022/09
-
-*Publicis media*
-
-Data science internship (Madrid) \hfill 10/2019-05/2020
+<!-- Data Science Internship (Madrid) \hfill 10/2019-05/2020 -->
 
 # Education
 
-*KU Leuven*, PhD in Biomedical Sciences \hfill 2022-2026
+**KU Leuven**, PhD in Biomedical Sciences \hfill 2022-2026 (expected)
 
-*Complutense university of Madrid (UCM)*, European Master in Official Statistics (EMOS) \hfill 2019-2021
+**Complutense University of Madrid (UCM)**, European Master in Official Statistics (EMOS) \hfill 2019-2021
 
-*University of Angers*, B.A. Marketing (Erasmus programme) \hfill 2017-2018
+<!-- **University of Angers**, B.A. Marketing (Erasmus Programme) \hfill 2017-2018 -->
 
-*University of Granada*, B.A. Marketing \hfill 2015-2019
+**University of Granada**, B.A. Marketing \hfill 2015-2019
 
 # Publications
 
 ::: {#refs-peer}
 :::
 
-# Technical Reports
+# Peer review
 
-::: {#refs-other}
-:::
+Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj precision oncology**, **Nature Communications medicine** and **Diagnostic and prognostic research**
+<!-- # Technical Reports & Preprints -->
 
-# Conference presentations
+<!-- ::: {#refs-other} -->
+<!-- ::: -->
 
-*Head-to-head comparisons of RMI and ADNEX models (presenation)*, ISUOG, Budapest \hfill 2024-09
+# Conference Presentations
 
-*Multicenter flexible calibration curves using random effects meta-analysis (poster)*, ISCB, Thesalonikki \hfill 2024-07
+**Problem of Individual Risk Estimation for Health AI (Talk)**, SEB, Bilbao \hfill 01/2026
 
-*Drawing multicenter calibration curves (presentation)*, Sociedad Española de Bioestadistica (SEB) \hfill 2024-02
+**Updating the ADNEX model for surgically and conservatively managed patients (Talk)**, ISUOG, Cancun \hfill 09/2025
 
-*ADNEX model systematic review and meta-analysis (presentation)*, ISUOG, Seoul \hfill 2023-10
+**Combining calibration plots (Talk)**, MEMTAB, Birmingham \hfill 04/2025
 
-*Do we understand random forests? (poster)*, ISCB, Milan \hfill 2023-08
+**Problem of Individual Risk Estimation for Health AI (Talk)**, ENAR, New Orleans \hfill 03/2025
 
-*Do we understand random forests? (poster)*, Young Statisticians Meeting (YSM), Leicester \hfill 2023-07
+**Head-to-head comparisons of RMI and ADNEX models (Talk)**, ISUOG, Budapest \hfill 09/2024
 
-# Awards
+**Multicenter flexible calibration curves using random effects (Poster)**, ISCB, Thessaloniki \hfill 07/2024
 
-*Young investigator award in gynaecology*, issued by ISUOG \hfill 2023
+**Drawing multicenter calibration curves (Talk)**, SEB, Barcelona \hfill 02/2024
 
-*Young statisticians prize (YSP)*, issued by IAOS \hfill 2022
+**ADNEX model systematic review and meta-analysis (Talk)**, ISUOG, Seoul \hfill 10/2023
+
+**Do we understand random forests? (Poster)**, ISCB, Milan \hfill 08/2023
+
+**Do we understand random forests? (Poster)**,YSM, Leicester \hfill 07/2023
+
+# Awards & Prizes
+
+**Young Investigator Award in Gynaecology**, issued by ISUOG \hfill 2023
+
+**Young Statisticians Prize (YSP)**, 2\textsuperscript{nd}, issued by IAOS \hfill 2022
+
+<!-- # Skills -->
+
+<!-- - Clinical Prediction Models -->
+<!-- - Meta-analysis -->
+<!-- - Machine Learning -->
+<!-- - Statistical Analysis -->
+<!-- - Data Science -->
+<!-- - Biomedical Research -->
+<!-- - Programming: **R**, **Python** -->
+
+# Professional Memberships
+
+- STRATOS early career adjunct member
+- International Society of Ultrasound in Obstetrics and Gynecology (ISUOG)
+- International Ovarian Tumour Analysis group (IOTA) 
+- International Biometric Society (IBS)
+- International Society For Clinical Biostatistics (ISCB) 
+
+# Languages
+
+- **Spanish**: Native
+- **Basque**: Native
+- **English**: Full Working Proficiency
+- **French**: Full Working Proficiency
 
 <!-- # References -->
 
