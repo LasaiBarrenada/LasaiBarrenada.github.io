@@ -120,7 +120,7 @@ a {
     }
     
     .hero {
-      padding-top: 2rem;
+            padding-top: 6rem;
     }
 
     .section_margin {
@@ -134,7 +134,7 @@ a {
     }
     
     .hero {
-      padding-top: 2rem;
+            padding-top: 6rem;
     }
 
     .section_margin {
@@ -149,13 +149,13 @@ a {
     z-index: 1;
     max-width: 2000px;
     margin: auto;
-    padding-top: 2rem;
+    padding-top: 6rem;
 }
 
 .hero_content {
     flex: 1;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: flex-start;
     flex-direction: column;
     z-index: 7;

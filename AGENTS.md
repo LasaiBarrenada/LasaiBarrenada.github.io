@@ -81,6 +81,8 @@ Disabled globally with `search: false` in `_quarto.yml`. Do NOT add it back with
 - Social icons (right): GitHub, LinkedIn, ORCID, Google Scholar, ResearchGate, Bluesky, email, RSS
 - Mobile: logo flush left, hamburger flush right — controlled by `@media (max-width: 991.98px)` in `styles.scss`
 
+The landing-page hero uses 6rem of top padding and start-aligns `.hero_content` in `html/landing_page_styles.css` so its heading clears the pinned navbar without being vertically centered on desktop.
+
 ---
 
 ## Landing page (`index.qmd`)

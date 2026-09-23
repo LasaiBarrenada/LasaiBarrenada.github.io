@@ -97,6 +97,9 @@ The hero background canvas has an interactive feature on top of the particle ani
 ### Quarto version note
 Quarto 1.9+ can hoist the first hero heading into the page title block when it sees an `<h1>` inside the landing-page HTML. The hero now uses `.hero_title` instead, and `#title-block-header` is hidden in `html/landing_page_styles.css` so the landing page stays flush under the navbar.
 
+The hero uses 6rem of top padding and aligns `.hero_content` to the start so the "Hi, I'm Lasai" heading remains below the pinned navbar instead of being vertically centered on desktop.
+
+
 Key parameters in the `<script>` block of `index.qmd`:
 - `MAX_DOTS` — number of points before the curve is drawn (default: 10)
 - `0.75` in `computeLoess()` — the LOESS span (smoothing parameter)
