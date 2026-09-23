@@ -17,7 +17,13 @@ If available, you'll also find slides, related papers, and recordings.
 library(openxlsx)
 library(dplyr)
 
-conferences <- read.xlsx("conferences.xlsx") |>
+conference_file <- if (file.exists("speaking/conferences.xlsx")) {
+  "speaking/conferences.xlsx"
+} else {
+  "conferences.xlsx"
+}
+
+conferences <- read.xlsx(conference_file) |>
   arrange(-Year, -Month)
 
 month_abb <- c("Jan","Feb","Mar","Apr","May","Jun",
@@ -109,18 +115,32 @@ library(dplyr)
 library(tidygeocoder)
 library(jsonlite)
 
-conferences <- read_excel(path = "conferences.xlsx")
+conference_file <- if (file.exists("speaking/conferences.xlsx")) {
+  "speaking/conferences.xlsx"
+} else {
+  "conferences.xlsx"
+}
 
-conf_coords <- tidygeocoder::geocode(.tbl = conferences, city = Location) |>
-  filter(!is.na(lat)) |>
+conferences <- read_excel(path = conference_file)
+
+conf_coords <- tidygeocoder::geocode(
+  .tbl = conferences,
+  city = Location,
+  method = "arcgis"
+) |>
   select(Code_Name, Year, Location, lat, long)
 
 uni_coords <- data.frame(
-  name  = c("KU Leuven", "UMC Utrecht", "Memorial Sloan Kettering"),
-  city  = c("Leuven",    "Utrecht",     "New York")
+  name = c("KU Leuven", "UMC Utrecht", "Memorial Sloan Kettering"),
+  city = c("Leuven", "Utrecht", "New York")
 ) |>
-  tidygeocoder::geocode(city = city) |>
+  tidygeocoder::geocode(city = city, method = "arcgis") |>
   select(name, lat, long)
+
+if (anyNA(conf_coords$lat) || anyNA(conf_coords$long) ||
+    anyNA(uni_coords$lat) || anyNA(uni_coords$long)) {
+  stop("Map geocoding returned missing coordinates. Check internet access and the city names in conferences.xlsx.")
+}
 
 cat(sprintf(
   "<script>\nconst conferenceData = %s;\nconst universityData = %s;\n</script>",
@@ -251,12 +271,11 @@ cat(sprintf(
     worldCopyJump: false
   });
 
-  /* CartoDB Voyager — warm, detailed, with labels */
+  /* OpenStreetMap standard tiles — public and key-free */
   L.tileLayer(
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd',
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       maxZoom: 18
     }
   ).addTo(map);

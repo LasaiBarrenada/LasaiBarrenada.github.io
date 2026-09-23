@@ -124,10 +124,22 @@ csl: nature.csl
 
 :::: {.cv-entry}
 ::: {.cv-entry-title}
+FWO Postdoctoral Fellowship (KU Leuven)
+:::
+::: {.cv-entry-date}
+10/2026 – 10/2029
+:::
+::::
+::: {.cv-entry-detail}
+Honest clinical prediction model development and valuation, Leuven
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
 KU Leuven
 :::
 ::: {.cv-entry-date}
-10/2022 – Present
+10/2022 – 10/2026
 :::
 ::::
 ::: {.cv-entry-detail}
@@ -189,7 +201,7 @@ Postgraduate Internship, Madrid
 KU Leuven — PhD in Biomedical Sciences
 :::
 ::: {.cv-entry-date}
-2022 – 2026 (expected)
+10/2022 – 10/2026 
 :::
 ::::
 ::: {.cv-entry-detail}
@@ -229,6 +241,19 @@ Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in O
 :::
 
 ## Conference Presentations
+
+:::: {.cv-entry}
+::: {.cv-conf-title}
+Cost-based variable selection to improve clinical utility of prediction models (Poster)
+:::
+::: {.cv-entry-date}
+10/2026
+:::
+::::
+::: {.cv-conf-venue}
+ISCB GDMS · Freiburg
+:::
+
 
 :::: {.cv-entry}
 ::: {.cv-conf-title}

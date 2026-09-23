@@ -62,7 +62,7 @@ AGENTS.md                    # This file
 ## Key site behaviours
 
 ### Freeze
-`execute: freeze: true` globally — R code is cached in `_freeze/` and only re-runs when the cache is deleted. **Exceptions:** `projects-page.qmd`, `speaking-page.qmd`, and `software-page.qmd` all have `freeze: false` — they always re-execute on render. The Publications page (`_freeze/Publications/`) must be manually cleared when a new paper appears on Google Scholar.
+`execute: freeze: true` globally — R code is cached in `_freeze/` and only re-runs when the cache is deleted. **Exceptions:** `projects-page.qmd`, `speaking-page.qmd`, `software-page.qmd`, and `Publications/publications-page.qmd` all have `freeze: false` — they always re-execute on render. The Publications page also bypasses the `scholar` package cache and explicitly fetches the complete profile list.
 
 ### Deployment
 ```bash
@@ -89,6 +89,7 @@ The hero section has:
 - A **particle animation** canvas (`#hero-canvas`) — 60 floating dots with connecting lines, drawn with vanilla JS. `pointer-events: none` on the canvas so clicks pass through.
 - An **interactive LOESS Easter egg** — click on the hero background to place blue data points. At 10 points, a LOESS curve (tricube kernel, span=0.75) is fitted and R² is shown in the top-right. A "⟳ Random data" button (top-right, `top:56px`) auto-generates 10 random points. 11th click resets everything.
 - Profile photo (`img/lasai_headshot.png`) and bio text in `<p>` tags inside the `{=html}` block.
+- Quarto 1.9+ can hoist the first hero heading into the page title block if it is an `<h1>`; the hero now uses `.hero_title`, and `#title-block-header` is hidden in `html/landing_page_styles.css` to keep the page flush under the navbar.
 
 ---
 
@@ -107,7 +108,7 @@ The hero section has:
 
 - Navbar tab is labelled **"Talks"** — the file lives in `speaking/`.
 - Same timeline structure as projects (R chunk `tl-speaking`, year dividers, `html/timeline.css`).
-- **Map**: R chunk `map-data` geocodes city names and injects coordinates as JS arrays (`conferenceData`, `universityData`). The map is built with **Leaflet.js** + **CartoDB Voyager** tiles. Red circles = conferences; blue pulsing circles = affiliated institutions (KU Leuven, UMC Utrecht, Memorial Sloan Kettering). Popups on click, works on mobile. No travel arcs. Zoom constrained to a single world view (`minZoom: 2`, `maxBounds`).
+- **Map**: R chunk `map-data` geocodes conference and institution city names with ArcGIS and injects coordinates as JS arrays (`conferenceData`, `universityData`). The map is built with **Leaflet.js** + public OpenStreetMap tiles. Rendering stops if geocoding returns missing coordinates. Red circles = conferences; blue pulsing circles = affiliated institutions (KU Leuven, UMC Utrecht, Memorial Sloan Kettering). Popups on click, works on mobile. No travel arcs. Zoom constrained to a single world view (`minZoom: 2`, `maxBounds`).
 - **Map → timeline linking**: each timeline entry has a unique `id` (e.g., `talk-iscb-2024`). Conference popups have a "Show in timeline ↓" link that smooth-scrolls to the entry and highlights it with a blue pulse animation (`tl-highlight` class).
 - **University popups**: UMC Utrecht and MSK show "Visiting Researcher" below the name; KU Leuven does not (home institution).
 - Affiliated institutions are defined in the `map-data` R chunk as a `uni_coords` data frame.
@@ -121,7 +122,7 @@ The hero section has:
 - Builds a **D3 force-directed co-authorship network** — nodes = co-authors, edges = shared papers, minimum 2 shared papers to appear.
 - Author name deduplication: accent variants are normalised; a `manual_corrections` vector handles edge cases (Dutch particle names, compound surnames).
 - Preprint/journal deduplication: Jaccard similarity ≥ 0.28 drops the preprint.
-- Cache in `_freeze/Publications/` — delete to force re-fetch from Google Scholar.
+- The page fetches the complete Google Scholar profile list with `flush = TRUE` on every render, so new publications do not require manual cache deletion.
 - ⚠️ D3 tooltips use `mouseover` — they do NOT work on mobile touch devices.
 
 ---

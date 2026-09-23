@@ -24,3 +24,5 @@ blog/mac-setup/mac_setup_thumbnail.png
 .positai
 
 **/*.quarto_ipynb
+
+/.luarc.json

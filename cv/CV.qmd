@@ -2,20 +2,24 @@
 title: CV
 format:
   quarto-cv-pdf: default
+classoption: dvipsnames
 author: 
   Lasai Barreñada
 date: last-modified
-# phone: 123-456-7890
 address: "Herestraat 49, Leuven 3000, Belgium"
 email: lasai.barrenadataleb@kuleuven.be
-fontsize: 10pt
-fontfamily: ebgaramond-maths # default font LaTeX package https://tug.org/FontCatalogue/about.html
-# mainfont: Ubuntu # if you want to use a different locally installed font
-#CJKmainfont: Noto Sans CJK JP # locally installed Asian character font, must use with xelatex
-# github: LasaiBarrenada # github account
-orcid: 0000-0001-8020-0210 # orcid identifier
-# osf: pgkjv # osf five character id
-# twitter: BarrenadaLasai # twitter handle
+fontsize: 9pt
+fontfamily: ebgaramond-maths 
+geometry: "top=0.8cm, bottom=0.8cm, left=1.5cm, right=1.5cm" 
+colorlinks: true
+linkcolor: NavyBlue
+urlcolor: NavyBlue
+citecolor: NavyBlue
+header-includes:
+  - \usepackage{titlesec}
+  - \titleformat{\section}{\normalfont\Large\bfseries\color{Maroon}}{}{0pt}{}
+  - \titleformat{\subsection}{\normalfont\large\bfseries\color{Maroon}}{}{0pt}{}
+orcid: 0000-0001-8020-0210
 web: lasaibarrenada.github.io
 fontawesome: yes
 nocite: '@*'
@@ -24,12 +28,14 @@ bibliography:
   other: other_bib.bib
 validate-yaml: false
 csl: nature.csl
-profile: "PhD researcher in clinical prediction models at KU Leuven."
+profile: "Incoming FWO Postdoctoral Fellow in clinical prediction models at KU Leuven."
 ---
 
 # Professional Experience
 
 **KU Leuven**
+
+FWO Postdoctoral Fellow (Leuven) \hfill 10/2026-10/2029 (Incoming)
 
 PhD Researcher in clinical prediction models (Leuven) \hfill 10/2022-Current
 
@@ -56,7 +62,7 @@ Postgraduate Internship (Madrid) \hfill 10/2020-09/2021
 
 # Education
 
-**KU Leuven**, PhD in Biomedical Sciences \hfill 2022-2026 (expected)
+**KU Leuven**, PhD in Biomedical Sciences \hfill 09/2022-09/2026 
 
 **Complutense University of Madrid (UCM)**, European Master in Official Statistics (EMOS) \hfill 2019-2021
 
@@ -71,13 +77,16 @@ Postgraduate Internship (Madrid) \hfill 10/2020-09/2021
 
 # Peer review
 
-Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj precision oncology**, **Nature Communications medicine** and **Diagnostic and prognostic research**
+Conducted >30 peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj precision oncology**, **Nature Communications medicine** and **Diagnostic and prognostic research**
 <!-- # Technical Reports & Preprints -->
 
 <!-- ::: {#refs-other} -->
 <!-- ::: -->
 
 # Conference Presentations
+
+**Cost-based variable selection to improve clinical utility of prediction models (Poster)**, ISCB, Freiburg \hfill 10/2026
+
 
 **Problem of Individual Risk Estimation for Health AI (Talk)**, SEB, Bilbao \hfill 01/2026
 
@@ -117,11 +126,21 @@ Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in O
 
 # Professional Memberships
 
-- STRATOS early career adjunct member
-- International Society of Ultrasound in Obstetrics and Gynecology (ISUOG)
-- International Ovarian Tumour Analysis group (IOTA) 
-- International Biometric Society (IBS)
-- International Society For Clinical Biostatistics (ISCB) 
+International Society of Ultrasound in Obstetrics and Gynecology (ISUOG), International Ovarian Tumour Analysis group (IOTA), International Biometric Society (IBS), International Society For Clinical Biostatistics (ISCB) 
+
+# Fellowships
+
+- [**STRATOS**](https://www.stratos-initiative.org/) early career adjunct member
+
+- [**ISCB early career biostatistician**](https://iscb.international/early-career-biostatisticians/) committee
+
+- **FEPS Young Academics Network** 10th cycle
+
+# Grants
+
+- FWO Postdoctoral Fellowship \hfill 2026-2029
+- FWO travel grants x4 \hfill 2023,2024,2025,2026
+- FWO long stay abroad grant (5 months) \hfill 2025-2026 
 
 # Languages
 

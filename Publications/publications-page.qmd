@@ -1,6 +1,8 @@
 ---
 layout: page
 title: Publications
+execute:
+  freeze: false
 ---
 
 A complete and up-to-date list of my publications is available on [Google Scholar](https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en), including preprints.
@@ -17,7 +19,13 @@ library(stringr)
 library(jsonlite)
 
 id <- 'uPOL3NkAAAAJ'
-pubs <- get_publications(id)
+pubs <- get_publications(
+  id,
+  cstart = 0,
+  cstop = Inf,
+  pagesize = 100,
+  flush = TRUE
+)
 
 # ── Fetch full author lists for truncated papers ──────────────────────────────
 # Google Scholar truncates long author lists with "...". We fetch the full
