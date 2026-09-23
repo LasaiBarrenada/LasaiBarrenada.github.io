@@ -375,6 +375,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="quarto-version-note" class="level3">
 <h3 class="anchored" data-anchor-id="quarto-version-note">Quarto version note</h3>
 <p>Quarto 1.9+ can hoist the first hero heading into the page title block when it sees an <code>&lt;h1&gt;</code> inside the landing-page HTML. The hero now uses <code>.hero_title</code> instead, and <code>#title-block-header</code> is hidden in <code>html/landing_page_styles.css</code> so the landing page stays flush under the navbar.</p>
+<p>The hero uses 6rem of top padding and aligns <code>.hero_content</code> to the start so the “Hi, I’m Lasai” heading remains below the pinned navbar instead of being vertically centered on desktop.</p>
 <p>Key parameters in the <code>&lt;script&gt;</code> block of <code>index.qmd</code>: - <code>MAX_DOTS</code> — number of points before the curve is drawn (default: 10) - <code>0.75</code> in <code>computeLoess()</code> — the LOESS span (smoothing parameter) - <code>hintOpacity</code> — initial opacity of the hint text (default: 0.65) - <code>top: 56px</code> in <code>#random-btn</code> CSS — positions the button below the “This is basically my job :)” line</p>
 <p>Resizing the browser window clears dots and resets the hint.</p>
 <hr>
