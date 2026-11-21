@@ -27,7 +27,10 @@ bibliography:
   peer: peer_bib.bib
   other: other_bib.bib
 validate-yaml: false
-csl: nature.csl
+csl: nature_bold.csl
+filters:
+  - path: highlight-author.lua
+    at: post-quarto
 profile: "Incoming FWO Postdoctoral Fellow in clinical prediction models at KU Leuven."
 ---
 
@@ -35,9 +38,9 @@ profile: "Incoming FWO Postdoctoral Fellow in clinical prediction models at KU L
 
 **KU Leuven**
 
-FWO Postdoctoral Fellow (Leuven) \hfill 10/2026-10/2029 (Incoming)
+FWO Postdoctoral Fellow (Leuven) \hfill 10/2026-10/2029 
 
-PhD Researcher in clinical prediction models (Leuven) \hfill 10/2022-Current
+PhD Researcher in clinical prediction models (Leuven) \hfill 10/2022-10/2026
 
 **Memorial Sloan Kettering Cancer Center**
 
@@ -77,7 +80,7 @@ Postgraduate Internship (Madrid) \hfill 10/2020-09/2021
 
 # Peer review
 
-Conducted >30 peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj precision oncology**, **Nature Communications medicine** and **Diagnostic and prognostic research**
+Conducted more than 30 peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj precision oncology**, **Nature Communications medicine** and **Diagnostic and prognostic research**
 <!-- # Technical Reports & Preprints -->
 
 <!-- ::: {#refs-other} -->
@@ -132,7 +135,7 @@ International Society of Ultrasound in Obstetrics and Gynecology (ISUOG), Intern
 
 - [**STRATOS**](https://www.stratos-initiative.org/) early career adjunct member
 
-- [**ISCB early career biostatistician**](https://iscb.international/early-career-biostatisticians/) committee
+- [**ISCB early career biostatistician**](https://iscb.international/early-career-biostatisticians/) committee Chair
 
 - **FEPS Young Academics Network** 10th cycle
 

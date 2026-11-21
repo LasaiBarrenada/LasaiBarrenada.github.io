@@ -1,0 +1,47 @@
+---
+title: CV
+format:
+  quarto-cv-pdf: default
+classoption: dvipsnames
+author: 
+  Lasai Barreñada
+date: last-modified
+address: "Herestraat 49, Leuven 3000, Belgium"
+email: lasai.barrenadataleb@kuleuven.be
+fontsize: 9pt
+fontfamily: ebgaramond-maths 
+geometry: "top=0.8cm, bottom=0.8cm, left=1.5cm, right=1.5cm" 
+colorlinks: true
+linkcolor: NavyBlue
+urlcolor: NavyBlue
+citecolor: NavyBlue
+header-includes:
+  - \usepackage{titlesec}
+  - \titleformat{\section}{\normalfont\Large\bfseries\color{Maroon}}{}{0pt}{}
+  - \titleformat{\subsection}{\normalfont\large\bfseries\color{Maroon}}{}{0pt}{}
+orcid: 0000-0001-8020-0210
+web: lasaibarrenada.github.io
+fontawesome: yes
+nocite: '@*'
+bibliography: 
+  peer: peer_bib_auto.bib
+  other: other_bib_auto.bib
+validate-yaml: false
+csl: nature_bold.csl
+filters:
+  - path: highlight-author.lua
+    at: post-quarto
+profile: "Incoming FWO Postdoctoral Fellow in clinical prediction models at KU Leuven."
+---
+
+
+# Publications
+
+::: {#refs-peer}
+:::
+
+
+# Preprints
+
+::: {#refs-other} 
+:::
