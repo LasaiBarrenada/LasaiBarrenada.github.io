@@ -883,6 +883,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="site-wide-settings-_quarto.yml" class="level2">
 <h2 class="anchored" data-anchor-id="site-wide-settings-_quarto.yml">9. Site-wide Settings — <code>_quarto.yml</code></h2>
 <p>Search is <strong>disabled</strong> (<code>search: false</code>). The website title is set to <code>"Lasai Barreñada"</code> (short form — the full <code>"Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research"</code> description is in <code>description-meta</code> for SEO only). The navbar tab for talks is labelled <strong>“Talks”</strong> (the page file remains in the <code>speaking/</code> folder). The <code>navbar: right:</code> social links are Google Scholar, ORCID, LinkedIn, and email (all with <code>aria-label</code> attributes), and the footer’s “Last updated” reads <code>November 2026</code> from <code>_variables.yml</code>.</p>
+<p>Under <code>project: resources:</code>, <code>img/**</code>, <code>html/*.css</code>, and <code>_redirects</code> are declared explicitly so Quarto always copies all custom CSS files into <code>_site/html/</code> even when <code>&lt;link&gt;</code> tags use cache-busting query strings (<code>?v=YYYYMMDD</code>).</p>
 <section id="change-your-name-or-description-appears-in-browser-tab-seo" class="level3">
 <h3 class="anchored" data-anchor-id="change-your-name-or-description-appears-in-browser-tab-seo">Change your name or description (appears in browser tab / SEO)</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">title-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your Name"</span></span>
@@ -935,15 +936,20 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <td>Timeline styles for the Speaking page (cards, dots, dates, links, badges, filter pills <code>.tl-filter-bar</code>, expand/collapse with <code>max-height: 800px</code>, mobile breakpoints)</td>
 </tr>
 <tr class="even">
-<td><code>html/landing_page_styles.css</code></td>
-<td>Hero section layout on the landing page</td>
+<td><code>html/software.css</code></td>
+<td>Card grid, GitLab badge, and OSF component card styles on the Software page</td>
 </tr>
 <tr class="odd">
+<td><code>html/landing_page_styles.css</code></td>
+<td>Hero section layout and <code>.hero_cta</code> / <code>.hero_btn</code> buttons on the landing page</td>
+</tr>
+<tr class="even">
 <td><code>html/seo.html</code></td>
 <td>Meta tags injected into every page <code>&lt;head&gt;</code></td>
 </tr>
 </tbody>
 </table>
+<p>Whenever you modify one of the standalone custom CSS files (<code>landing_page_styles.css</code>, <code>projects.css</code>, <code>timeline.css</code>, <code>software.css</code>), also bump the <code>?v=YYYYMMDD</code> cache-busting query string on its <code>&lt;link&gt;</code> tag in the corresponding <code>.qmd</code> file (<code>index.qmd</code>, <code>projects/projects-page.qmd</code>, <code>speaking/speaking-page.qmd</code>, or <code>software/software-page.qmd</code>) so browsers and GitHub Pages CDN don’t pair newly deployed HTML with stale cached CSS.</p>
 <section id="navbar-responsive-behaviour" class="level3">
 <h3 class="anchored" data-anchor-id="navbar-responsive-behaviour">Navbar responsive behaviour</h3>
 <p>The navbar logo scales down on mobile screens (max-height 28px below 992px). The hamburger toggle is pushed to the right and the logo stays flush left. These rules are defined in <code>html/styles.scss</code> inside a <code>@media (max-width: 991.98px)</code> block.</p>
