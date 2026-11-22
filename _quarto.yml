@@ -7,7 +7,6 @@ project:
   resources:
     - "img/**"
     - "_redirects"
-    - "speaking/pdf/**"
 
   preview: 
     port: 22222
@@ -16,11 +15,11 @@ project:
     navigate: true
 
 title-meta: "Lasai Barreñada"
-description-meta: "Bio-statistician | PhD researcher | Prediction models, Healthcare, Research"
+description-meta: "Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research"
 
 website:
   title: "Lasai Barreñada"
-  description: "Bio-statistician | PhD researcher | Prediction models, Healthcare, Research"
+  description: "Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research"
   site-url: https://lasaibarrenada.github.io/
   image: img/website_thumbnail.png
   
@@ -45,24 +44,15 @@ website:
         href: software/software-page.qmd
     right:
       - text: "{{< ai google-scholar >}}"
+        aria-label: "Google Scholar"
         href: https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en
         target: _blank
       - text: "{{< ai orcid >}}"
+        aria-label: "ORCID"
         href: https://orcid.org/0000-0001-8020-0210
         target: _blank
-      - text: "{{< ai researcherid >}}"   # Academicons (Web of Science)
-        href: https://www.webofscience.com/wos/author/record/ACY-2331-2022
-        target: _blank
-      - icon: twitter # Font Awesome (Built-in)
-        href: https://bsky.app/profile/lasaibarrenada.bsky.social
-        target: _blank
-      - text: "{{< fa brands github >}}"  # Font Awesome (Built-in)
-        href: https://github.com/LasaiBarrenada
-        target: _blank
-      - text: "{{< ai osf >}}"
-        href: https://osf.io/pgkjv/
-        target: _blank
       - text: "{{< fa brands linkedin >}}"# Font Awesome (Built-in)
+        aria-label: "LinkedIn"
         href: https://www.linkedin.com/in/lasaib/
         target: _blank
       - icon: envelope
@@ -90,7 +80,7 @@ website:
     center: |
       <span class="faux-block"><a href="/license/index.html">License</a></span>
     right: |
-      <span class="faux-block">Last updated: <script>document.write(new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}))</script></span>
+      <span class="faux-block">Last updated: {{< var last_updated >}}</span>
       <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span>
 execute:
   freeze: true

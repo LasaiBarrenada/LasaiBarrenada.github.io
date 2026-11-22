@@ -6,100 +6,234 @@ execute:
   freeze: false
 ---
 
-This page contains a brief overview of projects that I significantly shaped throughout the entire project life cycle.
-If you're interested in a full list of projects I have been involved in, please check out my [CV](../cv).
+This page highlights my first-author research projects and selected collaborative work, along with key academic milestones.
+For a complete list of publications and contributions, see my [Publications](../Publications/publications-page.qmd) or [CV](../cv/cv-page.qmd).
 
 ```{=html}
-<link rel="stylesheet" href="/html/timeline.css">
+<link rel="stylesheet" href="/html/projects.css">
 ```
 
 ```{r tl-projects, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
 library(openxlsx)
 library(dplyr)
 
-projects <- read.xlsx("projects.xlsx") |>
-  arrange(-Year, -Month)
+projects <- read.xlsx("projects.xlsx")
 
 month_abb <- c("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec")
 
-html_entry <- function(row) {
-  mon <- if (!is.na(row$Month)) month_abb[as.integer(row$Month)] else ""
-  upcoming <- is.na(row$Link_1)
+esc <- function(x) {
+  if (is.null(x) || is.na(x)) return("")
+  x <- as.character(x)
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;",  x, fixed = TRUE)
+  x <- gsub(">", "&gt;",  x, fixed = TRUE)
+  x <- gsub('"', "&quot;", x, fixed = TRUE)
+  x
+}
 
-  # Title — link to first URL if available
-  title_html <- if (!upcoming) {
-    sprintf('<a href="%s" target="_blank">%s</a>', row$Link_1, row$Title)
+slugify <- function(x) {
+  tolower(gsub("[^a-zA-Z0-9]+", "-", trimws(as.character(x))))
+}
+
+laurel_left <- '<svg class="tl-laurel" viewBox="0 0 20 24" aria-hidden="true"><path d="M15.5 22.5 C12.5 21.3, 10.2 19.2, 8.8 16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12.2 20.5 C8.8 20.5, 6.2 19.2, 5.8 17 C8.5 16.8, 11 18.2, 12.2 20.5 Z"/><path d="M10.5 17.5 C9.8 15.2, 10.4 13.5, 11.8 12.6 C12.2 14.8, 11.6 16.5, 10.5 17.5 Z"/><path d="M8.2 15.8 C5 15, 3 13, 3.2 10.6 C5.8 11, 7.8 13, 8.2 15.8 Z"/><path d="M9 12.5 C8.5 9.8, 9.5 8, 11.2 7.2 C11.4 9.5, 10.5 11.5, 9 12.5 Z"/><path d="M7.5 10.5 C4.8 9, 3.8 6.5, 4.5 4.2 C7 5, 8.2 7.5, 7.5 10.5 Z"/><path d="M9.5 6.5 C9 3.8, 10.2 2, 12.5 1.5 C12.5 4, 11.2 5.8, 9.5 6.5 Z"/></svg>'
+laurel_right <- '<svg class="tl-laurel" viewBox="0 0 20 24" aria-hidden="true"><g transform="translate(20,0) scale(-1,1)"><path d="M15.5 22.5 C12.5 21.3, 10.2 19.2, 8.8 16.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12.2 20.5 C8.8 20.5, 6.2 19.2, 5.8 17 C8.5 16.8, 11 18.2, 12.2 20.5 Z"/><path d="M10.5 17.5 C9.8 15.2, 10.4 13.5, 11.8 12.6 C12.2 14.8, 11.6 16.5, 10.5 17.5 Z"/><path d="M8.2 15.8 C5 15, 3 13, 3.2 10.6 C5.8 11, 7.8 13, 8.2 15.8 Z"/><path d="M9 12.5 C8.5 9.8, 9.5 8, 11.2 7.2 C11.4 9.5, 10.5 11.5, 9 12.5 Z"/><path d="M7.5 10.5 C4.8 9, 3.8 6.5, 4.5 4.2 C7 5, 8.2 7.5, 7.5 10.5 Z"/><path d="M9.5 6.5 C9 3.8, 10.2 2, 12.5 1.5 C12.5 4, 11.2 5.8, 9.5 6.5 Z"/></g></svg>'
+
+# Split into Milestones & Honours vs. Research Projects
+is_honour <- !is.na(projects$Category) & projects$Category %in% c("Milestone", "Award")
+honours <- projects[is_honour, , drop = FALSE] |>
+  mutate(m_sort = ifelse(is.na(Month), -1L, as.integer(Month))) |>
+  arrange(-Year, -m_sort)
+
+research <- projects[!is_honour, , drop = FALSE] |>
+  mutate(m_sort = ifelse(is.na(Month), -1L, as.integer(Month))) |>
+  arrange(-Year, -m_sort)
+
+# ── 1. Milestones & Honours Strip ────────────────────────────────────────────
+honour_cards <- vapply(seq_len(nrow(honours)), function(i) {
+  row <- as.list(honours[i, ])
+  is_ms <- identical(row$Category, "Milestone") ||
+    (!is.na(row$Title) && grepl("phd|defend|milestone", row$Title, ignore.case = TRUE))
+
+  card_cls <- if (is_ms) "proj-honour-card proj-honour-milestone" else "proj-honour-card proj-honour-award"
+  mon <- if (!is.na(row$Month)) month_abb[as.integer(row$Month)] else ""
+  date_lbl <- trimws(paste(mon, row$Year))
+
+  title_html <- if (!is.na(row$Link_1) && nzchar(trimws(row$Link_1))) {
+    sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', esc(trimws(row$Link_1)), esc(row$Title))
   } else {
-    row$Title
+    esc(row$Title)
   }
 
-  # Upcoming badge
-  badge_html <- if (upcoming) '<span class="tl-type-upcoming">Upcoming</span>\n' else ""
+  venue_html <- if (!is.na(row$Venue) && nzchar(trimws(row$Venue))) {
+    sprintf('<div class="proj-honour-venue">%s</div>', esc(row$Venue))
+  } else ""
 
-  # Entry class
-  entry_cls <- if (upcoming) ' tl-upcoming' else ''
+  note_html <- if (!is.na(row$Summary) && nzchar(trimws(row$Summary))) {
+    sprintf('<div class="proj-honour-note">%s</div>', esc(row$Summary))
+  } else ""
 
-  # Links
   link_tags <- ""
   for (k in 1:3) {
     nm  <- row[[paste0("Link_", k, "_name")]]
     url <- row[[paste0("Link_", k)]]
-    if (!is.na(nm) && !is.na(url)) {
-      cls <- if (grepl("award", nm, ignore.case = TRUE)) ' class="tl-award"' else ''
-      link_tags <- paste0(link_tags,
-        sprintf('<a href="%s" target="_blank"%s>%s</a>', url, cls, nm))
+    if (!is.na(nm) && !is.na(url) && nzchar(trimws(url))) {
+      if (is_ms) {
+        link_tags <- paste0(link_tags, sprintf(
+          '<a href="%s" target="_blank" rel="noopener" class="proj-laurel-pill">%s%s%s</a>',
+          esc(trimws(url)), laurel_left, esc(nm), laurel_right
+        ))
+      } else {
+        link_tags <- paste0(link_tags, sprintf(
+          '<a href="%s" target="_blank" rel="noopener" class="proj-award-pill">%s</a>',
+          esc(trimws(url)), esc(nm)
+        ))
+      }
     }
   }
-  if (nchar(link_tags) > 0)
-    link_tags <- paste0('<div class="tl-links">', link_tags, '</div>')
-
-  # Summary
-  summary_html <- ""
-  if (!is.na(row$Summary) && nchar(row$Summary) > 0) {
-    summary_html <- sprintf(
-      '<button class="tl-toggle" onclick="toggleSummary(this)">Summary</button>\n<div class="tl-summary">%s</div>',
-      row$Summary)
-  }
+  links_html <- if (nzchar(link_tags)) sprintf('<div class="proj-honour-links">%s</div>', link_tags) else ""
 
   sprintf(
-'<div class="tl-entry%s">
-<div class="tl-date">%s<br>%s</div>
-<div class="tl-card">
-%s<div class="tl-title">%s</div>
-<div class="tl-venue">%s</div>
+'<div class="%s">
+<div class="proj-honour-date">%s</div>
+<div class="proj-honour-title">%s</div>
 %s
 %s
-</div>
+%s
 </div>',
-    entry_cls, mon, row$Year,
-    badge_html, title_html, row$Venue,
-    link_tags, summary_html
+    card_cls, esc(date_lbl), title_html, venue_html, note_html, links_html
   )
-}
+}, character(1))
 
-raw_entries <- apply(projects, 1, function(x) html_entry(as.list(x)))
+# ── 2. Research Projects Bento Grid ──────────────────────────────────────────
+n_all  <- nrow(research)
+n_meth <- sum(research$Category == "Methodology", na.rm = TRUE)
+n_util <- sum(research$Category == "Clinical Utility", na.rm = TRUE)
+n_ov   <- sum(research$Category == "Ovarian Cancer", na.rm = TRUE)
+n_pre  <- sum(research$Status %in% c("Preprint", "Upcoming"), na.rm = TRUE)
 
-# Insert year dividers when the year changes
-years <- projects$Year
-output <- character()
-prev_year <- NULL
-for (i in seq_along(raw_entries)) {
-  yr <- years[i]
-  if (is.null(prev_year) || yr != prev_year) {
-    output <- c(output, sprintf('<div class="tl-year-divider"><span>%s</span></div>', yr))
-    prev_year <- yr
+research_cards <- vapply(seq_len(nrow(research)), function(i) {
+  row <- as.list(research[i, ])
+  cat_name <- if (!is.na(row$Category) && nzchar(row$Category)) row$Category else "Methodology"
+  cat_slug <- slugify(cat_name)
+
+  status_name <- if (!is.na(row$Status) && nzchar(row$Status)) {
+    row$Status
+  } else if (is.na(row$Link_1)) {
+    "Upcoming"
+  } else {
+    "Published"
   }
-  output <- c(output, raw_entries[i])
-}
+  status_slug <- slugify(status_name)
+  is_upcoming <- identical(status_slug, "upcoming") || is.na(row$Link_1)
 
-cat('<div class="tl-wrapper">\n', paste(output, collapse = "\n"), '\n</div>\n')
+  mon <- if (!is.na(row$Month)) month_abb[as.integer(row$Month)] else ""
+  date_lbl <- trimws(paste(mon, row$Year))
+
+  title_html <- if (!is.na(row$Link_1) && nzchar(trimws(row$Link_1))) {
+    sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', esc(trimws(row$Link_1)), esc(row$Title))
+  } else {
+    esc(row$Title)
+  }
+
+  venue_html <- if (!is.na(row$Venue) && nzchar(trimws(row$Venue))) {
+    sprintf('<div class="proj-card-venue">%s</div>', esc(row$Venue))
+  } else ""
+
+  summary_html <- ""
+  if (!is.na(row$Summary) && nzchar(trimws(row$Summary))) {
+    summary_html <- sprintf(
+      '<div class="proj-card-summary">%s</div>\n<button type="button" class="proj-expand-btn" onclick="toggleCardSummary(this)">Read more &#9656;</button>',
+      esc(trimws(row$Summary))
+    )
+  }
+
+  link_tags <- ""
+  for (k in 1:3) {
+    nm  <- row[[paste0("Link_", k, "_name")]]
+    url <- row[[paste0("Link_", k)]]
+    if (!is.na(nm) && !is.na(url) && nzchar(trimws(url))) {
+      link_tags <- paste0(link_tags, sprintf(
+        '<a href="%s" target="_blank" rel="noopener" class="proj-link-btn">%s</a>',
+        esc(trimws(url)), esc(nm)
+      ))
+    }
+  }
+  links_html <- if (nzchar(link_tags)) sprintf('<div class="proj-card-links">%s</div>', link_tags) else ""
+
+  card_cls <- paste0("proj-card", if (is_upcoming) " proj-card-upcoming" else "")
+
+  sprintf(
+'<div class="%s" data-category="%s" data-status="%s">
+<div class="proj-card-top">
+<div class="proj-badges">
+<span class="proj-cat-badge proj-cat-%s">%s</span>
+<span class="proj-status-badge proj-status-%s">%s</span>
+</div>
+<span class="proj-card-date">%s</span>
+</div>
+<div class="proj-card-title">%s</div>
+%s
+%s
+%s
+</div>',
+    card_cls, esc(cat_slug), esc(status_slug),
+    esc(cat_slug), esc(cat_name),
+    esc(status_slug), esc(status_name),
+    esc(date_lbl), title_html, venue_html, summary_html, links_html
+  )
+}, character(1))
+
+cat('<div class="column-body-outset">\n')
+cat('<h2 class="proj-section-heading">Milestones &amp; Honours</h2>\n')
+cat('<div class="proj-honours-grid">\n', paste(honour_cards, collapse = "\n"), '\n</div>\n')
+cat('<h2 class="proj-section-heading">Research Projects</h2>\n')
+cat(sprintf(
+'<div class="proj-filter-bar" role="group" aria-label="Filter research projects">
+<button type="button" class="proj-filter-btn active" onclick="filterProjects(\'all\', this)">All <span class="proj-filter-count">(%d)</span></button>
+<button type="button" class="proj-filter-btn" onclick="filterProjects(\'methodology\', this)">Methodology <span class="proj-filter-count">(%d)</span></button>
+<button type="button" class="proj-filter-btn" onclick="filterProjects(\'clinical-utility\', this)">Clinical Utility <span class="proj-filter-count">(%d)</span></button>
+<button type="button" class="proj-filter-btn" onclick="filterProjects(\'ovarian-cancer\', this)">Ovarian Cancer <span class="proj-filter-count">(%d)</span></button>
+<button type="button" class="proj-filter-btn" onclick="filterProjects(\'preprint-upcoming\', this)">Preprints &amp; Upcoming <span class="proj-filter-count">(%d)</span></button>
+</div>\n',
+  n_all, n_meth, n_util, n_ov, n_pre
+))
+cat('<div class="proj-grid">\n', paste(research_cards, collapse = "\n"), '\n</div>\n')
+cat('</div>\n')
 cat('<script>
-function toggleSummary(btn) {
-  const summary = btn.nextElementSibling;
-  const isOpen  = summary.classList.contains("open");
-  summary.classList.toggle("open", !isOpen);
-  btn.classList.toggle("open", !isOpen);
+function toggleCardSummary(btn) {
+  const summary = btn.previousElementSibling;
+  if (!summary) return;
+  const expanded = summary.classList.toggle("expanded");
+  btn.innerHTML = expanded ? "Show less &#9662;" : "Read more &#9656;";
 }
+function updateExpandButtons() {
+  document.querySelectorAll(".proj-card").forEach(card => {
+    if (card.style.display === "none") return;
+    const summary = card.querySelector(".proj-card-summary");
+    const btn = card.querySelector(".proj-expand-btn");
+    if (!summary || !btn) return;
+    if (summary.classList.contains("expanded")) {
+      btn.style.display = "inline-block";
+    } else {
+      btn.style.display = (summary.scrollHeight > summary.clientHeight + 2) ? "inline-block" : "none";
+    }
+  });
+}
+function filterProjects(filterKey, btn) {
+  document.querySelectorAll(".proj-filter-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".proj-card").forEach(card => {
+    const cat = card.getAttribute("data-category");
+    const status = card.getAttribute("data-status");
+    const show = (filterKey === "all") ||
+      (filterKey === "preprint-upcoming" && (status === "preprint" || status === "upcoming")) ||
+      (cat === filterKey);
+    card.style.display = show ? "" : "none";
+  });
+  updateExpandButtons();
+}
+document.addEventListener("DOMContentLoaded", updateExpandButtons);
+window.addEventListener("resize", updateExpandButtons);
 </script>\n')
 ```

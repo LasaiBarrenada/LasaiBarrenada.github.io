@@ -6,14 +6,85 @@ freeze: false
 ---
 
 A collection of open-source software and research repositories I have developed or contributed to,
-hosted on [GitHub](https://github.com/LasaiBarrenada) and
+hosted on [GitHub](https://github.com/LasaiBarrenada),
+[GitLab (KU Leuven)](https://gitlab.kuleuven.be/u0158158), and
 [OSF](https://osf.io/user/pgkjv).
 
 ---
 
+```{r}
+#| label: github-build-cache
+#| echo: false
+#| results: asis
+#| message: false
+#| warning: false
+
+library(jsonlite)
+
+fetch_gh_json <- function(url) {
+  tryCatch({
+    if (requireNamespace("curl", quietly = TRUE)) {
+      h <- curl::new_handle()
+      curl::handle_setheaders(
+        h,
+        "User-Agent" = "LasaiBarrenada-Website",
+        "Accept"     = "application/vnd.github.v3+json"
+      )
+      res <- curl::curl_fetch_memory(url, handle = h)
+      if (res$status_code != 200) return(NULL)
+      fromJSON(rawToChar(res$content), simplifyVector = FALSE)
+    } else {
+      fromJSON(url, simplifyVector = FALSE)
+    }
+  }, error = function(e) NULL)
+}
+
+trim_repo <- function(r) {
+  if (is.null(r) || is.null(r$name)) return(NULL)
+  topics_vec <- if (is.null(r$topics)) character(0) else as.character(unlist(r$topics))
+  list(
+    name             = r$name,
+    full_name        = r$full_name,
+    html_url         = r$html_url,
+    description      = if (is.null(r$description)) "" else r$description,
+    language         = if (is.null(r$language)) NULL else r$language,
+    stargazers_count = if (is.null(r$stargazers_count)) 0L else as.integer(r$stargazers_count),
+    pushed_at        = r$pushed_at,
+    fork             = isTRUE(r$fork),
+    archived         = isTRUE(r$archived),
+    topics           = I(topics_vec)
+  )
+}
+
+contrib_slugs <- c(
+  "BavoDC/CalibrationCurves",
+  "thomas-sounack/TRIPOD-Code",
+  "benvancalster/PerfMeasuresOverview"
+)
+
+owned_raw <- fetch_gh_json("https://api.github.com/users/LasaiBarrenada/repos?type=owner&sort=pushed&per_page=100")
+
+gh_cache <- if (!is.null(owned_raw) && length(owned_raw) > 0) {
+  owned_clean <- Filter(Negate(is.null), lapply(owned_raw, trim_repo))
+  contrib_raw <- lapply(contrib_slugs, function(slug) {
+    trim_repo(fetch_gh_json(paste0("https://api.github.com/repos/", slug)))
+  })
+  contrib_clean <- Filter(Negate(is.null), contrib_raw)
+  list(owned = I(owned_clean), contrib = I(contrib_clean))
+} else {
+  NULL
+}
+
+cat(sprintf(
+  "<script>\nwindow.GITHUB_BUILD_CACHE = %s;\n</script>\n",
+  toJSON(gh_cache, auto_unbox = TRUE, null = "null")
+))
+```
+
 ```{=html}
 <link rel="stylesheet" href="/html/software.css">
 
+<h2 class="sw-section-heading" style="margin-top:1.5rem;">GitHub Repositories</h2>
 <div id="sw-container">
 <div id="sw-loading">
 <div class="sw-spinner"></div>
@@ -141,23 +212,20 @@ hosted on [GitHub](https://github.com/LasaiBarrenada) and
     });
   }
 
-  /* ── Fetch owned repos + contributed repos, then render ─────── */
-  Promise.all([
-    fetchJSON(API + '/users/' + USERNAME + '/repos?type=owner&sort=pushed&per_page=100'),
-    Promise.all(CONTRIB_REPOS.map(function (slug) {
-      return fetchJSON(API + '/repos/' + slug).catch(function () { return null; });
-    }))
-  ])
-  .then(function (results) {
+  /* ── Render helper & build-time cache fallback ──────────────── */
+  var renderedFromCache = false;
+
+  function renderRepos(ownedRaw, contribRaw) {
     document.getElementById('sw-loading').style.display = 'none';
+    document.getElementById('sw-error').style.display = 'none';
 
     /* Own repos: exclude forks, archived, and blacklisted */
-    var owned = results[0].filter(function (r) {
+    var owned = (ownedRaw || []).filter(function (r) {
       return !r.fork && !r.archived && EXCLUDE_REPOS.indexOf(r.name) === -1;
     });
 
     /* Contributed repos: drop any that failed to fetch */
-    var contrib = results[1].filter(function (r) { return r !== null && !r.archived; });
+    var contrib = (contribRaw || []).filter(function (r) { return r !== null && !r.archived; });
 
     var all = owned.map(function (r) { return { repo: r, contrib: false }; })
       .concat(contrib.map(function (r) { return { repo: r, contrib: true }; }));
@@ -173,12 +241,29 @@ hosted on [GitHub](https://github.com/LasaiBarrenada) and
     }
 
     document.getElementById('sw-grid').innerHTML = cards.join('');
+  }
+
+  if (window.GITHUB_BUILD_CACHE && Array.isArray(window.GITHUB_BUILD_CACHE.owned) && window.GITHUB_BUILD_CACHE.owned.length > 0) {
+    renderRepos(window.GITHUB_BUILD_CACHE.owned, window.GITHUB_BUILD_CACHE.contrib || []);
+    renderedFromCache = true;
+  }
+
+  /* ── Fetch owned repos + contributed repos, then render ─────── */
+  Promise.all([
+    fetchJSON(API + '/users/' + USERNAME + '/repos?type=owner&sort=pushed&per_page=100'),
+    Promise.all(CONTRIB_REPOS.map(function (slug) {
+      return fetchJSON(API + '/repos/' + slug).catch(function () { return null; });
+    }))
+  ])
+  .then(function (results) {
+    renderRepos(results[0], results[1]);
   })
   .catch(function (err) {
+    console.error('GitHub repos fetch failed:', err);
+    if (renderedFromCache) return;
     document.getElementById('sw-loading').style.display = 'none';
     var el = document.getElementById('sw-error');
     el.style.display = 'block';
-    console.error('GitHub repos fetch failed:', err);
     var isRateLimit = err && err.message && err.message.indexOf('403') !== -1;
     el.innerHTML = isRateLimit
       ? '<p>GitHub API rate limit reached &mdash; please try again in a few minutes.</p>'
@@ -191,6 +276,152 @@ hosted on [GitHub](https://github.com/LasaiBarrenada) and
 })();
 </script>
 
+```
+
+```{r}
+#| label: gitlab-projects
+#| echo: false
+#| results: asis
+#| message: false
+#| warning: false
+
+cat('<h2 class="sw-section-heading">GitLab Projects (KU Leuven)</h2>\n')
+cat('<div class="sw-grid" id="gitlab-grid">\n')
+
+library(jsonlite)
+
+gitlab_user    <- "u0158158"
+gitlab_exclude <- c("u0158158")
+
+fetch_gl_json <- function(url) {
+  tryCatch({
+    if (requireNamespace("curl", quietly = TRUE)) {
+      h <- curl::new_handle()
+      curl::handle_setheaders(
+        h,
+        "User-Agent" = "LasaiBarrenada-Website",
+        "Accept"     = "application/json"
+      )
+      res <- curl::curl_fetch_memory(url, handle = h)
+      if (res$status_code != 200) return(NULL)
+      fromJSON(rawToChar(res$content), simplifyVector = FALSE)
+    } else {
+      fromJSON(url, simplifyVector = FALSE)
+    }
+  }, error = function(e) NULL)
+}
+
+esc_gl <- function(x) {
+  if (is.null(x) || is.na(x)) return("")
+  x <- as.character(x)
+  x <- gsub("&", "&amp;", x, fixed = TRUE)
+  x <- gsub("<", "&lt;",  x, fixed = TRUE)
+  x <- gsub(">", "&gt;",  x, fixed = TRUE)
+  x <- gsub('"', "&quot;", x, fixed = TRUE)
+  x
+}
+
+format_gl_date <- function(date_str) {
+  d <- as.POSIXct(date_str, format = "%Y-%m-%dT%H:%M:%OS", tz = "UTC")
+  format(d, "%b %Y")
+}
+
+gl_lang_colors <- c(
+  "R" = "#198CE7", "Python" = "#3572A5", "JavaScript" = "#f1e05a",
+  "TypeScript" = "#3178c6", "HTML" = "#e34c26", "CSS" = "#563d7c",
+  "SCSS" = "#c6538c", "TeX" = "#3D6117", "Shell" = "#89e051",
+  "Jupyter Notebook" = "#DA5B0B", "C++" = "#f34b7d", "C" = "#555555",
+  "Stata" = "#1a5f91", "SAS" = "#B34936", "MATLAB" = "#e16737"
+)
+
+gl_owned <- fetch_gl_json(sprintf("https://gitlab.kuleuven.be/api/v4/users/%s/projects?per_page=100", gitlab_user))
+gl_contrib <- fetch_gl_json(sprintf("https://gitlab.kuleuven.be/api/v4/users/%s/contributed_projects?per_page=100", gitlab_user))
+
+gl_all_raw <- c(
+  if (is.list(gl_owned)) gl_owned else list(),
+  if (is.list(gl_contrib)) gl_contrib else list()
+)
+
+# Deduplicate by project id
+gl_by_id <- list()
+for (p in gl_all_raw) {
+  if (is.null(p) || is.null(p$id)) next
+  pid_str <- as.character(p$id)
+  if (!pid_str %in% names(gl_by_id)) {
+    gl_by_id[[pid_str]] <- p
+  }
+}
+
+# Filter out archived and excluded profile repos
+gl_projects <- Filter(function(p) {
+  !isTRUE(p$archived) && !(p$name %in% gitlab_exclude)
+}, unname(gl_by_id))
+
+if (length(gl_projects) > 0) {
+  dates <- vapply(gl_projects, function(p) {
+    if (!is.null(p$last_activity_at)) p$last_activity_at else ""
+  }, "")
+  gl_projects <- gl_projects[order(dates, decreasing = TRUE)]
+
+  for (p in gl_projects) {
+    url  <- esc_gl(p$web_url)
+    name <- esc_gl(if (!is.null(p$path_with_namespace)) p$path_with_namespace else p$name)
+
+    stars <- if (!is.null(p$star_count) && p$star_count > 0) {
+      sprintf('<span class="sw-stars">&#11088; %d</span>', as.integer(p$star_count))
+    } else ""
+
+    desc <- if (!is.null(p$description) && nzchar(trimws(p$description))) {
+      esc_gl(trimws(p$description))
+    } else {
+      "<em>No description provided.</em>"
+    }
+
+    topics_html <- ""
+    if (!is.null(p$topics) && length(p$topics) > 0) {
+      spans <- vapply(p$topics, function(t) {
+        sprintf('<span class="sw-topic sw-topic-gitlab">%s</span>', esc_gl(t))
+      }, "")
+      topics_html <- sprintf('<div class="sw-topics">%s</div>', paste(spans, collapse = ""))
+    }
+
+    langs <- fetch_gl_json(sprintf("https://gitlab.kuleuven.be/api/v4/projects/%d/languages", as.integer(p$id)))
+    lang_html <- ""
+    if (!is.null(langs) && length(langs) > 0) {
+      non_web <- setdiff(names(langs), c("HTML", "CSS", "SCSS", "JavaScript"))
+      primary_lang <- if (length(non_web) > 0) non_web[1] else names(langs)[1]
+      col <- if (primary_lang %in% names(gl_lang_colors)) unname(gl_lang_colors[primary_lang]) else "#999"
+      lang_html <- sprintf(
+        '<div class="sw-lang"><span class="sw-lang-dot" style="background:%s"></span><span class="sw-lang-name">%s</span></div>',
+        col, esc_gl(primary_lang)
+      )
+    }
+
+    cat(sprintf(
+'<div class="sw-card sw-card-gitlab">
+<div class="sw-card-header">
+<a href="%s" target="_blank" class="sw-repo-name">%s</a>%s
+</div>
+<span class="sw-gitlab-badge">GitLab</span>
+<p class="sw-card-desc">%s</p>
+%s
+<div class="sw-card-meta">
+%s<div class="sw-updated">Updated %s</div>
+</div>
+</div>\n',
+      url, name, stars, desc, topics_html, lang_html, format_gl_date(p$last_activity_at)
+    ))
+  }
+} else {
+  cat('<div id="gitlab-error" style="text-align:center;padding:2rem 1rem;color:#666;',
+      'background:#f8f9fa;border-radius:8px;border:1px solid #dee2e6;grid-column:1 / -1;">',
+      '<p>Could not load projects from KU Leuven GitLab.</p>',
+      '<p><a href="https://gitlab.kuleuven.be/u0158158" target="_blank" ',
+      'style="color:#007BFF;">View my projects on GitLab &#8594;</a></p></div>\n',
+      sep = "")
+}
+
+cat('</div>\n')
 ```
 
 ```{r}

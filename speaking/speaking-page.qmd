@@ -26,6 +26,9 @@ conference_file <- if (file.exists("speaking/conferences.xlsx")) {
 conferences <- read.xlsx(conference_file) |>
   arrange(-Year, -Month)
 
+base_ids <- tolower(gsub("[^a-zA-Z0-9]+", "-", paste0("talk-", conferences$Code_Name, "-", conferences$Year)))
+conferences$entry_id <- make.unique(base_ids, sep = "-")
+
 month_abb <- c("Jan","Feb","Mar","Apr","May","Jun",
                "Jul","Aug","Sep","Oct","Nov","Dec")
 
@@ -55,16 +58,16 @@ html_entry <- function(row) {
         sprintf('<a href="%s" target="_blank" rel="noopener">%s</a>', url, nm))
     }
   }
-  if (nchar(link_tags) > 0)
-    link_tags <- paste0('<div class="tl-links">', link_tags, '</div>')
+  map_link <- sprintf(
+    '<a href="#travel-map" class="tl-map-link" onclick="window._focusMapEntry && window._focusMapEntry(\'%s\'); return false;">Locate on map &uarr;</a>',
+    row$entry_id
+  )
+  link_tags <- paste0('<div class="tl-links">', link_tags, map_link, '</div>')
 
   entry_cls <- if (type_cls == "upcoming") ' tl-upcoming' else ''
 
-  # Unique ID for map linking
-  entry_id <- tolower(gsub("[^a-zA-Z0-9]+", "-", paste0("talk-", row$Code_Name, "-", row$Year)))
-
   sprintf(
-    '<div class="tl-entry%s" id="%s">
+    '<div class="tl-entry%s" id="%s" data-type="%s" data-year="%s">
 <div class="tl-date">%s<br>%s</div>
 <div class="tl-card">
 <span class="tl-type tl-type-%s">%s</span>
@@ -73,13 +76,16 @@ html_entry <- function(row) {
 %s
 </div>
 </div>',
-    entry_cls, entry_id, mon, row$Year,
+    entry_cls, row$entry_id, type_cls, row$Year,
+    mon, row$Year,
     type_cls, type_lbl,
     title, venue, link_tags
   )
 }
 
-raw_entries <- apply(conferences, 1, function(x) html_entry(as.list(x)))
+raw_entries <- vapply(seq_len(nrow(conferences)), function(i) {
+  html_entry(as.list(conferences[i, ]))
+}, character(1))
 
 # Insert year dividers when the year changes
 years <- conferences$Year
@@ -88,12 +94,13 @@ prev_year <- NULL
 for (i in seq_along(raw_entries)) {
   yr <- years[i]
   if (is.null(prev_year) || yr != prev_year) {
-    output <- c(output, sprintf('<div class="tl-year-divider"><span>%s</span></div>', yr))
+    output <- c(output, sprintf('<div class="tl-year-divider" data-year="%s"><span>%s</span></div>', yr, yr))
     prev_year <- yr
   }
   output <- c(output, raw_entries[i])
 }
 
+cat('<div class="tl-filter-bar">\n<button class="tl-filter-btn active" onclick="filterTalks(\'all\', this)">All</button>\n<button class="tl-filter-btn" onclick="filterTalks(\'talk\', this)">Talks</button>\n<button class="tl-filter-btn" onclick="filterTalks(\'poster\', this)">Posters</button>\n</div>\n')
 cat('<div class="tl-wrapper">\n', paste(output, collapse = "\n"), '\n</div>\n')
 cat('<script>
 function toggleSummary(btn) {
@@ -101,6 +108,20 @@ function toggleSummary(btn) {
   const isOpen  = summary.classList.contains("open");
   summary.classList.toggle("open", !isOpen);
   btn.classList.toggle("open", !isOpen);
+}
+function filterTalks(type, btn) {
+  document.querySelectorAll(".tl-filter-btn").forEach(b => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".tl-entry").forEach(el => {
+    const show = (type === "all") || (el.getAttribute("data-type") === type);
+    el.style.display = show ? "" : "none";
+  });
+  document.querySelectorAll(".tl-year-divider").forEach(div => {
+    const yr = div.getAttribute("data-year");
+    const hasVisible = Array.from(document.querySelectorAll(\'.tl-entry[data-year="\' + yr + \'"]\'))
+      .some(el => el.style.display !== "none");
+    div.style.display = hasVisible ? "" : "none";
+  });
 }
 </script>\n')
 ```
@@ -110,7 +131,7 @@ function toggleSummary(btn) {
 ## My scientific adventure
 
 ```{r map-data, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
-library(readxl)
+library(openxlsx)
 library(dplyr)
 library(tidygeocoder)
 library(jsonlite)
@@ -121,20 +142,62 @@ conference_file <- if (file.exists("speaking/conferences.xlsx")) {
   "conferences.xlsx"
 }
 
-conferences <- read_excel(path = conference_file)
+cache_file <- if (file.exists("speaking/geocache.csv")) {
+  "speaking/geocache.csv"
+} else if (dir.exists("speaking")) {
+  "speaking/geocache.csv"
+} else {
+  "geocache.csv"
+}
 
-conf_coords <- tidygeocoder::geocode(
-  .tbl = conferences,
-  city = Location,
-  method = "arcgis"
-) |>
-  select(Code_Name, Year, Location, lat, long)
+conferences <- read.xlsx(conference_file) |>
+  arrange(-Year, -Month)
+
+base_ids <- tolower(gsub("[^a-zA-Z0-9]+", "-", paste0("talk-", conferences$Code_Name, "-", conferences$Year)))
+conferences$entry_id <- make.unique(base_ids, sep = "-")
 
 uni_coords <- data.frame(
   name = c("KU Leuven", "UMC Utrecht", "Memorial Sloan Kettering"),
-  city = c("Leuven", "Utrecht", "New York")
-) |>
-  tidygeocoder::geocode(city = city, method = "arcgis") |>
+  city = c("Leuven", "Utrecht", "New York"),
+  stringsAsFactors = FALSE
+)
+
+needed_cities <- unique(trimws(c(conferences$Location, uni_coords$city)))
+needed_cities <- needed_cities[!is.na(needed_cities) & nzchar(needed_cities)]
+
+geocache <- if (file.exists(cache_file)) {
+  read.csv(cache_file, stringsAsFactors = FALSE)
+} else {
+  data.frame(city = character(0), lat = numeric(0), long = numeric(0), stringsAsFactors = FALSE)
+}
+
+valid_cached <- geocache[!is.na(geocache$lat) & !is.na(geocache$long), , drop = FALSE]
+missing_cities <- setdiff(needed_cities, valid_cached$city)
+
+if (length(missing_cities) > 0) {
+  new_geo <- tidygeocoder::geocode(
+    .tbl = data.frame(city = missing_cities, stringsAsFactors = FALSE),
+    city = city,
+    method = "arcgis"
+  )
+  if (anyNA(new_geo$lat) || anyNA(new_geo$long)) {
+    stop("Map geocoding returned missing coordinates. Check internet access and the city names in conferences.xlsx.")
+  }
+  geocache <- bind_rows(
+    valid_cached[!valid_cached$city %in% new_geo$city, , drop = FALSE],
+    new_geo
+  ) |>
+    arrange(city)
+  write.csv(geocache, cache_file, row.names = FALSE)
+}
+
+conf_coords <- conferences |>
+  mutate(city_key = trimws(Location)) |>
+  left_join(geocache, by = c("city_key" = "city")) |>
+  select(entry_id, Code_Name, Year, Location, Title, Type, lat, long)
+
+uni_coords <- uni_coords |>
+  left_join(geocache, by = "city") |>
   select(name, lat, long)
 
 if (anyNA(conf_coords$lat) || anyNA(conf_coords$long) ||
@@ -211,6 +274,27 @@ cat(sprintf(
   cursor: pointer;
 }
 .popup-scroll-link:hover { text-decoration: underline; }
+.popup-talk-title {
+  color: #444;
+  font-size: 12px;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+.popup-talk-list {
+  margin-top: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.popup-talk-item {
+  padding-top: 6px;
+  margin-top: 6px;
+  border-top: 1px solid #eef2f7;
+}
+.popup-talk-item:first-child {
+  padding-top: 2px;
+  margin-top: 0;
+  border-top: none;
+}
 
 /* Pulsing ring for university markers */
 @keyframes leaflet-pulse {
@@ -280,41 +364,94 @@ cat(sprintf(
     }
   ).addTo(map);
 
-  /* ── Scroll-to-timeline helper ──────────────────────────────────── */
-  function entryId(codeName, year) {
-    return 'talk-' + (codeName + '-' + year).toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  /* ── Scroll-to-timeline & map-focus helpers ─────────────────────── */
+  function escHtml(str) {
+    if (str === null || str === undefined) return '';
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
   function scrollToEntry(id) {
     const el = document.getElementById(id);
     if (!el) return;
+    if (el.style.display === 'none' && typeof window.filterTalks === 'function') {
+      const allBtn = document.querySelector('.tl-filter-btn');
+      window.filterTalks('all', allBtn);
+    }
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
     el.classList.add('tl-highlight');
     setTimeout(() => el.classList.remove('tl-highlight'), 2000);
   }
 
-  /* Make scrollToEntry accessible from popup links */
+  /* Make helpers accessible from popup/timeline links */
   window._scrollToEntry = scrollToEntry;
 
-  /* ── Conference markers ─────────────────────────────────────────── */
-  conferenceData.forEach(d => {
-    const id = entryId(d.Code_Name, d.Year);
+  /* ── Conference markers (grouped by city) ───────────────────────── */
+  const markerByEntryId = {};
+  const cityGroups = new Map();
 
-    L.circleMarker([+d.lat, +d.long], {
-      radius: 7,
+  conferenceData.forEach(d => {
+    const key = (d.Location || '').trim().toLowerCase() || (d.lat + ',' + d.long);
+    if (!cityGroups.has(key)) {
+      cityGroups.set(key, {
+        location: d.Location,
+        lat: +d.lat,
+        long: +d.long,
+        entries: []
+      });
+    }
+    cityGroups.get(key).entries.push(d);
+  });
+
+  cityGroups.forEach(group => {
+    let popupHtml = '';
+    if (group.entries.length === 1) {
+      const d = group.entries[0];
+      popupHtml =
+        '<div class="popup-name">' + escHtml(d.Code_Name) + ' ' + escHtml(d.Year) + '</div>' +
+        '<div class="popup-detail">' + escHtml(d.Location) + '</div>' +
+        (d.Title ? '<div class="popup-talk-title">' + escHtml(d.Title) + '</div>' : '') +
+        '<a href="#" class="popup-scroll-link" onclick="window._scrollToEntry(\'' + escHtml(d.entry_id) + '\'); return false;">Show in timeline &darr;</a>';
+    } else {
+      const itemsHtml = group.entries.map(d =>
+        '<div class="popup-talk-item">' +
+          '<div class="popup-detail"><strong>' + escHtml(d.Code_Name) + ' ' + escHtml(d.Year) + '</strong></div>' +
+          (d.Title ? '<div class="popup-talk-title">' + escHtml(d.Title) + '</div>' : '') +
+          '<a href="#" class="popup-scroll-link" onclick="window._scrollToEntry(\'' + escHtml(d.entry_id) + '\'); return false;">Show in timeline &darr;</a>' +
+        '</div>'
+      ).join('');
+      popupHtml =
+        '<div class="popup-name">' + escHtml(group.location) + ' (' + group.entries.length + ' talks)</div>' +
+        '<div class="popup-talk-list">' + itemsHtml + '</div>';
+    }
+
+    const marker = L.circleMarker([group.lat, group.long], {
+      radius: group.entries.length > 1 ? 8.5 : 7,
       fillColor: '#e05555',
       color: '#fff',
       weight: 2,
       fillOpacity: 0.88
     })
-    .bindPopup(
-      '<div class="popup-name">' + d.Code_Name + ' ' + d.Year + '</div>' +
-      '<div class="popup-detail">' + d.Location + '</div>' +
-      '<a href="#" class="popup-scroll-link" onclick="window._scrollToEntry(\'' + id + '\'); return false;">Show in timeline ↓</a>',
-      { className: 'map-popup', maxWidth: 200 }
-    )
+    .bindPopup(popupHtml, { className: 'map-popup', maxWidth: 260 })
     .addTo(map);
+
+    group.entries.forEach(d => {
+      markerByEntryId[d.entry_id] = marker;
+    });
   });
+
+  window._focusMapEntry = function (entryId) {
+    const mapEl = document.getElementById('travel-map');
+    if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const marker = markerByEntryId[entryId];
+    if (marker) {
+      map.setView(marker.getLatLng(), Math.max(map.getZoom(), 5), { animate: true });
+      setTimeout(() => marker.openPopup(), 250);
+    }
+  };
 
   /* ── University markers (with pulse) ────────────────────────────── */
   universityData.forEach(d => {

@@ -51,6 +51,11 @@ format:
   border-color: rgba(0,123,255,0.65);
   color: rgba(0,100,210,1);
 }
+@media (max-width: 700px) {
+  #random-btn {
+    display: none;
+  }
+}
 </style>
 
 <div class="gradient_bg">
@@ -64,12 +69,17 @@ format:
             <p>
             I'm an FWO Postdoctoral fellow at KU Leuven in the Development and Regeneration department and within the International Ovarian Tumour Analysis (<a href="https://iotaplus.org/en/research/methodological-research" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>IOTA</span></a>) group, working with  <a href="https://orcid.org/0000-0003-1613-7450" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Ben Van Calster</span></a>, <a href="https://orcid.org/0000-0002-3037-122X" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Laure Wynants</span></a>, and <a href="https://orcid.org/0000-0002-3707-6645" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>Dirk Timmerman</span></a>. My work combines methodological and applied research to improve the calibration and clinical utility of prediction models, with a focus on models for ovarian cancer diagnosis, including the <a href="https://www.bmj.com/content/349/bmj.g5920" target="_blank"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>ADNEX</span></a> model.
             </p>
-            <p>If you'd like to collaborate or have questions about my work, feel free to reach out: <a href="mailto:lasai.barrenadataleb[at]kuleuven.be"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>lasai.barrenadataleb@kuleuven.be</span></a></p>
+            <p>If you'd like to collaborate or have questions about my work, feel free to reach out: <a href="mailto:lasai.barrenadataleb@kuleuven.be"><span style='text-decoration: underline;text-decoration-color: #007BFF;'>lasai.barrenadataleb@kuleuven.be</span></a></p>
+            <div class="hero_cta">
+              <a href="/projects/projects-page.html" class="hero_btn hero_btn_primary">Explore Projects &rarr;</a>
+              <a href="/Publications/publications-page.html" class="hero_btn hero_btn_outline">Publications</a>
+              <a href="/cv/cv.pdf" target="_blank" rel="noopener" class="hero_btn hero_btn_outline">CV (PDF)</a>
+            </div>
 
 
         </div>
         <div class="hero_image">
-            <img src="/img/lasai_headshot.png"/>
+            <img src="/img/lasai_headshot.png" alt="Lasai Barreñada"/>
         </div>
         <div id="dot_container">
         </div>
@@ -274,7 +284,7 @@ format:
     }
 
     // ── Hint / counter ──────────────────────────────────────────
-    if (hintOpacity > 0.01) {
+    if (hintOpacity > 0.01 && W >= 700) {
       ctx.save();
       ctx.font = '400 13px Inter, sans-serif';
       ctx.textAlign = 'right';

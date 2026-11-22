@@ -4,7 +4,7 @@ comments: false
 toc: true
 engine: knitr
 execute:
-  freeze: true
+  freeze: false
 resources:
   - "cv.pdf"
 nocite: '@*'
@@ -95,6 +95,7 @@ csl: nature.csl
 .cv-conf-venue {
   font-size: 0.85rem;
   color: #777;
+  margin-bottom: 0.85rem;
 }
 
 /* Peer review section */
@@ -131,7 +132,7 @@ FWO Postdoctoral Fellowship (KU Leuven)
 :::
 ::::
 ::: {.cv-entry-detail}
-Honest clinical prediction model development and valuation, Leuven
+Honest clinical prediction model development and evaluation, Leuven
 :::
 
 :::: {.cv-entry}
@@ -234,146 +235,65 @@ University of Granada — B.A. Marketing
 ::: {#refs}
 :::
 
+```{=html}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  document.querySelectorAll("#refs .csl-entry").forEach(function (el) {
+    el.innerHTML = el.innerHTML.replace(
+      /(Barre(?:ñ|n|&ntilde;)ada(?:\s+Taleb)?,\s*L\.)/g,
+      "<strong>$1</strong>"
+    );
+  });
+});
+</script>
+```
+
 ## Peer Review
 
 ::: {.cv-prose}
-Conducted various peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj Precision Oncology**, **Nature Communications Medicine**, and **Diagnostic and Prognostic Research**.
+Conducted more than 30 peer reviews for **Statistics in Medicine**, **Ultrasound in Obstetrics and Gynecology**, **International Journal of Gynecological Cancer**, **Heliyon**, **npj Precision Oncology**, **Nature Communications Medicine**, and **Diagnostic and Prognostic Research**.
 :::
 
 ## Conference Presentations
 
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Cost-based variable selection to improve clinical utility of prediction models (Poster)
-:::
-::: {.cv-entry-date}
-10/2026
-:::
-::::
-::: {.cv-conf-venue}
-ISCB GDMS · Freiburg
-:::
+```{r cv-conferences, echo=FALSE, results='asis', message=FALSE, warning=FALSE}
+library(openxlsx)
+library(dplyr)
 
+conf_path <- if (file.exists("../speaking/conferences.xlsx")) {
+  "../speaking/conferences.xlsx"
+} else {
+  "speaking/conferences.xlsx"
+}
 
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Problem of Individual Risk Estimation for Health AI (Talk)
-:::
-::: {.cv-entry-date}
-01/2026
-:::
-::::
-::: {.cv-conf-venue}
-SEB · Bilbao
-:::
+confs <- read.xlsx(conf_path) |>
+  arrange(-Year, -Month)
 
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Updating the ADNEX model for surgically and conservatively managed patients (Talk)
-:::
-::: {.cv-entry-date}
-09/2025
-:::
-::::
-::: {.cv-conf-venue}
-ISUOG · Cancún
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Combining calibration plots (Talk)
-:::
-::: {.cv-entry-date}
-04/2025
-:::
-::::
-::: {.cv-conf-venue}
-MEMTAB · Birmingham
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Problem of Individual Risk Estimation for Health AI (Talk)
-:::
-::: {.cv-entry-date}
-03/2025
-:::
-::::
-::: {.cv-conf-venue}
-ENAR · New Orleans
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Head-to-head comparisons of RMI and ADNEX models (Talk)
-:::
-::: {.cv-entry-date}
-09/2024
-:::
-::::
-::: {.cv-conf-venue}
-ISUOG · Budapest
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Multicenter flexible calibration curves using random effects (Poster)
-:::
-::: {.cv-entry-date}
-07/2024
-:::
-::::
-::: {.cv-conf-venue}
-ISCB · Thessaloniki
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Drawing multicenter calibration curves (Talk)
-:::
-::: {.cv-entry-date}
-02/2024
-:::
-::::
-::: {.cv-conf-venue}
-SEB · Barcelona
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-ADNEX model systematic review and meta-analysis (Talk)
-:::
-::: {.cv-entry-date}
-10/2023
-:::
-::::
-::: {.cv-conf-venue}
-ISUOG · Seoul
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Do we understand random forests? (Poster)
-:::
-::: {.cv-entry-date}
-08/2023
-:::
-::::
-::: {.cv-conf-venue}
-ISCB · Milan
-:::
-
-:::: {.cv-entry}
-::: {.cv-conf-title}
-Do we understand random forests? (Poster)
-:::
-::: {.cv-entry-date}
-07/2023
-:::
-::::
-::: {.cv-conf-venue}
-YSM · Leicester
-:::
+for (i in seq_len(nrow(confs))) {
+  r <- confs[i, ]
+  if (is.na(r$Title)) next
+  type_str <- if (is.na(r$Type)) {
+    "Upcoming"
+  } else if (grepl("oral", r$Type, ignore.case = TRUE)) {
+    "Talk"
+  } else {
+    "Poster"
+  }
+  date_str <- if (!is.na(r$Month)) {
+    sprintf("%02d/%d", as.integer(r$Month), as.integer(r$Year))
+  } else {
+    as.character(r$Year)
+  }
+  cat(sprintf(
+'<div class="cv-entry">
+<div class="cv-conf-title">%s (%s)</div>
+<div class="cv-entry-date">%s</div>
+</div>
+<div class="cv-conf-venue">%s &middot; %s</div>\n\n',
+    r$Title, type_str, date_str, r$Code_Name, r$Location
+  ))
+}
+```
 
 ## Awards & Prizes
 
@@ -416,9 +336,49 @@ Issued by IAOS
 </div>
 ```
 
+## Fellowships
+
+- [**STRATOS**](https://www.stratos-initiative.org/) early career adjunct member
+- [**ISCB early career biostatistician**](https://iscb.international/early-career-biostatisticians/) committee Chair
+- **FEPS Young Academics Network** (10th cycle)
+
+## Grants
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+FWO Postdoctoral Fellowship
+:::
+::: {.cv-entry-date}
+2026 – 2029
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+FWO Travel Grants (×4)
+:::
+::: {.cv-entry-date}
+2023, 2024, 2025, 2026
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
+:::: {.cv-entry}
+::: {.cv-entry-title}
+FWO Long Stay Abroad Grant (5 months)
+:::
+::: {.cv-entry-date}
+2025 – 2026
+:::
+::::
+::: {.cv-entry-detail}
+:::
+
 ## Professional Memberships
 
-- STRATOS early career adjunct member
 - International Society of Ultrasound in Obstetrics and Gynecology (ISUOG)
 - International Ovarian Tumour Analysis group (IOTA)
 - International Biometric Society (IBS)

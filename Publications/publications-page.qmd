@@ -6,7 +6,7 @@ execute:
 ---
 
 A complete and up-to-date list of my publications is available on [Google Scholar](https://scholar.google.com/citations?user=uPOL3NkAAAAJ&hl=en), including preprints.
-The network below shows my main collaborators based on shared publications indexed by Google Scholar.
+The network below shows my main collaborators (≥ 2 shared publications) based on publications indexed by Google Scholar.
 
 ---
 
@@ -27,19 +27,371 @@ pubs <- get_publications(
   flush = TRUE
 )
 
-# ── Fetch full author lists for truncated papers ──────────────────────────────
-# Google Scholar truncates long author lists with "...". We fetch the full
-# list via get_complete_authors() and fall back to the truncated string on error.
-pubs$author_full <- pubs$author
-trunc_idx <- grep("\\.\\.\\.", pubs$author)
-for (i in trunc_idx) {
-  full <- tryCatch(
-    get_complete_authors(id, pubs$pubid[i]),
-    error = function(e) NA_character_
-  )
-  if (!is.na(full) && nchar(trimws(full)) > 0) pubs$author_full[i] <- full
-  Sys.sleep(0.3)
+# ── String & author-name helpers ──────────────────────────────────────────────
+clean_unicode_punct <- function(x) {
+  x <- gsub("[\u2010\u2011\u2012\u2013\u2014\u2212]", "-", x, perl = TRUE)
+  x <- gsub("[\u2018\u2019\u02BC]", "'", x, perl = TRUE)
+  x <- gsub("\u00A0", " ", x, perl = TRUE)
+  trimws(gsub("\\s+", " ", x))
 }
+
+safe_ascii_lower <- function(x) {
+  out <- iconv(x, from = "UTF-8", to = "ASCII//TRANSLIT")
+  bad <- is.na(out) & !is.na(x)
+  if (any(bad)) {
+    out[bad] <- iconv(x[bad], from = "UTF-8", to = "ASCII", sub = "")
+  }
+  out[is.na(out)] <- ""
+  tolower(trimws(out))
+}
+
+norm_title <- function(t) {
+  t <- clean_unicode_punct(t)
+  t <- safe_ascii_lower(t)
+  t <- gsub("[^a-z0-9 ]", " ", t)
+  trimws(gsub("\\s+", " ", t))
+}
+
+jaccard_sim <- function(a, b) {
+  a <- unique(a[nzchar(a)])
+  b <- unique(b[nzchar(b)])
+  u <- length(union(a, b))
+  if (u == 0) return(0)
+  length(intersect(a, b)) / u
+}
+
+title_case_if_allcaps <- function(tok) {
+  letters_only <- gsub("[^\\p{L}]", "", tok, perl = TRUE)
+  if (nchar(letters_only) >= 3 && !grepl("\\p{Ll}", tok, perl = TRUE)) {
+    low <- tolower(tok)
+    low <- gsub("(^|[-'])(\\p{Ll})", "\\1\\U\\2", low, perl = TRUE)
+    return(low)
+  }
+  tok
+}
+
+format_surname <- function(s) {
+  s <- clean_unicode_punct(s)
+  toks <- strsplit(s, "\\s+")[[1]]
+  toks <- vapply(toks, title_case_if_allcaps, character(1))
+  res <- paste(toks, collapse = " ")
+  # Capitalize after apostrophe in names like Dall'asta -> Dall'Asta
+  gsub("(?<=\\p{L}{2}')(\\p{Ll})", "\\U\\1", res, perl = TRUE)
+}
+
+given_to_initials <- function(given) {
+  given <- clean_unicode_punct(given)
+  given <- gsub("[.-]+", " ", given)
+  parts <- strsplit(trimws(given), "\\s+")[[1]]
+  parts <- parts[nzchar(parts)]
+  if (length(parts) == 0) return("")
+  inits <- vapply(parts, function(w) {
+    letters <- gsub("[^\\p{L}]", "", w, perl = TRUE)
+    if (!nzchar(letters)) return("")
+    if (!grepl("\\p{Ll}", letters, perl = TRUE)) {
+      return(letters)
+    }
+    toupper(substr(letters, 1, 1))
+  }, character(1))
+  paste0(inits, collapse = "")
+}
+
+is_particle_tok <- function(tok) {
+  tolower(tok) %in% c("van", "von", "de", "del", "der", "den", "di", "da", "la", "las", "los", "te", "ten", "ter")
+}
+
+parse_display_author <- function(name) {
+  name <- clean_unicode_punct(name)
+  if (!nzchar(name)) return("")
+  if (grepl("collaborators|consortium|group|committee", name, ignore.case = TRUE)) {
+    return(name)
+  }
+  words <- strsplit(name, "\\s+")[[1]]
+  n <- length(words)
+  if (n <= 1) return(name)
+
+  # Walk backwards from the last token to keep surname particles & known compound surnames intact
+  surname_start <- n
+  while (surname_start > 2) {
+    prev <- words[surname_start - 1]
+    cur  <- words[surname_start]
+    if (is_particle_tok(prev)) {
+      surname_start <- surname_start - 1
+    } else if (safe_ascii_lower(prev) == "sainz" && tolower(cur) == "de") {
+      surname_start <- surname_start - 1
+    } else if (safe_ascii_lower(prev) %in% c("galvez", "fernandez", "ramirez", "abreu") &&
+               surname_start == n) {
+      surname_start <- surname_start - 1
+    } else {
+      break
+    }
+  }
+  if (surname_start > 2 && safe_ascii_lower(words[surname_start - 1]) == "galvez" &&
+      safe_ascii_lower(words[surname_start]) == "sainz") {
+    surname_start <- surname_start - 1
+  }
+
+  given_str   <- paste(words[seq_len(surname_start - 1)], collapse = " ")
+  surname_str <- format_surname(paste(words[surname_start:n], collapse = " "))
+  inits <- given_to_initials(given_str)
+  if (!nzchar(inits)) return(surname_str)
+  paste(inits, surname_str)
+}
+
+split_top_level_and <- function(s) {
+  chars <- strsplit(s, "")[[1]]
+  n <- length(chars)
+  if (n == 0) return(character(0))
+  depth <- 0L
+  out <- character(0)
+  start <- 1L
+  i <- 1L
+  while (i <= n) {
+    ch <- chars[i]
+    if (ch == "{") {
+      depth <- depth + 1L
+    } else if (ch == "}") {
+      depth <- max(0L, depth - 1L)
+    } else if (depth == 0L && i >= 5L && i <= n) {
+      tail_sub <- paste0(chars[i:n], collapse = "")
+      if (grepl("^\\s+[Aa][Nn][Dd]\\s+", tail_sub)) {
+        m <- regexpr("^\\s+[Aa][Nn][Dd]\\s+", tail_sub)
+        mlen <- attr(m, "match.length")
+        out <- c(out, paste0(chars[start:(i - 1L)], collapse = ""))
+        i <- i + mlen
+        start <- i
+        next
+      }
+    }
+    i <- i + 1L
+  }
+  out <- c(out, paste0(chars[start:n], collapse = ""))
+  trimws(out)
+}
+
+parse_bibtex_authors <- function(auth_str) {
+  parts <- split_top_level_and(clean_unicode_punct(auth_str))
+  parsed <- vapply(parts, function(item) {
+    item <- trimws(item)
+    if (!nzchar(item)) return("")
+    # Corporate / group author wrapped in braces e.g. {IOTA 6 Collaborators}
+    if (grepl("^\\{[^}]+\\}$", item)) {
+      return(trimws(gsub("[{}]", "", item)))
+    }
+    item <- gsub("[{}]", "", item)
+
+    # BibLaTeX key=value format: family=Smeden, given=Maarten, prefix=van, useprefix=true
+    if (grepl("family\\s*=", item, ignore.case = TRUE)) {
+      kv_parts <- trimws(strsplit(item, ",")[[1]])
+      kv <- list()
+      for (p in kv_parts) {
+        eq_pos <- regexpr("=", p, fixed = TRUE)
+        if (eq_pos > 0) {
+          k <- tolower(trimws(substr(p, 1, eq_pos - 1)))
+          v <- trimws(substr(p, eq_pos + 1, nchar(p)))
+          kv[[k]] <- v
+        }
+      }
+      fam <- format_surname(if (!is.null(kv$family)) kv$family else "")
+      pfx <- if (!is.null(kv$prefix) && nzchar(kv$prefix)) kv$prefix else ""
+      giv <- if (!is.null(kv$given)) kv$given else ""
+      sur <- if (nzchar(pfx)) paste(pfx, fam) else fam
+      inits <- given_to_initials(giv)
+      return(trimws(paste(inits, sur)))
+    }
+
+    if (grepl(",", item, fixed = TRUE)) {
+      comma_pos <- regexpr(",", item, fixed = TRUE)
+      last  <- trimws(substr(item, 1, comma_pos - 1))
+      first <- trimws(substr(item, comma_pos + 1, nchar(item)))
+      # Zotero moves trailing surname particles after first name (e.g. "Calster, Ben Van", "Campo, Bavo De Cock")
+      while (grepl("^(.+?)\\s+(De\\s+Cock|van\\s+der|van\\s+den|de\\s+la|Van|Von|De|Del|Den|Der)$",
+                   first, ignore.case = TRUE, perl = TRUE)) {
+        m <- regexec("^(.+?)\\s+(De\\s+Cock|van\\s+der|van\\s+den|de\\s+la|Van|Von|De|Del|Den|Der)$",
+                     first, ignore.case = TRUE, perl = TRUE)
+        caps <- regmatches(first, m)[[1]]
+        first <- trimws(caps[2])
+        last  <- paste(trimws(caps[3]), last)
+      }
+      inits <- given_to_initials(first)
+      sur   <- format_surname(last)
+      if (!nzchar(inits)) return(sur)
+      return(paste(inits, sur))
+    }
+
+    parse_display_author(item)
+  }, character(1))
+  parsed <- parsed[nzchar(parsed)]
+  paste(parsed, collapse = ", ")
+}
+
+# ── Local BibTeX author index (Layer 1) ───────────────────────────────────────
+extract_bib_field <- function(block, field_name) {
+  pat <- paste0("(?i)(?:^|\\n)\\s*", field_name, "\\s*=\\s*\\{")
+  m <- regexpr(pat, block, perl = TRUE)
+  if (m < 0) return(NA_character_)
+  start_pos <- as.integer(m) + attr(m, "match.length")
+  chars <- strsplit(substr(block, start_pos, nchar(block)), "")[[1]]
+  depth <- 1L
+  end_rel <- length(chars)
+  for (k in seq_along(chars)) {
+    if (chars[k] == "{") depth <- depth + 1L
+    else if (chars[k] == "}") {
+      depth <- depth - 1L
+      if (depth == 0L) {
+        end_rel <- k - 1L
+        break
+      }
+    }
+  }
+  raw <- paste0(chars[seq_len(end_rel)], collapse = "")
+  clean_unicode_punct(gsub("\\s+", " ", raw))
+}
+
+load_bibtex_lookup <- function(paths) {
+  entries <- list()
+  for (p in paths) {
+    if (!file.exists(p)) next
+    txt <- paste(readLines(p, encoding = "UTF-8", warn = FALSE), collapse = "\n")
+    starts <- gregexpr("(?m)^@", txt, perl = TRUE)[[1]]
+    if (length(starts) == 1 && starts[1] == -1) next
+    ends <- c(starts[-1] - 1L, nchar(txt))
+    for (k in seq_along(starts)) {
+      block <- substr(txt, starts[k], ends[k])
+      ttl <- extract_bib_field(block, "title")
+      aut <- extract_bib_field(block, "author")
+      pub <- extract_bib_field(block, "publisher")
+      if (is.na(ttl) || is.na(aut) || !nzchar(ttl) || !nzchar(aut)) next
+      ttl_clean <- gsub("[{}]", "", ttl)
+      ttl_norm  <- norm_title(ttl_clean)
+      entries[[length(entries) + 1L]] <- list(
+        title_norm = ttl_norm,
+        tokens     = strsplit(ttl_norm, " ")[[1]],
+        authors    = parse_bibtex_authors(aut),
+        publisher  = if (is.na(pub)) "" else pub
+      )
+    }
+  }
+  entries
+}
+
+bib_entries <- load_bibtex_lookup(c(
+  "../cv/peer_bib_auto.bib",
+  "../cv/other_bib_auto.bib",
+  "../cv/peer_bib.bib"
+))
+
+# ── OpenAlex ORCID & search index (Layer 2) ───────────────────────────────────
+extract_openalex_record <- function(w) {
+  wtype <- tolower(if (is.null(w$type)) "" else as.character(w$type))
+  ttl <- if (is.null(w$title)) "" else as.character(w$title)
+  if (wtype == "dataset") return(NULL)
+  if (grepl("^(replication data|correction|erratum|corrigendum)\\b", ttl, ignore.case = TRUE)) {
+    return(NULL)
+  }
+  if (is.null(w$authorships) || length(w$authorships) == 0) return(NULL)
+  raw_names <- vapply(w$authorships, function(a) {
+    if (is.null(a$author) || is.null(a$author$display_name)) "" else as.character(a$author$display_name)
+  }, character(1))
+  raw_names <- raw_names[nzchar(raw_names)]
+  if (length(raw_names) == 0) return(NULL)
+  fmt <- vapply(raw_names, parse_display_author, character(1))
+  fmt_str <- paste(fmt[nzchar(fmt)], collapse = ", ")
+  if (!str_detect(fmt_str, regex("barre[nñ]", ignore_case = TRUE))) return(NULL)
+  ttl_norm <- norm_title(ttl)
+  list(
+    title_norm = ttl_norm,
+    tokens     = strsplit(ttl_norm, " ")[[1]],
+    authors    = fmt_str
+  )
+}
+
+load_openalex_orcid <- function(orcid = "0000-0001-8020-0210") {
+  old_to <- getOption("timeout")
+  options(timeout = 12)
+  on.exit(options(timeout = old_to), add = TRUE)
+  url <- paste0(
+    "https://api.openalex.org/works?filter=author.orcid:https://orcid.org/",
+    orcid, "&per-page=100&mailto=lasai.barrenadataleb@kuleuven.be"
+  )
+  res <- tryCatch(fromJSON(url, simplifyVector = FALSE), error = function(e) NULL)
+  if (is.null(res) || is.null(res$results)) return(list())
+  out <- lapply(res$results, extract_openalex_record)
+  Filter(Negate(is.null), out)
+}
+
+search_openalex_title <- function(title_str) {
+  old_to <- getOption("timeout")
+  options(timeout = 8)
+  on.exit(options(timeout = old_to), add = TRUE)
+  url <- paste0(
+    "https://api.openalex.org/works?search=",
+    utils::URLencode(title_str, reserved = TRUE),
+    "&per-page=5&mailto=lasai.barrenadataleb@kuleuven.be"
+  )
+  res <- tryCatch(fromJSON(url, simplifyVector = FALSE), error = function(e) NULL)
+  if (is.null(res) || is.null(res$results)) return(list())
+  Filter(Negate(is.null), lapply(res$results, extract_openalex_record))
+}
+
+best_record_match <- function(pub_tokens, records, min_sim = 0.70) {
+  if (length(records) == 0) return(NULL)
+  sims <- vapply(records, function(rec) jaccard_sim(pub_tokens, rec$tokens), numeric(1))
+  best_idx <- which.max(sims)
+  if (length(best_idx) == 1 && sims[best_idx] >= min_sim) {
+    return(records[[best_idx]])
+  }
+  NULL
+}
+
+# ── Resolve complete author lists for truncated Scholar papers ────────────────
+pubs$author_full <- clean_unicode_punct(pubs$author)
+pubs$bib_publisher <- ""
+trunc_idx <- grep("\\.\\.\\.", pubs$author_full)
+oa_orcid_records <- if (length(trunc_idx) > 0) load_openalex_orcid() else list()
+
+for (i in trunc_idx) {
+  pub_tokens <- strsplit(norm_title(pubs$title[i]), " ")[[1]]
+  resolved <- NA_character_
+
+  # Layer 1: local BibTeX files
+  m_bib <- best_record_match(pub_tokens, bib_entries, min_sim = 0.75)
+  if (!is.null(m_bib)) {
+    resolved <- m_bib$authors
+    if (nzchar(m_bib$publisher)) pubs$bib_publisher[i] <- m_bib$publisher
+  }
+
+  # Layer 2a: OpenAlex ORCID works
+  if (is.na(resolved)) {
+    m_oa <- best_record_match(pub_tokens, oa_orcid_records, min_sim = 0.70)
+    if (!is.null(m_oa)) resolved <- m_oa$authors
+  }
+
+  # Layer 2b: OpenAlex title search fallback
+  if (is.na(resolved)) {
+    oa_search_records <- search_openalex_title(pubs$title[i])
+    m_oas <- best_record_match(pub_tokens, oa_search_records, min_sim = 0.75)
+    if (!is.null(m_oas)) resolved <- m_oas$authors
+  }
+
+  # Layer 3: Google Scholar get_complete_authors fallback
+  if (is.na(resolved)) {
+    full <- tryCatch(
+      get_complete_authors(id, pubs$pubid[i]),
+      error = function(e) NA_character_
+    )
+    if (!is.na(full) && nchar(trimws(full)) > 0) resolved <- clean_unicode_punct(full)
+    Sys.sleep(0.3)
+  }
+
+  if (!is.na(resolved) && nzchar(resolved)) {
+    pubs$author_full[i] <- resolved
+  }
+}
+
+# Drop entries where Lasai is not an author (e.g., award announcements about Lasai)
+authored_mask <- str_detect(pubs$author_full, regex("barre[nñ]", ignore_case = TRUE))
+pubs <- pubs[authored_mask, ]
 
 # ── Publication deduplication ─────────────────────────────────────────────────
 # Google Scholar sometimes indexes both a preprint and its published version.
@@ -47,104 +399,155 @@ for (i in trunc_idx) {
 # preprint/working-paper and every published paper, then dropping the preprint
 # when a close match (≥ 0.28) exists.
 
-norm_title <- function(t) {
-  t <- tolower(iconv(t, from = "UTF-8", to = "ASCII//TRANSLIT"))
-  t <- gsub("[^a-z0-9 ]", " ", t)
-  trimws(gsub("\\s+", " ", t))
-}
-
 title_tokens <- strsplit(sapply(pubs$title, norm_title), " ")
 
-jaccard_sim <- function(a, b) {
-  a <- unique(a); b <- unique(b)
-  length(intersect(a, b)) / length(union(a, b))
-}
-
 preprint_pat <- regex(
-  "arxiv|biorxiv|medrxiv|preprint|working paper|statistics spain",
+  "arxiv|biorxiv|medrxiv|zenodo|preprint|working paper|statistics spain",
   ignore_case = TRUE
 )
-is_preprint   <- str_detect(pubs$journal, preprint_pat)
+venue_src <- ifelse(
+  nzchar(trimws(pubs$journal)),
+  pubs$journal,
+  pubs$bib_publisher
+)
+is_preprint   <- str_detect(venue_src, preprint_pat)
 published_idx <- which(!is_preprint)
 preprint_idx  <- which(is_preprint)
 
 # Drop any preprint whose best title match with a published paper is ≥ 0.28
-drop_rows <- Filter(function(i) {
+drop_rows <- unlist(Filter(function(i) {
+  if (length(published_idx) == 0) return(FALSE)
   sims <- sapply(published_idx, function(j) jaccard_sim(title_tokens[[i]], title_tokens[[j]]))
   max(sims, na.rm = TRUE) >= 0.28
-}, preprint_idx)
+}, preprint_idx))
 
-clean_pubs <- pubs[!seq_len(nrow(pubs)) %in% drop_rows, ]
+keep_idx <- which(!seq_len(nrow(pubs)) %in% drop_rows)
+clean_pubs <- pubs[keep_idx, ]
+clean_is_preprint <- is_preprint[keep_idx]
+
+# Sort clean_pubs consistently (year desc, cites desc) before building lists
+yr_order <- suppressWarnings(as.integer(clean_pubs$year))
+yr_order[is.na(yr_order)] <- -1L
+ct_order <- suppressWarnings(as.integer(clean_pubs$cites))
+ct_order[is.na(ct_order)] <- 0L
+ord <- order(-yr_order, -ct_order)
+clean_pubs        <- clean_pubs[ord, ]
+clean_is_preprint <- clean_is_preprint[ord]
 
 # ── Name deduplication ────────────────────────────────────────────────────────
-# Some authors appear under multiple name forms:
-#   - Accent variants:  "M Martinez-Garcia" / "M Martínez-García"
-#   - Initial variants: "G Collins" / "GS Collins"
-#   - Abbreviation:     "JF Calatrava" / "J Fernández Calatrava"
-#                       "JCGS de Cueto" / "JC Gálvez Sainz de Cueto"
-#
-# Strategy:
-#   1. Apply manual corrections for cases that can't be resolved automatically.
-#   2. Normalise accents (iconv) and lowercase to create a matching key.
-#   3. Within each key-group keep the first-seen canonical form.
-
 manual_corrections <- c(
-  # Initial/abbreviation variants (can't be resolved by accent normalisation)
   "G Collins"        = "GS Collins",
   "JF Calatrava"     = "J Fernández Calatrava",
   "JCGS de Cueto"    = "JC Gálvez Sainz de Cueto",
   "JYJ Verbakel"     = "JY Verbakel",
-  # Dutch/Belgian particle names — get_complete_authors absorbs "Van"/"De"
-  # into initials: "B Van Calster" → "BV Calster", "B De Moor" → "BD Moor"
   "BV Calster"       = "B Van Calster",
   "BD Moor"          = "B De Moor",
-  # Encoding artefact in the COVID preprint full-author scrape
+  "BDC Campo"        = "B De Cock Campo",
+  "B De Cock"        = "B De Cock Campo",
+  "TH Bourne"        = "T Bourne",
+  "RR Zegarra"       = "R Ramirez Zegarra",
   "Rén Armañanzas"   = "R Armañanzas"
 )
 
-normalize_key <- function(x) {
-  x <- iconv(x, from = "UTF-8", to = "ASCII//TRANSLIT")
-  tolower(trimws(x))
+clean_coauthor_tokens <- function(auth_str) {
+  toks <- auth_str |>
+    str_split(",\\s*") |>
+    unlist() |>
+    clean_unicode_punct()
+  toks <- toks[!str_detect(toks, regex("barre[nñ]", ignore_case = TRUE))]
+  toks <- toks[!str_detect(toks, regex("collaborators|consortium|group|committee", ignore_case = TRUE))]
+  toks <- toks[!str_detect(toks, "^\\.+$|^…$")]
+  toks <- toks[nchar(toks) > 1]
+  ifelse(toks %in% names(manual_corrections), manual_corrections[toks], toks)
 }
 
-# Parse raw author strings (from deduplicated publication list, full author lists)
-raw_names <- clean_pubs$author_full |>
-  str_split(",\\s*") |>
-  unlist() |>
-  str_trim() |>
-  (\(x) x[!str_detect(x, regex("barre[nñ]", ignore_case = TRUE))])() |>
-  (\(x) x[!str_detect(x, "^\\.+$|^…$")])() |>
-  (\(x) x[nchar(x) > 1])()
+paper_raw_coauthors <- lapply(clean_pubs$author_full, clean_coauthor_tokens)
 
-# Apply manual corrections
-raw_names <- ifelse(
-  raw_names %in% names(manual_corrections),
-  manual_corrections[raw_names],
-  raw_names
-)
+# Stage 1: Group accent/case variants; prefer accented & properly cased form
+all_surfaces <- unlist(paper_raw_coauthors)
+pick_best_surface <- function(cands, freq_tbl) {
+  has_accent <- grepl("[^\\x01-\\x7F]", cands, perl = TRUE)
+  init_len   <- ifelse(grepl("^[A-Z]+\\s+", cands), nchar(sub("^([A-Z]+)\\s+.*$", "\\1", cands)), 0L)
+  freqs      <- as.integer(freq_tbl[cands])
+  freqs[is.na(freqs)] <- 0L
+  cands[order(-as.integer(has_accent), -init_len, -freqs, cands)][1]
+}
 
-# Build canonical name map (first-seen wins within each normalised group)
-canonical_map <- data.frame(
-  original   = unique(raw_names),
-  key        = normalize_key(unique(raw_names)),
-  stringsAsFactors = FALSE
-) |>
-  group_by(key) |>
-  summarise(canonical = first(original), .groups = "drop")
+surf_freq <- table(all_surfaces)
+stage1_keys <- safe_ascii_lower(names(surf_freq))
+stage1_groups <- split(names(surf_freq), stage1_keys)
+stage1_rep <- vapply(stage1_groups, pick_best_surface, character(1), freq_tbl = surf_freq)
+s1_lookup <- setNames(stage1_rep[stage1_keys], names(surf_freq))
 
-name_lookup <- setNames(canonical_map$canonical, canonical_map$key)
-canonical_names <- name_lookup[normalize_key(raw_names)]
+paper_s1 <- lapply(paper_raw_coauthors, function(x) unique(unname(s1_lookup[x])))
+
+# Stage 2: Merge unambiguous initial-prefix variants (e.g. A Vickers -> AJ Vickers, E Steyerberg -> EW Steyerberg)
+# strictly ONLY when the two forms share the exact surname and never co-occur on the same paper.
+s1_freq <- table(unlist(paper_s1))
+u_s1 <- names(s1_freq)
+s2_lookup <- setNames(u_s1, u_s1)
+
+if (length(u_s1) > 1) {
+  inits_vec <- ifelse(grepl("^[A-Z]+\\s+", u_s1), sub("^([A-Z]+)\\s+.*$", "\\1", u_s1), "")
+  surs_vec  <- ifelse(nzchar(inits_vec), safe_ascii_lower(sub("^[A-Z]+\\s+", "", u_s1)), "")
+
+  cooccur_pair <- function(a, b) {
+    any(vapply(paper_s1, function(pa) (a %in% pa) && (b %in% pa), logical(1)))
+  }
+
+  for (sur in unique(surs_vec[nzchar(surs_vec)])) {
+    idx <- which(surs_vec == sur)
+    if (length(idx) < 2) next
+    cands <- u_s1[idx]
+    cinits <- inits_vec[idx]
+    # Order shorter initials first
+    o <- order(nchar(cinits), cinits)
+    cands <- cands[o]
+    cinits <- cinits[o]
+    for (a_i in seq_along(cands)) {
+      sh <- cands[a_i]
+      si <- cinits[a_i]
+      ext_idx <- which(
+        nchar(cinits) > nchar(si) &
+        startsWith(cinits, si) &
+        vapply(cands, function(lg) !cooccur_pair(sh, lg), logical(1))
+      )
+      if (length(ext_idx) == 1) {
+        s2_lookup[sh] <- cands[ext_idx]
+      }
+    }
+  }
+  # Resolve any transitive chains
+  for (step in seq_len(3)) s2_lookup <- setNames(s2_lookup[s2_lookup], names(s2_lookup))
+}
+
+paper_coauthors <- lapply(paper_s1, function(x) {
+  mapped <- unique(unname(s2_lookup[x]))
+  mapped[!is.na(mapped) & nzchar(mapped)]
+})
 
 # ── Build nodes and links ─────────────────────────────────────────────────────
+canonical_names <- unlist(paper_coauthors)
 coauthors <- sort(table(canonical_names), decreasing = TRUE) |>
   as.data.frame(stringsAsFactors = FALSE) |>
   setNames(c("id", "n_papers")) |>
   mutate(n_papers = as.integer(n_papers)) |>
   filter(n_papers >= 2)
 
+# Cluster co-authors by shared papers so communities sit together around the circle
+if (nrow(coauthors) >= 3) {
+  inc_mat <- vapply(seq_along(paper_coauthors), function(j) {
+    as.integer(coauthors$id %in% paper_coauthors[[j]])
+  }, integer(nrow(coauthors)))
+  hc <- stats::hclust(stats::dist(inc_mat, method = "binary"), method = "average")
+  coauthors$order_idx <- match(seq_len(nrow(coauthors)), hc$order) - 1L
+} else {
+  coauthors$order_idx <- seq_len(nrow(coauthors)) - 1L
+}
+
 nodes <- bind_rows(
-  data.frame(id = "Lasai Barreñada", group = "self",     n_papers = NA_integer_, stringsAsFactors = FALSE),
-  data.frame(id = coauthors$id,      group = "coauthor", n_papers = coauthors$n_papers, stringsAsFactors = FALSE)
+  data.frame(id = "Lasai Barreñada", group = "self",     n_papers = NA_integer_, order_idx = NA_integer_, stringsAsFactors = FALSE),
+  data.frame(id = coauthors$id,      group = "coauthor", n_papers = coauthors$n_papers, order_idx = coauthors$order_idx, stringsAsFactors = FALSE)
 )
 
 links <- data.frame(
@@ -154,54 +557,65 @@ links <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# ── Build per-author publication list (for click panel) ───────────────────────
-pubs_by_author <- list()
+# ── Build full publication metadata list ────────────────────────────────────
+all_pubs_list <- vector("list", nrow(clean_pubs))
+
+get_col_val <- function(df, col, i, default = "") {
+  if (!col %in% names(df)) return(default)
+  v <- df[[col]][i]
+  if (is.null(v) || is.na(v)) return(default)
+  v
+}
+
+format_venue <- function(jrn, num, bib_pub = "") {
+  jrn <- clean_unicode_punct(as.character(jrn))
+  num <- clean_unicode_punct(as.character(num))
+  bib_pub <- clean_unicode_punct(as.character(bib_pub))
+  if (!nzchar(jrn) && nzchar(bib_pub)) return(bib_pub)
+  if (grepl("^arXiv", jrn, ignore.case = TRUE) && grepl("^:?\\d{4}\\.\\d+", num)) {
+    arxiv_id <- sub("^:", "", num)
+    return(paste0("arXiv:", arxiv_id))
+  }
+  if (grepl("^medRxiv$", jrn, ignore.case = TRUE) && nzchar(num)) {
+    num <- gsub("\\.\\s+", ".", num)
+    return(paste0("medRxiv, ", num))
+  }
+  if (nzchar(jrn) && nzchar(num)) paste0(jrn, ", ", num) else jrn
+}
 
 for (i in seq_len(nrow(clean_pubs))) {
-  paper_authors <- clean_pubs$author_full[i] |>
-    str_split(",\\s*") |>
-    unlist() |>
-    str_trim() |>
-    (\(x) x[!str_detect(x, regex("barre[nñ]", ignore_case = TRUE))])() |>
-    (\(x) x[!str_detect(x, "^\\.+$|^…$")])() |>
-    (\(x) x[nchar(x) > 1])()
-
-  paper_authors <- ifelse(
-    paper_authors %in% names(manual_corrections),
-    manual_corrections[paper_authors],
-    paper_authors
-  )
-
-  canonical_authors <- unique(name_lookup[normalize_key(paper_authors)])
-  canonical_authors <- canonical_authors[!is.na(canonical_authors)]
+  canonical_authors <- paper_coauthors[[i]]
 
   scholar_url <- paste0(
     "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=",
     id, "&citation_for_view=", id, ":", clean_pubs$pubid[i]
   )
-  paper_info <- list(title = clean_pubs$title[i], url = scholar_url)
 
-  for (author in canonical_authors) {
-    pubs_by_author[[author]] <- c(pubs_by_author[[author]], list(paper_info))
-  }
+  yr_raw <- suppressWarnings(as.integer(get_col_val(clean_pubs, "year", i, NA_integer_)))
+  ct_raw <- suppressWarnings(as.integer(get_col_val(clean_pubs, "cites", i, 0L)))
+  if (is.na(ct_raw)) ct_raw <- 0L
+  jrn     <- get_col_val(clean_pubs, "journal", i, "")
+  num     <- get_col_val(clean_pubs, "number", i, "")
+  bib_pub <- get_col_val(clean_pubs, "bib_publisher", i, "")
+  venue_str <- format_venue(jrn, num, bib_pub)
+
+  all_pubs_list[[i]] <- list(
+    title       = as.character(get_col_val(clean_pubs, "title", i, "")),
+    authors     = as.character(get_col_val(clean_pubs, "author_full", i, "")),
+    venue       = venue_str,
+    year        = yr_raw,
+    cites       = ct_raw,
+    is_preprint = isTRUE(clean_is_preprint[i]),
+    url         = scholar_url,
+    coauthors   = as.list(as.character(canonical_authors))
+  )
 }
 
-# Add Lasai's own full publication list (shown when the centre node is clicked)
-pubs_by_author[["Lasai Barreñada"]] <- lapply(seq_len(nrow(clean_pubs)), function(i) {
-  list(
-    title = clean_pubs$title[i],
-    url   = paste0(
-      "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=",
-      id, "&citation_for_view=", id, ":", clean_pubs$pubid[i]
-    )
-  )
-})
-
 cat(sprintf(
-  "<script>\nconst graphNodes = %s;\nconst graphLinks = %s;\nconst pubsByAuthor = %s;\n</script>",
-  toJSON(nodes,          auto_unbox = TRUE),
-  toJSON(links,          auto_unbox = TRUE),
-  toJSON(pubs_by_author, auto_unbox = TRUE)
+  "<script>\nconst graphNodes = %s;\nconst graphLinks = %s;\nconst allPublications = %s;\n</script>",
+  toJSON(nodes,         auto_unbox = TRUE),
+  toJSON(links,         auto_unbox = TRUE),
+  toJSON(all_pubs_list, auto_unbox = TRUE)
 ))
 ```
 
@@ -225,34 +639,188 @@ cat(sprintf(
   "></div>
 </div>
 
-<!-- Publication panel (shown on node click) -->
-<div id="pub-panel" style="
-  display: none;
-  margin-bottom: 2em;
-  border: 1px solid #c4d8ed;
-  border-radius: 6px;
-  background: #f4f8fd;
-  padding: 0.9em 1.2em;
-  font-size: 13.5px;
-  line-height: 1.6;
-  animation: fadeIn 0.18s ease;
-">
-  <style>@keyframes fadeIn { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }</style>
-  <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.5em;">
-    <span style="font-weight:600; font-size:14px; color:#1a6eaa;">
-      Publications with <span id="panel-author"></span>
+<!-- Full searchable & filterable publication list -->
+<div id="pub-list-section" style="margin-top: 2.2rem;">
+  <style>
+  .pub-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.75rem 0 1.25rem;
+  }
+  #pub-search {
+    flex: 1 1 260px;
+    padding: 0.48rem 0.85rem;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  #pub-search:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.12);
+  }
+  .pub-sort-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .pub-sort-label {
+    font-size: 0.83rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-right: 0.15rem;
+  }
+  .pub-sort-btn {
+    background: #f4f9ff;
+    border: 1px solid #cce0ff;
+    color: #0062cc;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.32rem 0.72rem;
+    border-radius: 16px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .pub-sort-btn:hover {
+    background: #dbeeff;
+  }
+  .pub-sort-btn.active {
+    background: #007BFF;
+    border-color: #007BFF;
+    color: #fff;
+  }
+  .pub-filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #e8f2ff;
+    color: #0056b3;
+    border: 1px solid #b8d6ff;
+    border-radius: 16px;
+    padding: 0.25rem 0.7rem;
+    font-size: 0.82rem;
+  }
+  .pub-filter-pill button {
+    background: none;
+    border: none;
+    color: #0056b3;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0 2px;
+  }
+  .pub-count {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-left: auto;
+  }
+  .pub-year-heading {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #007BFF;
+    border-bottom: 1px solid #e3eefc;
+    padding-bottom: 0.25rem;
+    margin: 1.5rem 0 0.75rem;
+  }
+  .pub-item {
+    padding: 0.75rem 0.9rem;
+    border: 1px solid #e9eef5;
+    border-radius: 7px;
+    background: #fff;
+    margin-bottom: 0.65rem;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .pub-item:hover {
+    border-color: #b8d6ff;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.06);
+  }
+  .pub-item-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+  }
+  .pub-item-title a {
+    color: #1a1a2e;
+    text-decoration: none;
+  }
+  .pub-item-title a:hover {
+    color: #007BFF;
+    text-decoration: underline;
+  }
+  .pub-item-authors {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.45;
+    margin-bottom: 0.3rem;
+  }
+  .pub-item-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+  .pub-venue {
+    font-style: italic;
+  }
+  .pub-badge-preprint {
+    background: #f0f4f8;
+    color: #495057;
+    border: 1px solid #d5dde5;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .pub-badge-cites {
+    background: #f0f7ff;
+    color: #0062cc;
+    border: 1px solid #cce0ff;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  .pub-badge-year {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+    padding: 1px 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+  }
+  </style>
+  <h2 style="margin-bottom: 0.5rem;">All publications</h2>
+  <div class="pub-controls">
+    <input type="search" id="pub-search" placeholder="Search by title, co-author, or journal…" aria-label="Search publications">
+    <div class="pub-sort-group" role="group" aria-label="Sort publications">
+      <span class="pub-sort-label">Sort:</span>
+      <button type="button" class="pub-sort-btn active" data-sort="year">Year</button>
+      <button type="button" class="pub-sort-btn" data-sort="cites">Citations</button>
+    </div>
+    <span id="pub-filter-pill" class="pub-filter-pill" style="display:none;">
+      Filtered by: <strong id="pub-filter-name"></strong>
+      <button type="button" id="pub-filter-clear" aria-label="Clear co-author filter">×</button>
     </span>
-    <button onclick="document.getElementById('pub-panel').style.display='none'; window._clearSelectedNode && window._clearSelectedNode();"
-      style="background:none; border:none; cursor:pointer; font-size:18px; color:#999; line-height:1; padding:0 2px;">×</button>
+    <span id="pub-count" class="pub-count"></span>
   </div>
-  <ul id="panel-list" style="margin:0; padding-left:1.3em;"></ul>
+  <div id="pub-full-list"></div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
 
 <script>
 (function () {
-  const W = 860, H = 540;
+  const W = 860, H = 600;
   const DIM_OPACITY = 0.12;
   const FOCUS_MS = 300;
 
@@ -295,30 +863,46 @@ cat(sprintf(
     .attr("in", d => d);
 
   // ── Scales ────────────────────────────────────────────────────────────
-  const maxP = d3.max(graphNodes.filter(d => d.group !== "self"), d => d.n_papers) || 1;
+  const coauthorNodes = graphNodes.filter(d => d.group !== "self");
+  const minP = d3.min(coauthorNodes, d => d.n_papers) || 2;
+  const maxP = d3.max(coauthorNodes, d => d.n_papers) || minP;
+  const domainMax = maxP === minP ? minP + 1 : maxP;
 
   const colorScale = d3.scaleLinear()
-    .domain([1, maxP])
+    .domain([minP, domainMax])
     .range(["#93c4e8", "#1a6eaa"]);
 
   const rScale = d3.scaleSqrt()
-    .domain([1, maxP])
-    .range([8, 20]);
+    .domain([minP, domainMax])
+    .range([8, 22]);
+
+  const distScale = maxP === minP
+    ? () => 165
+    : d3.scaleSqrt().domain([minP, maxP]).range([225, 92]);
 
   const CENTER_R = 32;
 
   function surname(name) {
-    const m = name.match(/^[A-Z.]+\s+(.*)/);
-    return m ? m[1] : name;
+    return name.replace(/^[A-Z.]+\s+/, "");
   }
 
-  // ── Data ──────────────────────────────────────────────────────────────
+  // ── Data & angular sector initialization ──────────────────────────────
   const nodes = graphNodes.map(d => ({ ...d }));
   const links = graphLinks.map(d => ({ ...d }));
+  const coCount = coauthorNodes.length || 1;
 
-  const center = nodes.find(d => d.group === "self");
-  center.fx = W / 2;
-  center.fy = H / 2;
+  nodes.forEach((d, i) => {
+    if (d.group === "self") {
+      d.fx = W / 2;
+      d.fy = H / 2;
+    } else {
+      const slot = Number.isFinite(d.order_idx) ? d.order_idx : i;
+      const angle = (2 * Math.PI * slot) / coCount - Math.PI / 2;
+      const r0 = distScale(d.n_papers);
+      d.x = W / 2 + Math.cos(angle) * r0;
+      d.y = H / 2 + Math.sin(angle) * r0;
+    }
+  });
 
   // Create a radial gradient per node (lighter centre → base colour edge)
   nodes.forEach((d, i) => {
@@ -334,11 +918,12 @@ cat(sprintf(
   // ── Simulation ────────────────────────────────────────────────────────
   const sim = d3.forceSimulation(nodes)
     .force("link",      d3.forceLink(links).id(d => d.id)
-                          .distance(d => 95 + (maxP - d.value) * 18))
+                          .distance(d => distScale(d.value)))
     .force("charge",    d3.forceManyBody().strength(-260))
-    .force("center",    d3.forceCenter(W / 2, H / 2))
+    .force("x",         d3.forceX(W / 2).strength(0.035))
+    .force("y",         d3.forceY(H / 2).strength(0.055))
     .force("collision", d3.forceCollide(d =>
-      d.group === "self" ? CENTER_R + 14 : rScale(d.n_papers) + 14));
+      d.group === "self" ? CENTER_R + 18 : rScale(d.n_papers) + 22));
 
   // ── Selection / focus state ───────────────────────────────────────────
   let selectedNode = null;
@@ -375,27 +960,121 @@ cat(sprintf(
     labelSel.transition().duration(FOCUS_MS).style("opacity", 1);
   }
 
+  let activeAuthorFilter = null;
+  let currentSort = "year";
+
+  function escapeHtml(str) {
+    if (!str) return "";
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function highlightSelf(authorsStr) {
+    const safe = escapeHtml(authorsStr || "");
+    return safe.replace(/([^,]*Barre(?:ñ|n|&ntilde;)ada[^,]*)/gi, "<strong>$1</strong>");
+  }
+
+  function renderPubItem(p, includeYear) {
+    const venueHtml = p.venue ? `<span class="pub-venue">${escapeHtml(p.venue)}</span>` : "";
+    const yearHtml = includeYear && p.year ? `<span class="pub-badge-year">${escapeHtml(String(p.year))}</span>` : "";
+    const preprintHtml = p.is_preprint ? '<span class="pub-badge-preprint">Preprint</span>' : "";
+    const citesHtml = p.cites > 0 ? `<span class="pub-badge-cites">Cited by ${p.cites}</span>` : "";
+    return `<div class="pub-item">
+      <div class="pub-item-title"><a href="${escapeHtml(p.url)}" target="_blank" rel="noopener">${escapeHtml(p.title)}</a></div>
+      <div class="pub-item-authors">${highlightSelf(p.authors)}</div>
+      <div class="pub-item-meta">${venueHtml}${yearHtml}${preprintHtml}${citesHtml}</div>
+    </div>`;
+  }
+
+  function renderPubList() {
+    const listEl = document.getElementById("pub-full-list");
+    const countEl = document.getElementById("pub-count");
+    const pillEl = document.getElementById("pub-filter-pill");
+    const pillNameEl = document.getElementById("pub-filter-name");
+    const searchInput = document.getElementById("pub-search");
+    if (!listEl || typeof allPublications === "undefined") return;
+
+    const q = (searchInput ? searchInput.value : "").trim().toLowerCase();
+
+    if (activeAuthorFilter) {
+      pillNameEl.textContent = activeAuthorFilter;
+      pillEl.style.display = "inline-flex";
+    } else {
+      pillEl.style.display = "none";
+    }
+
+    const filtered = allPublications.filter(p => {
+      if (activeAuthorFilter) {
+        const co = Array.isArray(p.coauthors) ? p.coauthors : (p.coauthors ? [p.coauthors] : []);
+        if (!co.includes(activeAuthorFilter)) return false;
+      }
+      if (q) {
+        const hay = ((p.title || "") + " " + (p.authors || "") + " " + (p.venue || "") + " " + (p.year || "")).toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    filtered.sort((a, b) => {
+      if (currentSort === "cites") {
+        return ((b.cites || 0) - (a.cites || 0)) || ((b.year || 0) - (a.year || 0));
+      }
+      return ((b.year || 0) - (a.year || 0)) || ((b.cites || 0) - (a.cites || 0));
+    });
+
+    countEl.textContent = `Showing ${filtered.length} of ${allPublications.length} publications`;
+
+    if (filtered.length === 0) {
+      listEl.innerHTML = '<p style="color:#6c757d; font-style:italic;">No matching publications found.</p>';
+      return;
+    }
+
+    let html = "";
+    if (currentSort === "cites") {
+      html = filtered.map(p => renderPubItem(p, true)).join("");
+    } else {
+      const byYear = new Map();
+      filtered.forEach(p => {
+        const yrKey = p.year ? String(p.year) : "Other";
+        if (!byYear.has(yrKey)) byYear.set(yrKey, []);
+        byYear.get(yrKey).push(p);
+      });
+
+      byYear.forEach((papers, yrKey) => {
+        html += `<div class="pub-year-heading">${escapeHtml(yrKey)}</div>`;
+        html += papers.map(p => renderPubItem(p, false)).join("");
+      });
+    }
+
+    listEl.innerHTML = html;
+  }
+
+  document.getElementById("pub-search")?.addEventListener("input", renderPubList);
+  document.querySelectorAll(".pub-sort-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const sortMode = btn.getAttribute("data-sort") || "year";
+      if (sortMode === currentSort) return;
+      currentSort = sortMode;
+      document.querySelectorAll(".pub-sort-btn").forEach(b => b.classList.toggle("active", b === btn));
+      renderPubList();
+    });
+  });
+  document.getElementById("pub-filter-clear")?.addEventListener("click", () => {
+    clearSelection();
+  });
+
   function clearSelection() {
     if (selectedNode) {
       nodeSel.filter(n => n.id === selectedNode.id)
         .attr("stroke", "#fff").attr("stroke-width", 2);
       selectedNode = null;
     }
-    document.getElementById("pub-panel").style.display = "none";
+    activeAuthorFilter = null;
     restoreFull();
-  }
-
-  window._clearSelectedNode = clearSelection;
-
-  function showPanel(d) {
-    const papers = pubsByAuthor[d.id] || [];
-    document.getElementById("panel-author").textContent = d.id;
-    document.getElementById("panel-list").innerHTML = papers
-      .map(p => `<li><a href="${p.url}" target="_blank" rel="noopener">${p.title}</a></li>`)
-      .join("");
-    const panel = document.getElementById("pub-panel");
-    panel.style.display = "block";
-    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    renderPubList();
   }
 
   // ── Links (curved paths) ──────────────────────────────────────────────
@@ -420,8 +1099,9 @@ cat(sprintf(
     return `M ${sx},${sy} Q ${mx},${my} ${tx},${ty}`;
   }
 
-  // ── Nodes ─────────────────────────────────────────────────────────────
+  // ── Nodes (visual) ────────────────────────────────────────────────────
   const nodeSel = svg.append("g")
+    .attr("pointer-events", "none")
     .selectAll("circle")
     .data(nodes)
     .join("circle")
@@ -429,33 +1109,45 @@ cat(sprintf(
       .attr("fill",         (d, i) => `url(#node-grad-${i})`)
       .attr("stroke",       "#fff")
       .attr("stroke-width", 2)
-      .attr("filter", d => d.group === "self" ? "url(#center-glow)" : "url(#node-shadow)")
+      .attr("filter", d => d.group === "self" ? "url(#center-glow)" : "url(#node-shadow)");
+
+  // ── Invisible hit targets for mobile touch accessibility ──────────────
+  const hitSel = svg.append("g")
+    .selectAll("circle")
+    .data(nodes)
+    .join("circle")
+      .attr("r", d => d.group === "self" ? CENTER_R + 6 : Math.max(20, rScale(d.n_papers) + 8))
+      .attr("fill", "transparent")
       .style("cursor", "pointer")
     .on("mouseover", function (event, d) {
       if (selectedNode && selectedNode.id === d.id) return;
-      d3.select(this).attr("stroke", "#ffcc00").attr("stroke-width", 3);
+      nodeSel.filter(n => n.id === d.id)
+        .attr("stroke", "#ffcc00").attr("stroke-width", 3);
       if (!selectedNode) applyFocus(d);
       const [x, y] = d3.pointer(event, container);
       if (d.group === "self") {
-        tooltip
-          .html(`<strong>Lasai Barreñada</strong><br/><em style="color:#888;font-size:11px">Click to see all publications</em>`)
-          .style("opacity", 1)
-          .style("left", (x + 14) + "px")
-          .style("top",  (y - 52) + "px");
+        tooltip.html(`<strong>Lasai Barreñada</strong><br/><em style="color:#888;font-size:11px">Click to show all publications</em>`);
       } else {
-        tooltip
-          .html(`<strong>${d.id}</strong><br/>
+        tooltip.html(`<strong>${d.id}</strong><br/>
                  ${d.n_papers} shared publication${d.n_papers > 1 ? "s" : ""}<br/>
-                 <em style="color:#888;font-size:11px">Click to see papers</em>`)
-          .style("opacity", 1)
-          .style("left", (x + 14) + "px")
-          .style("top",  (y - 52) + "px");
+                 <em style="color:#888;font-size:11px">Click to filter publications below</em>`);
       }
+      const cw = container.clientWidth || W;
+      const ch = container.clientHeight || H;
+      const tw = tooltip.node().offsetWidth || 180;
+      const th = tooltip.node().offsetHeight || 60;
+      const left = Math.max(8, Math.min(cw - tw - 8, x + 14));
+      const top  = Math.max(8, Math.min(ch - th - 8, y - 52));
+      tooltip
+        .style("opacity", 1)
+        .style("left", left + "px")
+        .style("top",  top + "px");
     })
     .on("mouseout", function (event, d) {
       tooltip.style("opacity", 0);
       if (selectedNode && selectedNode.id === d.id) return;
-      d3.select(this).attr("stroke", "#fff").attr("stroke-width", 2);
+      nodeSel.filter(n => n.id === d.id)
+        .attr("stroke", "#fff").attr("stroke-width", 2);
       if (selectedNode) applyFocus(selectedNode);
       else restoreFull();
     })
@@ -473,6 +1165,12 @@ cat(sprintf(
       }
       event.stopPropagation();
 
+      if (d.group === "self") {
+        clearSelection();
+        document.getElementById("pub-list-section")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        return;
+      }
+
       if (selectedNode && selectedNode.id === d.id) { clearSelection(); return; }
 
       if (selectedNode) {
@@ -481,9 +1179,12 @@ cat(sprintf(
       }
 
       selectedNode = d;
-      d3.select(this).attr("stroke", "#ffcc00").attr("stroke-width", 3);
+      nodeSel.filter(n => n.id === d.id)
+        .attr("stroke", "#ffcc00").attr("stroke-width", 3);
+      activeAuthorFilter = d.id;
       applyFocus(d);
-      showPanel(d);
+      renderPubList();
+      document.getElementById("pub-list-section")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     })
     .call(drag(sim));
 
@@ -500,19 +1201,27 @@ cat(sprintf(
       .attr("font-size",   d => d.group === "self" ? "13px" : "10px")
       .attr("font-weight", d => d.group === "self" ? "bold" : "normal")
       .attr("fill",        d => d.group === "self" ? "#fff" : "#333")
+      .style("paint-order",     "stroke")
+      .style("stroke",          d => d.group === "self" ? "none" : "#f4f8fd")
+      .style("stroke-width",    d => d.group === "self" ? "0px" : "3px")
+      .style("stroke-linejoin", "round")
       .style("opacity", 0);
 
   // ── Tick ──────────────────────────────────────────────────────────────
+  const padX = 56, padTop = 30, padBottom = 28;
   sim.on("tick", () => {
     nodes.forEach(d => {
       if (d.group !== "self") {
-        const r = rScale(d.n_papers) + 16;
-        d.x = Math.max(r, Math.min(W - r, d.x));
-        d.y = Math.max(r, Math.min(H - r, d.y));
+        const r = rScale(d.n_papers);
+        d.x = Math.max(padX + r, Math.min(W - padX - r, d.x));
+        d.y = Math.max(padTop + r, Math.min(H - padBottom - r, d.y));
       }
     });
     linkSel.attr("d", linkPath);
     nodeSel
+      .attr("cx", d => d.x)
+      .attr("cy", d => d.y);
+    hitSel
       .attr("cx", d => d.x)
       .attr("cy", d => d.y);
     labelSel
@@ -521,6 +1230,9 @@ cat(sprintf(
         ? d.y + 4.5
         : d.y - rScale(d.n_papers) - 4);
   });
+
+  // Render initial full publication list
+  renderPubList();
 
   // ── Entrance animation ────────────────────────────────────────────────
   setTimeout(() => {
@@ -549,27 +1261,30 @@ cat(sprintf(
   }
 
   // ── Legend ─────────────────────────────────────────────────────────────
-  const legend = svg.append("g").attr("transform", `translate(14, ${H - 78})`);
+  const legend = svg.append("g").attr("transform", `translate(14, ${H - 80})`);
 
   legend.append("rect")
-    .attr("width", 178).attr("height", 68).attr("rx", 5)
+    .attr("width", 168).attr("height", 68).attr("rx", 5)
     .attr("fill", "#fff").attr("fill-opacity", 0.9);
 
-  legend.append("circle").attr("cx", 14).attr("cy", 20).attr("r", 8)
-    .attr("fill", "#93c4e8");
-  legend.append("text").attr("x", 28).attr("y", 24)
-    .text("2 shared papers").attr("font-size", "11px").attr("fill", "#444");
+  const minR = rScale(minP);
+  const maxR = Math.min(15, rScale(maxP));
 
-  legend.append("circle").attr("cx", 14).attr("cy", 46).attr("r", 12)
-    .attr("fill", "#1a6eaa");
-  legend.append("text").attr("x", 28).attr("y", 50)
-    .text("Many shared papers").attr("font-size", "11px").attr("fill", "#444");
+  legend.append("circle").attr("cx", 20).attr("cy", 20).attr("r", minR)
+    .attr("fill", colorScale(minP));
+  legend.append("text").attr("x", 40).attr("y", 24)
+    .text(`${minP} shared papers`).attr("font-size", "11px").attr("fill", "#444");
+
+  legend.append("circle").attr("cx", 20).attr("cy", 48).attr("r", maxR)
+    .attr("fill", colorScale(maxP));
+  legend.append("text").attr("x", 40).attr("y", 52)
+    .text(`${maxP} shared papers`).attr("font-size", "11px").attr("fill", "#444");
 
   svg.append("text")
     .attr("x", W - 10).attr("y", H - 10)
     .attr("text-anchor", "end")
     .attr("font-size", "11px").attr("fill", "#aaa")
-    .text("Drag to rearrange · click any node to see publications");
+    .text("Drag to rearrange · click any node to filter publications below");
 })();
 </script>
 ```

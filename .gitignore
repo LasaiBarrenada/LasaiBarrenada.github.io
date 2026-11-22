@@ -26,3 +26,4 @@ blog/mac-setup/mac_setup_thumbnail.png
 **/*.quarto_ipynb
 
 /.luarc.json
+resources/Curriculum.xlsx

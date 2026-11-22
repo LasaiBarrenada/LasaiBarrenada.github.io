@@ -31,7 +31,7 @@ csl: nature_bold.csl
 filters:
   - path: highlight-author.lua
     at: post-quarto
-profile: "Incoming FWO Postdoctoral Fellow in clinical prediction models at KU Leuven."
+profile: "FWO Postdoctoral Fellow in clinical prediction models at KU Leuven."
 ---
 
 
