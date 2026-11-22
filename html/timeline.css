@@ -48,6 +48,21 @@
   background: #fafafa;
 }
 
+/* Milestone state (e.g., PhD defended) */
+.tl-entry.tl-milestone-entry::before {
+  background: #1b7a3d;
+  box-shadow: 0 0 0 2px #1b7a3d;
+}
+.tl-entry.tl-milestone-entry .tl-date { color: #1b7a3d; }
+.tl-entry.tl-milestone-entry .tl-card {
+  border-color: #bfe3c8;
+}
+.tl-entry.tl-milestone-entry .tl-card:hover {
+  box-shadow: 0 3px 14px rgba(27, 122, 61, 0.13);
+  border-color: #8fd1a0;
+}
+.tl-entry.tl-milestone-entry .tl-title a:hover { color: #1b7a3d; }
+
 /* Date label */
 .tl-date {
   position: absolute;
@@ -141,6 +156,24 @@
   content: '🏆 ';
 }
 
+/* Milestone link — green laureate style */
+.tl-links a.tl-milestone {
+  color: #166534;
+  border-color: #a3d9b1;
+  background: #eef9f1;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.tl-links a.tl-milestone:hover { background: #dcf2e2; }
+.tl-laurel {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
 /* Expand toggle */
 .tl-toggle {
   background: none;
@@ -172,10 +205,37 @@
   color: #444;
 }
 .tl-summary.open {
-  max-height: 300px;
+  max-height: 800px;
   padding-top: 0.75rem;
   border-top: 1px solid #e8f2ff;
   margin-top: 0.6rem;
+}
+
+/* Filter bar (Talks page) */
+.tl-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 1.2rem 0 0.5rem;
+}
+.tl-filter-btn {
+  background: #f4f9ff;
+  border: 1px solid #cce0ff;
+  color: #0062cc;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 4px 13px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.tl-filter-btn:hover {
+  background: #dbeeff;
+}
+.tl-filter-btn.active {
+  background: #007BFF;
+  border-color: #007BFF;
+  color: #fff;
 }
 
 /* Highlight animation (triggered from map link) */

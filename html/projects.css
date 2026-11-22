@@ -1,0 +1,417 @@
+/* ── Projects Page — Non-Linear Honours Strip & Filterable Bento Grid ────────── */
+
+.proj-section-heading {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 2rem 0 0.75rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e9ecef;
+  color: #1a1a2e;
+}
+
+/* ── Milestones & Honours Strip ─────────────────────────────────────────────── */
+.proj-honours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+  gap: 0.9rem;
+  margin: 1rem 0 2.2rem;
+}
+
+.proj-honour-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  min-width: 0;
+}
+
+.proj-honour-card:hover {
+  transform: translateY(-2px);
+}
+
+.proj-honour-milestone {
+  background: linear-gradient(135deg, #f3fbf5 0%, #ffffff 100%);
+  border: 1px solid #b8e0c2;
+  border-top: 3px solid #1b7a3d;
+}
+
+.proj-honour-milestone:hover {
+  box-shadow: 0 5px 16px rgba(27, 122, 61, 0.13);
+}
+
+.proj-honour-award {
+  background: linear-gradient(135deg, #fefbf3 0%, #ffffff 100%);
+  border: 1px solid #eadab0;
+  border-top: 3px solid #c9971c;
+}
+
+.proj-honour-award:hover {
+  box-shadow: 0 5px 16px rgba(184, 134, 11, 0.13);
+}
+
+.proj-honour-date {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 0.3rem;
+}
+
+.proj-honour-milestone .proj-honour-date {
+  color: #1b7a3d;
+}
+
+.proj-honour-award .proj-honour-date {
+  color: #a16207;
+}
+
+.proj-honour-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin-bottom: 0.25rem;
+  color: #1a1a2e;
+}
+
+.proj-honour-title a {
+  color: #1a1a2e;
+  text-decoration: none;
+}
+
+.proj-honour-milestone .proj-honour-title a:hover {
+  color: #1b7a3d;
+}
+
+.proj-honour-award .proj-honour-title a:hover {
+  color: #9a6e04;
+}
+
+.proj-honour-venue {
+  font-size: 0.8rem;
+  color: #6c757d;
+  line-height: 1.4;
+  margin-bottom: 0.7rem;
+  flex-grow: 1;
+}
+
+.proj-honour-note {
+  font-size: 0.78rem;
+  color: #3f624a;
+  margin-bottom: 0.7rem;
+  line-height: 1.4;
+}
+
+.proj-honour-links {
+  margin-top: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.proj-laurel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #166534;
+  background: #eef9f1;
+  border: 1px solid #a3d9b1;
+  border-radius: 5px;
+  padding: 3px 10px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.proj-laurel-pill:hover {
+  background: #dcf2e2;
+  color: #166534;
+}
+
+.proj-award-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #9a6e04;
+  background: #fdf8ec;
+  border: 1px solid #e6d49e;
+  border-radius: 5px;
+  padding: 3px 10px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.proj-award-pill::before {
+  content: '🏆 ';
+}
+
+.proj-award-pill:hover {
+  background: #f7edcf;
+  color: #9a6e04;
+}
+
+.tl-laurel {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  flex-shrink: 0;
+}
+
+/* ── Filter Bar ─────────────────────────────────────────────────────────────── */
+.proj-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.9rem 0 1.25rem;
+}
+
+.proj-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #f4f9ff;
+  border: 1px solid #cce0ff;
+  color: #0062cc;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.proj-filter-btn:hover {
+  background: #dbeeff;
+}
+
+.proj-filter-btn.active {
+  background: #007BFF;
+  border-color: #007BFF;
+  color: #fff;
+}
+
+.proj-filter-count {
+  font-size: 0.72rem;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+/* ── 2-Column Research Bento Grid ───────────────────────────────────────────── */
+.proj-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.proj-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2ecf7;
+  border-top: 3px solid #007BFF;
+  border-radius: 10px;
+  background: #fff;
+  padding: 1.15rem 1.25rem;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  min-width: 0;
+}
+
+.proj-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 80, 180, 0.08);
+  border-color: #b8d6ff;
+}
+
+.proj-card[data-category="methodology"] {
+  border-top-color: #007BFF;
+}
+
+.proj-card[data-category="clinical-utility"] {
+  border-top-color: #0d9488;
+}
+
+.proj-card[data-category="ovarian-cancer"] {
+  border-top-color: #4f46e5;
+}
+
+.proj-card-upcoming {
+  border: 1px dashed #cbd5e1;
+  border-top: 3px dashed #94a3b8;
+  background: #fafbfc;
+}
+
+.proj-card-upcoming:hover {
+  border-color: #94a3b8;
+}
+
+/* Card top row */
+.proj-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.65rem;
+}
+
+.proj-card-top p {
+  margin: 0;
+}
+
+.proj-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.proj-cat-badge,
+.proj-status-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.proj-cat-methodology {
+  background: #e8f2ff;
+  color: #0056b3;
+}
+
+.proj-cat-clinical-utility {
+  background: #e6f7f5;
+  color: #0f766e;
+}
+
+.proj-cat-ovarian-cancer {
+  background: #eef0ff;
+  color: #4338ca;
+}
+
+.proj-status-published {
+  background: #eef9f1;
+  color: #166534;
+}
+
+.proj-status-accepted {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.proj-status-preprint {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.proj-status-upcoming {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.proj-card-date {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #64748b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Title & Venue */
+.proj-card-title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.38;
+  margin-bottom: 0.25rem;
+  color: #1a1a2e;
+}
+
+.proj-card-title a {
+  color: #1a1a2e;
+  text-decoration: none;
+}
+
+.proj-card-title a:hover {
+  color: #007BFF;
+}
+
+.proj-card-venue {
+  font-size: 0.82rem;
+  color: #6c757d;
+  font-style: italic;
+  margin-bottom: 0.65rem;
+}
+
+/* Summary (3-line preview with smooth toggle) */
+.proj-card-summary {
+  font-size: 0.87rem;
+  line-height: 1.55;
+  color: #495057;
+  margin-bottom: 0.35rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.proj-card-summary.expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}
+
+.proj-expand-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #007BFF;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.proj-expand-btn:hover {
+  text-decoration: underline;
+}
+
+/* Card footer links */
+.proj-card-links {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f4f8;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.proj-link-btn {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #007BFF;
+  text-decoration: none;
+  border: 1px solid #cce0ff;
+  padding: 3px 10px;
+  border-radius: 5px;
+  background: #f4f9ff;
+  transition: background 0.15s;
+}
+
+.proj-link-btn:hover {
+  background: #dbeeff;
+  color: #0056b3;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .proj-grid {
+    grid-template-columns: 1fr;
+  }
+}

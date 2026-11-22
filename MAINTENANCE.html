@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
+<meta name="description" content="Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research">
 
 <title>maintenance – Lasai Barreñada</title>
 <style>
@@ -74,7 +74,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-e19f81c97bc45f6835df6be9cce9fdc9.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-98cad28c1b47bdf84fbbfe182e72a3a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-4428e0bc5bbb73b11a51b8f7846476b1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <link href="site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/academicons-1.9.4/all.css" rel="stylesheet">
@@ -107,12 +107,12 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 
 
 <meta property="og:title" content="Lasai Barreñada">
-<meta property="og:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
+<meta property="og:description" content="Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research">
 <meta property="og:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta property="og:site_name" content="Lasai Barreñada">
 <meta property="og:locale" content="en_US">
 <meta name="twitter:title" content="Lasai Barreñada">
-<meta name="twitter:description" content="Bio-statistician | PhD researcher | Prediction models, Healthcare, Research">
+<meta name="twitter:description" content="Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research">
 <meta name="twitter:image" content="https://lasaibarrenada.github.io//img/website_thumbnail.png">
 <meta name="twitter:creator" content="@BarrenadaLasai">
 <meta name="twitter:card" content="summary_large_image">
@@ -167,23 +167,6 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
   <li class="nav-item">
     <a class="nav-link" href="https://orcid.org/0000-0001-8020-0210" target="_blank"> 
 <span class="menu-text"><i class="ai  ai-orcid" aria-label="orcid"></i></span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="https://www.webofscience.com/wos/author/record/ACY-2331-2022" target="_blank"> 
-<span class="menu-text"><i class="ai  ai-researcherid" aria-label="researcherid"></i></span></a>
-  </li>  
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://bsky.app/profile/lasaibarrenada.bsky.social" target="_blank"> <i class="bi bi-twitter" role="img">
-</i> 
-<span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="https://github.com/LasaiBarrenada" target="_blank"> 
-<span class="menu-text"><i class="fa-brands fa-github" aria-label="github"></i></span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="https://osf.io/pgkjv/" target="_blank"> 
-<span class="menu-text"><i class="ai  ai-osf" aria-label="osf"></i></span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="https://www.linkedin.com/in/lasaib/" target="_blank"> 
@@ -242,7 +225,15 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>Add a conference talk</td>
-<td><code>speaking/conferences.xlsx</code></td>
+<td><code>speaking/conferences.xlsx</code> (auto-updates Talks page + HTML &amp; PDF CVs)</td>
+</tr>
+<tr class="even">
+<td>Add talk slides / poster PDF</td>
+<td><code>resources/</code> (linked via GitHub <code>blob/main/resources/&lt;file&gt;</code> in <code>speaking/conferences.xlsx</code>)</td>
+</tr>
+<tr class="odd">
+<td>Force re-geocoding of a city</td>
+<td>Remove its row from <code>speaking/geocache.csv</code> (or delete the file) and render</td>
 </tr>
 <tr class="even">
 <td>Add a CV entry (job, education, award…)</td>
@@ -289,18 +280,22 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <td><code>html/landing_page_styles.css</code></td>
 </tr>
 <tr class="odd">
-<td>Change timeline styles (projects &amp; speaking)</td>
-<td><code>html/timeline.css</code></td>
+<td>Change projects page styles</td>
+<td><code>html/projects.css</code></td>
 </tr>
 <tr class="even">
+<td>Change timeline styles (speaking)</td>
+<td><code>html/timeline.css</code></td>
+</tr>
+<tr class="odd">
 <td>Change page footer text</td>
 <td><code>_quarto.yml</code> → <code>page-footer</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Update “last updated” date</td>
 <td><code>_variables.yml</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Edit the license page</td>
 <td><code>license/index.qmd</code></td>
 </tr>
@@ -327,7 +322,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <li>On subsequent renders Quarto uses the cached output — it does <strong>not</strong> re-run R.</li>
 <li>This keeps the build fast and reproducible without needing R dependencies installed on the server.</li>
 </ul>
-<p><strong>Exceptions:</strong> The <strong>Projects</strong>, <strong>Speaking</strong>, <strong>Software</strong>, and <strong>Publications</strong> pages have <code>freeze: false</code> set in their YAML header, so they always re-execute when rendered. The Publications page also sets <code>flush = TRUE</code> in <code>get_publications()</code> to bypass the <code>scholar</code> package cache and requests the complete profile list. Projects, Speaking, and Software can be rendered directly after changing their data sources; Publications refreshes from Google Scholar on every render.</p>
+<p><strong>Exceptions:</strong> The <strong>Projects</strong>, <strong>Speaking</strong>, <strong>Software</strong>, <strong>Publications</strong>, and <strong>CV</strong> (<code>cv/cv-page.qmd</code>) pages all have <code>freeze: false</code> set in their YAML header, so they always re-execute when rendered. The Publications page also sets <code>flush = TRUE</code> in <code>get_publications()</code> to bypass the <code>scholar</code> package cache and requests the complete profile list. Projects, Speaking, Software, and CV can be rendered directly after changing their data sources; Publications refreshes from Google Scholar on every render.</p>
 <p><strong>When you MUST delete the freeze cache</strong> (to force re-execution on other pages):</p>
 <table class="caption-top table">
 <thead>
@@ -361,14 +356,21 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <li>No code changes needed — the page references this filename directly.</li>
 </ol>
 </section>
+<section id="hero-layout-cta-buttons-photo" class="level3">
+<h3 class="anchored" data-anchor-id="hero-layout-cta-buttons-photo">Hero layout, CTA buttons &amp; photo</h3>
+<ul>
+<li>Three quick-action CTA buttons (<code>.hero_cta</code> / <code>.hero_btn</code> in <code>html/landing_page_styles.css</code>) sit below the bio paragraphs: <strong>Explore Projects →</strong>, <strong>Publications</strong>, and <strong>CV (PDF)</strong>.</li>
+<li>The headshot <code>&lt;img src="/img/lasai_headshot.png" alt="Lasai Barreñada"/&gt;</code> includes accessible <code>alt</code> text, and the email link uses a valid <code>mailto:lasai.barrenadataleb@kuleuven.be</code> href.</li>
+</ul>
+</section>
 <section id="interactive-regression-easter-egg" class="level3">
 <h3 class="anchored" data-anchor-id="interactive-regression-easter-egg">Interactive regression Easter egg</h3>
 <p>The hero background canvas has an interactive feature on top of the particle animation:</p>
 <ol type="1">
-<li>A hint (“Click anywhere to place data points”) appears in the top-right in site-blue (<code>#007BFF</code>) at opacity 0.65, fading very slowly.</li>
+<li>A hint (“Click anywhere to place data points”) appears in the top-right in site-blue (<code>#007BFF</code>) at opacity 0.65, fading very slowly (hidden when viewport width <code>&lt; 700px</code> so it doesn’t collide with the heading on mobile).</li>
 <li>Clicking on the background (not on links/buttons) places a blue dot with a white border and a pop-in animation. A counter (“3 / 10”) tracks progress.</li>
 <li>At <strong>10 dots</strong>, a <strong>LOESS curve</strong> (span = 0.75, tricube kernel) is fitted through the points and drawn as a solid blue line. The <strong>R²</strong> value and the message “This is basically my job :)” appear in the top-right corner of the canvas.</li>
-<li>A <strong>“⟳ Random data”</strong> button appears just below the tagline (top-right, <code>top: 56px</code>). Clicking it clears any existing dots, generates 10 new random points spread across the canvas, and immediately fits + displays the LOESS and R². Clicking it again regenerates a fresh random set.</li>
+<li>A <strong>“⟳ Random data”</strong> button appears just below the tagline (top-right, <code>top: 56px</code>; hidden below <code>700px</code> on mobile). Clicking it clears any existing dots, generates 10 new random points spread across the canvas, and immediately fits + displays the LOESS and R². Clicking it again regenerates a fresh random set.</li>
 <li>Clicking anywhere on the canvas (11th click, or first click after a random set) clears everything and the cycle restarts.</li>
 </ol>
 </section>
@@ -383,12 +385,23 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="projects-page-projectsprojects-page.qmd" class="level2">
 <h2 class="anchored" data-anchor-id="projects-page-projectsprojects-page.qmd">4. Projects Page — <code>projects/projects-page.qmd</code></h2>
-<p>The page is a vertical HTML timeline generated by an R chunk (<code>tl-projects</code>) that reads <code>projects/projects.xlsx</code>. This works the same way as the speaking page — the R code builds the HTML cards from the spreadsheet data.</p>
-<p>Both pages share the same timeline CSS from <code>html/timeline.css</code> (see §10). <strong>Year dividers</strong> are automatically inserted between entries from different years to visually separate them.</p>
+<p>The page is a <strong>non-linear two-section portfolio</strong> generated by an R chunk (<code>tl-projects</code>) that reads <code>projects/projects.xlsx</code> and is styled via <code>html/projects.css</code> (using <code>.column-body-outset</code> for wider desktop cards):</p>
+<ol type="1">
+<li><strong>Milestones &amp; Honours</strong> (<code>.proj-honours-grid</code>): Horizontal multi-column strip displaying rows where <code>Category</code> is <code>Milestone</code> or <code>Award</code>.
+<ul>
+<li><strong>PhD Milestone</strong> (<code>.proj-honour-milestone</code>): Green top border, laurel-tinted background, and green laureate link pill (<code>.proj-laurel-pill</code>) with symmetric inline SVG laurel branches (<code>.tl-laurel</code>).</li>
+<li><strong>Awards</strong> (<code>.proj-honour-award</code>): Gold top border, warm gold tint, and 🏆 award pill (<code>.proj-award-pill</code>).</li>
+</ul></li>
+<li><strong>Research Projects</strong> (<code>.proj-filter-bar</code> + <code>.proj-grid</code>): Interactive category filter pills (<code>All</code>, <code>Methodology</code>, <code>Clinical Utility</code>, <code>Ovarian Cancer</code>, <code>Preprints &amp; Upcoming</code>) above a responsive 2-column Bento grid (1 column below <code>760px</code>).
+<ul>
+<li>Each card shows category &amp; status badges (<code>Published</code>, <code>Accepted</code>, <code>Preprint</code>, <code>Upcoming</code>), date, linked title, venue, a 3-line clamped summary preview with an automatic <code>Read more ▸</code> / <code>Show less ▾</code> toggle when truncated, and footer pill links (<code>Paper</code>, <code>Preprint</code>, <code>Code</code>, <code>Package</code>, <code>CRAN</code>).</li>
+<li>Upcoming entries (<code>Status == "Upcoming"</code> or blank <code>Link_1</code>) render with dashed muted borders (<code>.proj-card-upcoming</code>).</li>
+</ul></li>
+</ol>
 <p>Because the R output is inserted into Markdown before Pandoc processes it, <strong>no line of generated HTML may start with 4+ spaces</strong> (same constraint as the speaking page). Keep all <code>sprintf()</code> / <code>paste0()</code> templates at ≤ 3-space indentation.</p>
-<section id="add-a-new-project" class="level3">
-<h3 class="anchored" data-anchor-id="add-a-new-project">Add a new project</h3>
-<p>Open <code>projects/projects.xlsx</code> and add a new row. The columns are:</p>
+<section id="add-or-update-a-project" class="level3">
+<h3 class="anchored" data-anchor-id="add-or-update-a-project">Add or update a project</h3>
+<p>Open <code>projects/projects.xlsx</code> and add or edit a row. The columns are:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -415,56 +428,71 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td><code>Month</code></td>
-<td>Numeric month (used for sorting)</td>
-<td>3</td>
+<td>Numeric month (used for sorting; blank for undated upcoming)</td>
+<td>11</td>
 </tr>
 <tr class="even">
 <td><code>Venue</code></td>
-<td>Journal name or “arXiv preprint”</td>
-<td>BMJ Open</td>
+<td>Journal name, preprint server, or institution</td>
+<td>Diagnostic and Prognostic Research</td>
 </tr>
 <tr class="odd">
-<td><code>Link_1_name</code></td>
-<td>Label for the first link</td>
-<td>Paper</td>
+<td><code>OSF_ID</code></td>
+<td>Optional OSF node ID (also links papers onto OSF Software cards)</td>
+<td>ngcj2</td>
 </tr>
 <tr class="even">
-<td><code>Link_1</code></td>
-<td>URL for the first link</td>
-<td>https://…</td>
+<td><code>Link_1_name</code></td>
+<td>Label for the first link (or <code>"Dr. Barreñada"</code> / <code>"Award"</code>)</td>
+<td>Paper</td>
 </tr>
 <tr class="odd">
+<td><code>Link_1</code></td>
+<td>URL for the first link (leave blank for upcoming)</td>
+<td>https://…</td>
+</tr>
+<tr class="even">
 <td><code>Link_2_name</code></td>
 <td>Label for the second link</td>
 <td>Code</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Link_2</code></td>
 <td>URL for the second link</td>
 <td>https://…</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Link_3_name</code></td>
 <td>Label for an optional third link (leave blank if none)</td>
 <td>Package</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Link_3</code></td>
 <td>URL for the optional third link</td>
 <td>https://…</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Summary</code></td>
 <td>2–3 sentence plain-language summary</td>
 <td>Two or three sentences…</td>
 </tr>
+<tr class="odd">
+<td><code>Category</code></td>
+<td>Section/filter tag (<code>Methodology</code>, <code>Clinical Utility</code>, <code>Ovarian Cancer</code>, <code>Milestone</code>, <code>Award</code>)</td>
+<td>Clinical Utility</td>
+</tr>
+<tr class="even">
+<td><code>Status</code></td>
+<td>Badge label (<code>Published</code>, <code>Accepted</code>, <code>Preprint</code>, <code>Upcoming</code>, <code>Milestone</code>, <code>Award</code>)</td>
+<td>Published</td>
+</tr>
+<tr class="odd">
+<td><code>First_Author</code></td>
+<td><code>TRUE</code> / <code>FALSE</code> / <code>NA</code> (tracks first-author paper coverage from <code>resources/Curriculum.xlsx</code>)</td>
+<td>TRUE</td>
+</tr>
 </tbody>
 </table>
-<p>If <code>Link_1</code> is <strong>left blank</strong>, the project is displayed as <strong>Upcoming</strong> — grey hollow dot, grey card, and an “Upcoming” badge. Once published, fill in the links and the project switches to the normal blue style.</p>
-</section>
-<section id="award-links" class="level3">
-<h3 class="anchored" data-anchor-id="award-links">Award links</h3>
-<p>If any <code>Link_X_name</code> contains the word “Award” (case-insensitive), the link button is automatically rendered in a <strong>gold award style</strong> with a 🏆 icon. This is handled by the R code in <code>projects-page.qmd</code> and styled via <code>.tl-award</code> in <code>html/timeline.css</code>.</p>
 <p>Freeze is disabled on this page, so just edit the Excel and re-render — no need to delete cache folders.</p>
 <hr>
 </section>
@@ -473,13 +501,17 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="talks-page-speakingspeaking-page.qmd">5. Talks Page — <code>speaking/speaking-page.qmd</code></h2>
 <p>The page appears as <strong>“Talks”</strong> in the navbar (renamed from “Speaking”). The page has two sections:</p>
 <ol type="1">
-<li><strong>Timeline</strong> — an R chunk (<code>tl-speaking</code>) reads the Excel, builds HTML cards, and outputs them via <code>cat()</code> with <code>results='asis'</code>. Shares timeline CSS with the projects page via <code>html/timeline.css</code>. <strong>Year dividers</strong> are automatically inserted between entries from different years.</li>
-<li><strong>Map</strong> — an R chunk (<code>map-data</code>) geocodes conference cities and injects the coordinates as JSON for the <strong>Leaflet</strong> interactive map.</li>
+<li><strong>Timeline</strong> — a filter pill bar (<code>All | Talks | Posters</code>, <code>.tl-filter-bar</code> / <code>.tl-filter-btn</code> in <code>html/timeline.css</code>) lets visitors filter by presentation type (<code>data-type</code> / <code>data-year</code>), and an R chunk (<code>tl-speaking</code>) reads the Excel, builds HTML cards, and outputs them via <code>cat()</code> with <code>results='asis'</code>. Shares timeline CSS with the projects page via <code>html/timeline.css</code>. <strong>Year dividers</strong> are automatically inserted between entries from different years (and hidden automatically when no entries in that year match the active filter).</li>
+<li><strong>Map</strong> — an R chunk (<code>map-data</code>) reads <code>conferences.xlsx</code> with <code>openxlsx</code>, checks a local geocoding cache (<code>speaking/geocache.csv</code>), queries ArcGIS only for new/uncached cities, and injects the coordinates as JSON for the <strong>Leaflet</strong> interactive map.</li>
 </ol>
-<p>The map uses <strong>Leaflet.js</strong> with public OpenStreetMap tiles, so it does not require an API key. Conference locations and affiliated institutions are geocoded from their city names at render time using the ArcGIS geocoder. Rendering stops with a clear error if the geocoding service is unavailable or a city has no result, rather than generating a map without points. Clicking any marker opens a styled popup. The map works on both desktop and mobile with native touch support. Zoom is constrained (<code>minZoom: 2</code>, <code>maxBounds</code>) so only a single world view is shown.</p>
-<section id="map-timeline-linking" class="level3">
-<h3 class="anchored" data-anchor-id="map-timeline-linking">Map → timeline linking</h3>
-<p>Each timeline entry has a unique <code>id</code> attribute (e.g., <code>talk-iscb-2024</code>), generated by the R code from <code>Code_Name</code> and <code>Year</code>. Conference marker popups include a <strong>“Show in timeline ↓”</strong> link. Clicking it smooth-scrolls to the matching timeline entry and applies a 2-second blue pulse highlight (<code>tl-highlight</code> class → <code>tl-flash</code> animation in <code>html/timeline.css</code>). The ID is computed identically in both R and JS: <code>talk-{code_name}-{year}</code>, lowercased with non-alphanumeric characters replaced by hyphens.</p>
+<p>The map uses <strong>Leaflet.js</strong> with public OpenStreetMap tiles, so it does not require an API key. Conference locations and affiliated institutions are geocoded from their city names at render time using the ArcGIS geocoder and persisted in <code>speaking/geocache.csv</code> so subsequent renders are fast and work offline. Rendering stops with a clear error if the geocoding service is unavailable for an uncached city or returns no result, rather than generating a map without points. Clicking any marker opens a styled popup. The map works on both desktop and mobile with native touch support. Zoom is constrained (<code>minZoom: 2</code>, <code>maxBounds</code>) so only a single world view is shown.</p>
+<section id="map-timeline-linking-grouped-city-markers" class="level3">
+<h3 class="anchored" data-anchor-id="map-timeline-linking-grouped-city-markers">Map ↔︎ timeline linking &amp; grouped city markers</h3>
+<p>Each timeline entry has a unique <code>id</code> attribute (e.g., <code>talk-iscb-2024</code>), generated in R from <code>Code_Name</code> and <code>Year</code> with <code>make.unique(..., sep = "-")</code> so multiple talks at the same conference/year stay distinct. Both <code>tl-speaking</code> and <code>map-data</code> sort by <code>-Year, -Month</code> so IDs match identically.</p>
+<ul>
+<li><strong>Map → timeline</strong>: Conference markers are grouped by city so multiple talks in the same city share one marker instead of stacking; its popup lists every talk at that city, each with its own <strong>“Show in timeline ↓”</strong> link (<code>window._scrollToEntry</code>). Clicking it resets any active filter if needed, smooth-scrolls to the matching timeline entry, and applies a 2-second blue pulse highlight (<code>tl-highlight</code> class → <code>tl-flash</code> animation in <code>html/timeline.css</code>).</li>
+<li><strong>Timeline → map</strong>: Every timeline card includes a <strong>“Locate on map ↑”</strong> link (<code>window._focusMapEntry</code>) that smooth-scrolls to the map, pans/zooms to that city’s marker, and opens its popup.</li>
+</ul>
 </section>
 <section id="university-popup-labels" class="level3">
 <h3 class="anchored" data-anchor-id="university-popup-labels">University popup labels</h3>
@@ -561,6 +593,10 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
+<section id="talk-slides-and-poster-files-resources" class="level3">
+<h3 class="anchored" data-anchor-id="talk-slides-and-poster-files-resources">Talk slides and poster files (<code>resources/</code>)</h3>
+<p>Slides and poster files (PDFs, PPTX, HTML decks) live in the top-level <code>resources/</code> folder on the <code>main</code> branch rather than a separate <code>web_resources</code> repository. Because <code>resources/</code> is not listed in <code>_quarto.yml</code> → <code>project: resources:</code>, Quarto does <strong>not</strong> bundle these files into <code>_site/</code> / <code>gh-pages</code>; instead, <code>speaking/conferences.xlsx</code> links directly to them on GitHub via <code>https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/blob/main/resources/&lt;filename&gt;</code> (URL-encoded if the filename contains spaces or special characters).</p>
+</section>
 <section id="add-or-change-an-affiliated-institution-on-the-map" class="level3">
 <h3 class="anchored" data-anchor-id="add-or-change-an-affiliated-institution-on-the-map">Add or change an affiliated institution on the map</h3>
 <p>The list of institutions is defined in the <code>map-data</code> R chunk inside <code>speaking-page.qmd</code>:</p>
@@ -575,45 +611,69 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="publications-page-publicationspublications-page.qmd" class="level2">
 <h2 class="anchored" data-anchor-id="publications-page-publicationspublications-page.qmd">6. Publications Page — <code>Publications/publications-page.qmd</code></h2>
-<p>The page pulls data live from <strong>Google Scholar</strong> (user ID <code>uPOL3NkAAAAJ</code>) using the <code>scholar</code> R package. The co-authorship network is built automatically from your publication list.</p>
+<p>The page pulls your publication list live from <strong>Google Scholar</strong> (user ID <code>uPOL3NkAAAAJ</code>) using the <code>scholar</code> R package (<code>flush = TRUE</code>), resolves complete author lists for truncated entries (<code>...</code>), filters out non-authored entries (such as award announcements about you), and builds the interactive D3 co-authorship network and searchable publication list.</p>
 <section id="when-a-new-paper-appears-on-google-scholar" class="level3">
 <h3 class="anchored" data-anchor-id="when-a-new-paper-appears-on-google-scholar">When a new paper appears on Google Scholar</h3>
 <ol type="1">
 <li>Run <code>quarto render Publications/publications-page.qmd</code> (or render the full site).</li>
-<li>The R code will fetch the complete profile list with a fresh Scholar request, re-run the deduplication pipeline, and rebuild the network.</li>
+<li>The R code fetches the complete profile list (<code>flush = TRUE</code>), resolves full author lists, re-runs deduplication, and rebuilds both <code>graphNodes</code>/<code>graphLinks</code> and <code>allPublications</code>.</li>
 </ol>
+</section>
+<section id="multi-source-full-author-resolution-graph-data-chunk" class="level3">
+<h3 class="anchored" data-anchor-id="multi-source-full-author-resolution-graph-data-chunk">Multi-source full-author resolution (<code>graph-data</code> chunk)</h3>
+<p>Google Scholar truncates multi-author entries in the profile table with <code>, ...</code> and <code>scholar::get_complete_authors()</code> frequently returns <code>NA</code> under Google Scholar rate limits. For every truncated paper, <code>graph-data</code> resolves full author lists through a 4-tier fallback chain (formatted cleanly to <code>Initials Surname</code> while preserving multi-word particles like <code>Van Calster</code>, <code>van Smeden</code>, <code>De Cock Campo</code> and corporate groups like <code>IOTA 6 Collaborators</code>):</p>
+<ol type="1">
+<li><strong>Layer 1 — Local BibTeX files</strong> (<code>cv/peer_bib_auto.bib</code>, <code>cv/other_bib_auto.bib</code>, <code>cv/peer_bib.bib</code>, in priority order) matched by normalized title Jaccard similarity (<code>&gt;= 0.75</code>). Handles Zotero trailing particles (e.g., <code>Calster, Ben Van</code>), BibLaTeX <code>family=...</code>/<code>prefix=...</code> entries, and braced group authors.</li>
+<li><strong>Layer 2a — OpenAlex ORCID works</strong> (<code>https://api.openalex.org/works?filter=author.orcid:https://orcid.org/0000-0001-8020-0210&amp;per-page=100</code>) matched by normalized title Jaccard similarity (<code>&gt;= 0.70</code>), excluding <code>type == "dataset"</code> and <code>Replication Data</code> / <code>Correction</code> / <code>Erratum</code> records.</li>
+<li><strong>Layer 2b — OpenAlex title search fallback</strong> (<code>&gt;= 0.75</code> similarity, verified to contain a <code>Barreñada</code> author), also excluding datasets/corrections.</li>
+<li><strong>Layer 3 — <code>scholar::get_complete_authors()</code> fallback</strong> if still unresolved.</li>
+</ol>
+<p>After full author resolution, any Scholar entry where no author matches <code>barre[nñ]</code> (such as third-party prize announcements) is excluded. Malformed Scholar venue strings (e.g., <code>arXiv preprint arXiv:, :2610.37353</code>) are formatted cleanly (<code>arXiv:2610.37353</code>), and <code>Clean_pubs</code> / <code>pubs_by_author</code> / <code>allPublications</code> are consistently ordered by <code>-year, -cites</code>.</p>
 </section>
 <section id="author-name-deduplication" class="level3">
 <h3 class="anchored" data-anchor-id="author-name-deduplication">Author name deduplication</h3>
-<p>The pipeline automatically handles accent variants (e.g.&nbsp;<code>M Martinez-Garcia</code> ≡ <code>M Martínez-García</code>). For cases that cannot be resolved automatically — typically Dutch/Belgian particle names or abbreviated compound surnames — a <code>manual_corrections</code> vector is defined near the top of the R chunk:</p>
+<p>Two-stage canonicalization handles surface variants and initial differences:</p>
+<ol type="1">
+<li><strong><code>manual_corrections</code></strong> near the middle of <code>graph-data</code> maps abbreviations, particles, and encoding artefacts before automated grouping:</li>
+</ol>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>manual_corrections <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G Collins"</span>       <span class="ot">=</span> <span class="st">"GS Collins"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BV Calster"</span>      <span class="ot">=</span> <span class="st">"B Van Calster"</span>,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BD Moor"</span>         <span class="ot">=</span> <span class="st">"B De Moor"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JYJ Verbakel"</span>    <span class="ot">=</span> <span class="st">"JY Verbakel"</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JF Calatrava"</span>    <span class="ot">=</span> <span class="st">"J Fernández Calatrava"</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JCGS de Cueto"</span>   <span class="ot">=</span> <span class="st">"JC Gálvez Sainz de Cueto"</span>,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Rén Armañanzas"</span>  <span class="ot">=</span> <span class="st">"R Armañanzas"</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>If a new co-author appears under two different name formats, add a new entry here:</p>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"G Collins"</span>        <span class="ot">=</span> <span class="st">"GS Collins"</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JF Calatrava"</span>     <span class="ot">=</span> <span class="st">"J Fernández Calatrava"</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JCGS de Cueto"</span>    <span class="ot">=</span> <span class="st">"JC Gálvez Sainz de Cueto"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"JYJ Verbakel"</span>     <span class="ot">=</span> <span class="st">"JY Verbakel"</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BV Calster"</span>       <span class="ot">=</span> <span class="st">"B Van Calster"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BD Moor"</span>          <span class="ot">=</span> <span class="st">"B De Moor"</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"BDC Campo"</span>        <span class="ot">=</span> <span class="st">"B De Cock Campo"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"B De Cock"</span>        <span class="ot">=</span> <span class="st">"B De Cock Campo"</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"TH Bourne"</span>        <span class="ot">=</span> <span class="st">"T Bourne"</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"RR Zegarra"</span>       <span class="ot">=</span> <span class="st">"R Ramirez Zegarra"</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Rén Armañanzas"</span>   <span class="ot">=</span> <span class="st">"R Armañanzas"</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ol start="2" type="1">
+<li><strong>Stage 1 (accent/case preference)</strong> groups names sharing the same transliterated lowercase key (<code>M Martinez-Garcia</code> ≡ <code>M Martínez-García</code>), preferring forms with accented Unicode characters, longer initials, and higher frequency.</li>
+<li><strong>Stage 2 (initial-prefix merge with co-occurrence guard)</strong> automatically merges unambiguous initial prefixes sharing an exact surname (e.g., <code>A Vickers</code> → <code>AJ Vickers</code>, <code>E Steyerberg</code> → <code>EW Steyerberg</code>) <strong>only</strong> when the two forms have zero co-occurrence on the same paper — preventing distinct authors like <code>H Lee</code> and <code>HC Lee</code> on the <em>Nature Medicine</em> paper from being merged. Corporate/consortium names (<code>Collaborators</code>, <code>Consortium</code>, <code>Group</code>, <code>Committee</code>) are kept in the paper’s <code>authors</code> string but excluded from collaborator counts.</li>
+</ol>
+<p>If a new co-author appears under an unexpected abbreviation or nickname, add an entry to <code>manual_corrections</code>:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="st">"Garbled form"</span>  <span class="ot">=</span> <span class="st">"Canonical form"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="publication-deduplication-preprint-journal" class="level3">
 <h3 class="anchored" data-anchor-id="publication-deduplication-preprint-journal">Publication deduplication (preprint + journal)</h3>
-<p>The pipeline also detects preprint/working-paper duplicates by comparing titles with Jaccard similarity. If a preprint you have on Google Scholar gets published and the two entries persist simultaneously, the preprint will be automatically dropped when Jaccard similarity ≥ 0.28 with the published version. No manual action needed.</p>
+<p>The pipeline detects preprint/working-paper duplicates (<code>arxiv|biorxiv|medrxiv|zenodo|preprint|working paper|statistics spain</code>) by comparing titles with Jaccard similarity. If a preprint on Google Scholar gets published and both entries appear simultaneously, the preprint is dropped when Jaccard similarity ≥ 0.28 with a published paper.</p>
 </section>
 <section id="the-network-only-shows-co-authors-with-2-shared-papers" class="level3">
 <h3 class="anchored" data-anchor-id="the-network-only-shows-co-authors-with-2-shared-papers">The network only shows co-authors with ≥ 2 shared papers</h3>
-<p>This is controlled by the <code>filter(n_papers &gt;= 2)</code> line in the R chunk. Change <code>2</code> to any other threshold if needed.</p>
+<p>This is controlled by the <code>filter(n_papers &gt;= 2)</code> line in the R chunk. Change <code>2</code> to any other threshold if needed. Co-authors are ordered via hierarchical clustering (<code>stats::hclust(..., method = "average")</code> on a binary co-author × paper matrix) and assigned <code>order_idx</code> so D3 initializes research communities in adjacent radial sectors.</p>
 </section>
-<section id="visual-enhancements-d3" class="level3">
-<h3 class="anchored" data-anchor-id="visual-enhancements-d3">Visual enhancements (D3)</h3>
-<p>The network uses several visual techniques implemented in the <code>&lt;script&gt;</code> block:</p>
+<section id="visual-enhancements-searchable-publication-list-d3-js" class="level3">
+<h3 class="anchored" data-anchor-id="visual-enhancements-searchable-publication-list-d3-js">Visual enhancements &amp; searchable publication list (D3 + JS)</h3>
+<p>The network (<code>W = 860</code>, <code>H = 600</code>) uses several visual and usability enhancements in the <code>&lt;script&gt;</code> block:</p>
 <ul>
+<li><strong>Scaled radial geometry &amp; clustered initialization</strong>: <code>colorScale</code>, <code>rScale</code> (<code>[8, 22]</code>), and <code>distScale</code> (<code>[225, 92]</code>) scale over actual <code>[minP, maxP]</code> counts so outer nodes stay cleanly inside the SVG bounds (<code>padX = 56</code>, <code>padTop = 30</code>, <code>padBottom = 28</code>), initialized by <code>order_idx</code> with light centering forces and collision radius <code>+ 22</code>.</li>
 <li><strong>Focus + dim</strong>: Hovering or clicking a node highlights it and its connected links/nodes; everything else fades to 12% opacity (<code>DIM_OPACITY</code>). When a node is selected (clicked), hover on other nodes does not change the focus — only clicking a new node or the background changes it.</li>
-<li><strong>Gradient nodes</strong>: Each node uses an SVG radial gradient (lighter centre, darker edge) defined in <code>&lt;defs&gt;</code>. The centre node also has a glow filter (<code>feGaussianBlur</code> + <code>feMerge</code>); coauthor nodes have a drop shadow (<code>feDropShadow</code>).</li>
-<li><strong>Curved links</strong>: Links are <code>&lt;path&gt;</code> elements with quadratic Bézier curves instead of straight <code>&lt;line&gt;</code> elements. Adjacent links alternate curve direction (<code>sign = i % 2</code>) so they don’t overlap.</li>
-<li><strong>Entrance animation</strong>: Nodes start at <code>r = 0</code> and scale in with <code>d3.easeBackOut</code> (slight overshoot); links and labels fade in. The animation fires 400 ms after page load to let the simulation settle first.</li>
+<li><strong>Label halos &amp; clamped tooltips</strong>: Co-author surname labels render with a <code>#f4f8fd</code> <code>paint-order: stroke</code> halo for legibility across links, and <code>#graph-tooltip</code> coordinates are clamped inside <code>#graph-container</code> bounds. The legend dynamically renders actual <code>minP</code> and <code>maxP</code> shared-paper counts.</li>
+<li><strong>Mobile touch hit targets</strong>: Transparent overlay circles (<code>hitSel</code>, minimum radius 20 px) handle pointer, drag, and tap events so smaller co-author nodes remain easy to tap on touch screens.</li>
+<li><strong>Gradient nodes &amp; curved links</strong>: Each node uses a radial gradient + drop shadow (center node uses <code>center-glow</code>); links alternate quadratic Bézier curve direction (<code>sign = i % 2</code>).</li>
+<li><strong>Full searchable publication list (<code>#pub-list-section</code>)</strong>: Below the chart, R injects <code>allPublications</code> (deduplicated, sorted by <code>-year, -cites</code>) and JS renders a publication list with a live search box (<code>#pub-search</code>), a <strong>Sort: Year | Citations</strong> toggle (<code>.pub-sort-btn</code> — Year groups entries under year headers; Citations renders a flat list sorted by citation count with year badges), author self-highlighting, preprint/citation badges, and a count indicator. Clicking any co-author node in the D3 network filters <code>#pub-full-list</code> directly and highlights the selected collaborator’s links (clicking the node again, clicking the center node, clicking the SVG background, or clicking the filter pill’s <code>×</code> clears the filter and restores all publications).</li>
 </ul>
 <hr>
 </section>
@@ -635,18 +695,18 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td><code>cv/cv-page.qmd</code></td>
-<td><strong>HTML page</strong> shown on the website — renders the CV content directly with styled sections, a table of contents, and a “Download PDF” button at the top</td>
+<td><strong>HTML page</strong> shown on the website — renders the CV content directly (<code>freeze: false</code>), pulls Conference Presentations from <code>speaking/conferences.xlsx</code>, bolds <code>"Barreñada, L."</code> in <code>#refs</code> via JS, and includes a TOC + “Download PDF” button</td>
 </tr>
 <tr class="even">
 <td><code>cv/cv.qmd</code></td>
-<td><strong>PDF source</strong> using <code>quarto-cv-pdf</code> format — generates <code>cv.pdf</code> for download</td>
+<td><strong>PDF source</strong> using <code>quarto-cv-pdf</code> format — pulls Conference Presentations from <code>speaking/conferences.xlsx</code> and generates <code>cv.pdf</code> for download</td>
 </tr>
 </tbody>
 </table>
-<p>Both files should be kept in sync when you add new entries.</p>
-<section id="add-a-new-entry-job-talk-award-etc." class="level3">
-<h3 class="anchored" data-anchor-id="add-a-new-entry-job-talk-award-etc.">Add a new entry (job, talk, award, etc.)</h3>
-<p>Update <strong>both</strong> files:</p>
+<p>Both files should be kept in sync when you add new jobs, education, awards, grants, or fellowships. <strong>Conference presentations</strong> are read automatically from <code>speaking/conferences.xlsx</code> in both files, so you only need to update the spreadsheet.</p>
+<section id="add-a-new-entry-job-education-award-grant-etc." class="level3">
+<h3 class="anchored" data-anchor-id="add-a-new-entry-job-education-award-grant-etc.">Add a new entry (job, education, award, grant, etc.)</h3>
+<p>Update <strong>both</strong> files (Conference Presentations are automatic via <code>speaking/conferences.xlsx</code>):</p>
 <ol type="1">
 <li><strong><code>cv-page.qmd</code></strong> — Add an entry using the Quarto div pattern:</li>
 </ol>
@@ -690,22 +750,28 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <section id="technical-notes" class="level3">
 <h3 class="anchored" data-anchor-id="technical-notes">Technical notes</h3>
 <ul>
-<li><code>cv-page.qmd</code> uses <code>engine: knitr</code> (needed for the inline R expression <code>Sys.Date()</code>). Without it, Quarto falls back to Jupyter/Python and fails.</li>
-<li><code>cv-page.qmd</code> has <code>freeze: true</code> since publications from the bib file don’t change often. Delete <code>_freeze/cv/cv-page/</code> when you add a new publication to force re-rendering.</li>
+<li><code>cv-page.qmd</code> uses <code>engine: knitr</code> (needed for <code>Sys.Date()</code> and the <code>cv-conferences</code> R chunk).</li>
+<li><code>cv-page.qmd</code> has <code>freeze: false</code> so <code>Sys.Date()</code>, <code>speaking/conferences.xlsx</code>, and <code>peer_bib.bib</code> always stay up to date on render.</li>
+<li>In HTML output, Pandoc’s built-in <code>citeproc</code> runs after <code>post-quarto</code> Lua filters, so <code>cv-page.qmd</code> bolds <code>Barreñada, L.</code> inside <code>#refs</code> via a small <code>DOMContentLoaded</code> script instead of <code>highlight-author.lua</code> (which is used for the PDF CVs <code>cv.qmd</code> and <code>cv_onlypubs.qmd</code>).</li>
 </ul>
 <hr>
 </section>
 </section>
 <section id="software-page-softwaresoftware-page.qmd" class="level2">
 <h2 class="anchored" data-anchor-id="software-page-softwaresoftware-page.qmd">8. Software Page — <code>software/software-page.qmd</code></h2>
-<p>The page fetches data from two platforms using client-side JS — no R code, no freeze cache:</p>
+<p>The page displays repositories from three platforms (<code>freeze: false</code>):</p>
 <ol type="1">
-<li><strong>GitHub</strong> (username <code>LasaiBarrenada</code>) — public repositories displayed in a card grid.</li>
-<li><strong>OSF</strong> (user ID <code>pgkjv</code>) — public top-level projects displayed in a separate card grid below.</li>
+<li><strong>GitHub</strong> (username <code>LasaiBarrenada</code>) — pre-fetched at build time by R (<code>github-build-cache</code> chunk) into <code>window.GITHUB_BUILD_CACHE</code> for instant rendering, and refreshed in the browser via client-side JS.</li>
+<li><strong>GitLab (KU Leuven)</strong> (username <code>u0158158</code> at <code>gitlab.kuleuven.be</code>) — owned and contributed public projects fetched at build time by R (<code>gitlab-projects</code> chunk) and displayed under <strong>GitLab Projects (KU Leuven)</strong>.</li>
+<li><strong>OSF</strong> (user ID <code>pgkjv</code>) — public top-level projects fetched at build time by R (<code>osf-projects</code> chunk) and displayed in a separate card grid below.</li>
 </ol>
 <section id="how-it-works-github" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works-github">How it works — GitHub</h3>
-<p>A <code>&lt;script&gt;</code> block calls <code>https://api.github.com/users/LasaiBarrenada/repos?type=owner&amp;sort=pushed&amp;per_page=100</code> on page load. Repos are displayed in a responsive 2-column card grid (1 column on mobile). Each card shows the repo name (linked), description, primary language with a coloured dot, star count, fork badge (if applicable), topic tags, and a relative “Updated X ago” timestamp.</p>
+<ol type="1">
+<li><strong>Build-time cache (<code>github-build-cache</code>)</strong>: At render time, R fetches owned repos and <code>CONTRIB_REPOS</code> from GitHub’s API (using <code>curl</code> with a <code>User-Agent</code> header when available) and embeds trimmed metadata in <code>window.GITHUB_BUILD_CACHE</code>.</li>
+<li><strong>Instant render + live refresh</strong>: On page load, if <code>window.GITHUB_BUILD_CACHE</code> is populated, cards render immediately with zero spinner flash. A background <code>fetch()</code> to <code>https://api.github.com/users/LasaiBarrenada/repos?type=owner&amp;sort=pushed&amp;per_page=100</code> (plus <code>CONTRIB_REPOS</code>) refreshes star counts and push dates. If the live request fails (e.g., 403 unauthenticated rate limit on shared institutional Wi-Fi), the build-time cards remain visible instead of showing an error.</li>
+<li>Repos are displayed in a responsive 2-column card grid (1 column on mobile), sorted by stars descending. Each card shows the repo name (linked), description, primary language with a coloured dot, star count, contributor badge (if applicable), topic tags, and a relative “Updated X ago” timestamp.</li>
+</ol>
 </section>
 <section id="configuration-github-inside-the-first-script-block" class="level3">
 <h3 class="anchored" data-anchor-id="configuration-github-inside-the-first-script-block">Configuration — GitHub (inside the first <code>&lt;script&gt;</code> block)</h3>
@@ -739,6 +805,10 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
+</section>
+<section id="how-it-works-gitlab-ku-leuven" class="level3">
+<h3 class="anchored" data-anchor-id="how-it-works-gitlab-ku-leuven">How it works — GitLab (KU Leuven)</h3>
+<p>The <code>gitlab-projects</code> R chunk queries both <code>https://gitlab.kuleuven.be/api/v4/users/u0158158/projects?per_page=100</code> and <code>.../contributed_projects?per_page=100</code> at build time, deduplicates by project <code>id</code>, excludes archived projects and <code>gitlab_exclude</code> (<code>u0158158</code>), sorts by <code>last_activity_at</code> descending, and fetches <code>/api/v4/projects/{id}/languages</code> for each project (preferring programming languages such as <code>R</code> over <code>HTML</code>/<code>CSS</code>/<code>SCSS</code>/<code>JavaScript</code>). Cards display the full <code>path_with_namespace</code>, a red-orange <code>"GitLab"</code> badge (<code>.sw-gitlab-badge</code>), description, topic pills (<code>.sw-topic-gitlab</code>), primary language dot, and <code>"Updated Mon YYYY"</code>.</p>
 </section>
 <section id="how-it-works-osf" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works-osf">How it works — OSF</h3>
@@ -796,12 +866,12 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="styling" class="level3">
 <h3 class="anchored" data-anchor-id="styling">Styling</h3>
-<p>Card grid styles are in <code>html/software.css</code>. The page loads this file with a <code>&lt;link&gt;</code> tag. Do not inline styles in the page file. OSF-specific styles (<code>.sw-osf-badge</code>, <code>.sw-osf-category</code>, <code>.sw-topic-osf</code>, <code>.sw-card-osf:hover</code>, <code>.sw-section-heading</code>, <code>.sw-papers</code>, <code>.sw-paper-link</code>) are also in <code>software.css</code>.</p>
+<p>Card grid styles are in <code>html/software.css</code>. The page loads this file with a <code>&lt;link&gt;</code> tag. Do not inline styles in the page file. GitLab-specific styles (<code>.sw-gitlab-badge</code>, <code>.sw-topic-gitlab</code>, <code>.sw-card-gitlab:hover</code>) and OSF-specific styles (<code>.sw-osf-badge</code>, <code>.sw-osf-category</code>, <code>.sw-topic-osf</code>, <code>.sw-card-osf:hover</code>, <code>.sw-section-heading</code>, <code>.sw-papers</code>, <code>.sw-paper-link</code>) are also in <code>software.css</code>.</p>
 </section>
 <section id="gotchas" class="level3">
 <h3 class="anchored" data-anchor-id="gotchas">Gotchas</h3>
 <ul>
-<li>The GitHub public API allows <strong>60 requests/hour</strong> without authentication. This is sufficient for a personal site but will fail if the page is loaded very frequently in a short time. If rate-limited, a fallback message with a link to the GitHub profile is shown.</li>
+<li>The GitHub public API allows <strong>60 requests/hour</strong> without authentication. Because <code>github-build-cache</code> embeds build-time data in <code>window.GITHUB_BUILD_CACHE</code>, visitors on shared networks won’t hit a broken empty page if the live browser fetch is rate-limited (the error fallback only appears if both the live fetch and build-time cache are unavailable).</li>
 <li>The OSF public API has no documented unauthenticated rate limit, but is similarly generous. If it fails, a fallback message with a link to the OSF profile is shown.</li>
 <li>Archived repos are automatically excluded (GitHub). Forked repos are filtered out from the main fetch.</li>
 <li>To showcase external repos the user contributes to (via commits/PRs), add the upstream <code>owner/repo</code> path to the <code>CONTRIB_REPOS</code> array — these are fetched individually and shown with a “Contributor” badge.</li>
@@ -812,7 +882,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="site-wide-settings-_quarto.yml" class="level2">
 <h2 class="anchored" data-anchor-id="site-wide-settings-_quarto.yml">9. Site-wide Settings — <code>_quarto.yml</code></h2>
-<p>Search is <strong>disabled</strong> (<code>search: false</code>). The website title is set to <code>"Lasai Barreñada"</code> (short form — the full “Medical Statistician &amp; Researcher” description is in <code>description-meta</code> for SEO only). The navbar tab for talks is labelled <strong>“Talks”</strong> (the page file remains in the <code>speaking/</code> folder).</p>
+<p>Search is <strong>disabled</strong> (<code>search: false</code>). The website title is set to <code>"Lasai Barreñada"</code> (short form — the full <code>"Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research"</code> description is in <code>description-meta</code> for SEO only). The navbar tab for talks is labelled <strong>“Talks”</strong> (the page file remains in the <code>speaking/</code> folder). The <code>navbar: right:</code> social links are Google Scholar, ORCID, LinkedIn, and email (all with <code>aria-label</code> attributes), and the footer’s “Last updated” reads <code>November 2026</code> from <code>_variables.yml</code>.</p>
 <section id="change-your-name-or-description-appears-in-browser-tab-seo" class="level3">
 <h3 class="anchored" data-anchor-id="change-your-name-or-description-appears-in-browser-tab-seo">Change your name or description (appears in browser tab / SEO)</h3>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">title-meta</span><span class="kw">:</span><span class="at"> </span><span class="st">"Your Name"</span></span>
@@ -854,17 +924,21 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td><code>html/styles.scss</code></td>
-<td>Global font (Inter for body and headings), link colours, spacing, <strong>navbar responsive sizing</strong> — applied to all pages</td>
+<td>Global font (Inter via Bunny Fonts <code>fonts.bunny.net</code> for body and headings), link colours, spacing, <strong>navbar responsive sizing</strong> — applied to all pages</td>
 </tr>
 <tr class="even">
-<td><code>html/timeline.css</code></td>
-<td>Shared timeline styles for Projects and Speaking pages (cards, dots, dates, links, badges, award styling, expand/collapse, mobile breakpoints)</td>
+<td><code>html/projects.css</code></td>
+<td>Non-linear Projects page styles (Milestones &amp; Honours strip, filter bar, 2-column Bento grid, category accents, 3-line summary toggle)</td>
 </tr>
 <tr class="odd">
+<td><code>html/timeline.css</code></td>
+<td>Timeline styles for the Speaking page (cards, dots, dates, links, badges, filter pills <code>.tl-filter-bar</code>, expand/collapse with <code>max-height: 800px</code>, mobile breakpoints)</td>
+</tr>
+<tr class="even">
 <td><code>html/landing_page_styles.css</code></td>
 <td>Hero section layout on the landing page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>html/seo.html</code></td>
 <td>Meta tags injected into every page <code>&lt;head&gt;</code></td>
 </tr>
@@ -948,8 +1022,8 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="variables-file-_variables.yml" class="level2">
 <h2 class="anchored" data-anchor-id="variables-file-_variables.yml">13. Variables File — <code>_variables.yml</code></h2>
-<p>Small global variables used across the site (e.g.&nbsp;the “last updated” date in the footer). Edit directly:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_updated</span><span class="kw">:</span><span class="at"> </span><span class="st">"February 2026"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Small global variables used across the site — notably <code>last_updated</code>, which renders in the page footer via <code>November 2026</code>. Edit directly:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_updated</span><span class="kw">:</span><span class="at"> </span><span class="st">"November 2026"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
@@ -1366,10 +1440,8 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <p><span class="faux-block"><a href="./license/index.html">License</a></span></p>
 </div>
     <div class="nav-footer-right">
-<span class="faux-block">Last updated:
-<script>document.write(new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'}))</script>
-<p> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
-</span></div>
+<p><span class="faux-block">Last updated: November 2026</span> <span class="faux-block"> Built with <a href="https://quarto.org/">Quarto</a></span></p>
+</div>
   </div>
 </footer>
 

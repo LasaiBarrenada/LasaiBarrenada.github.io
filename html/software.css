@@ -167,6 +167,28 @@
   color: #333;
 }
 
+/* ── GitLab badge & accents ─────────────────────────────────── */
+.sw-gitlab-badge {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  background: #e24329;
+  border-radius: 1rem;
+  padding: 0.1rem 0.55rem;
+  margin-bottom: 0.3rem;
+}
+
+.sw-topic-gitlab {
+  color: #c2410c;
+  background: #fff0e6;
+}
+
+.sw-card-gitlab:hover {
+  border-color: #fc6d26;
+}
+
 /* ── OSF badge ──────────────────────────────────────────────── */
 .sw-osf-badge {
   display: inline-block;
