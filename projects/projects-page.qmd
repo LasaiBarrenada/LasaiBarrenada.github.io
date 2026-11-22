@@ -10,7 +10,7 @@ This page highlights my first-author research projects and selected collaborativ
 For a complete list of publications and contributions, see my [Publications](../Publications/publications-page.qmd) or [CV](../cv/cv-page.qmd).
 
 ```{=html}
-<link rel="stylesheet" href="/html/projects.css">
+<link rel="stylesheet" href="../html/projects.css?v=20261122">
 ```
 
 ```{r tl-projects, echo=FALSE, results='asis', message=FALSE, warning=FALSE}

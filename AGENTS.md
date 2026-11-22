@@ -73,6 +73,7 @@ quarto render        # builds _site/
 quarto preview       # local hot-reload at localhost:22222
 quarto publish gh-pages   # push to GitHub Pages
 ```
+`_quarto.yml` lists `"html/*.css"` under `project: resources:` so Quarto always copies custom CSS files (`landing_page_styles.css`, `projects.css`, `timeline.css`, `software.css`) to `_site/html/`. Their `<link>` tags in `index.qmd`, `projects/projects-page.qmd`, `speaking/speaking-page.qmd`, and `software/software-page.qmd` include `?v=20261122` cache-busting query strings — bump `?v=YYYYMMDD` whenever editing any CSS file in `html/`.
 
 ### Search
 Disabled globally with `search: false` in `_quarto.yml`. Do NOT add it back without being asked — it was intentionally removed.

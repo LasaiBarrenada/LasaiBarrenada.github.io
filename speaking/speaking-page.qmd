@@ -10,7 +10,7 @@ Here's a list of my selected public speaking occasions including poster and oral
 If available, you'll also find slides, related papers, and recordings.
 
 ```{=html}
-<link rel="stylesheet" href="/html/timeline.css">
+<link rel="stylesheet" href="../html/timeline.css?v=20261122">
 ```
 
 ```{r tl-speaking, echo=FALSE, results='asis', message=FALSE, warning=FALSE}

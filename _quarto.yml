@@ -6,6 +6,7 @@ project:
   
   resources:
     - "img/**"
+    - "html/*.css"
     - "_redirects"
 
   preview: 

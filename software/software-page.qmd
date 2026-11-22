@@ -82,7 +82,7 @@ cat(sprintf(
 ```
 
 ```{=html}
-<link rel="stylesheet" href="/html/software.css">
+<link rel="stylesheet" href="../html/software.css?v=20261122">
 
 <h2 class="sw-section-heading" style="margin-top:1.5rem;">GitHub Repositories</h2>
 <div id="sw-container">

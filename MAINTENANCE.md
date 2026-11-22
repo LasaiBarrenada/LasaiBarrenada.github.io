@@ -404,6 +404,8 @@ Card grid styles are in `html/software.css`. The page loads this file with a `<l
 
 Search is **disabled** (`search: false`). The website title is set to `"Lasai Barreñada"` (short form — the full `"Medical Statistician | FWO Postdoctoral Fellow | Prediction models, Healthcare, Research"` description is in `description-meta` for SEO only). The navbar tab for talks is labelled **"Talks"** (the page file remains in the `speaking/` folder). The `navbar: right:` social links are Google Scholar, ORCID, LinkedIn, and email (all with `aria-label` attributes), and the footer's "Last updated" reads `{{< var last_updated >}}` from `_variables.yml`.
 
+Under `project: resources:`, `img/**`, `html/*.css`, and `_redirects` are declared explicitly so Quarto always copies all custom CSS files into `_site/html/` even when `<link>` tags use cache-busting query strings (`?v=YYYYMMDD`).
+
 ### Change your name or description (appears in browser tab / SEO)
 ```yaml
 title-meta: "Your Name"
@@ -438,8 +440,11 @@ Edit `website: page-footer: left`.
 | `html/styles.scss` | Global font (Inter via Bunny Fonts `fonts.bunny.net` for body and headings), link colours, spacing, **navbar responsive sizing** — applied to all pages |
 | `html/projects.css` | Non-linear Projects page styles (Milestones & Honours strip, filter bar, 2-column Bento grid, category accents, 3-line summary toggle) |
 | `html/timeline.css` | Timeline styles for the Speaking page (cards, dots, dates, links, badges, filter pills `.tl-filter-bar`, expand/collapse with `max-height: 800px`, mobile breakpoints) |
-| `html/landing_page_styles.css` | Hero section layout on the landing page |
+| `html/software.css` | Card grid, GitLab badge, and OSF component card styles on the Software page |
+| `html/landing_page_styles.css` | Hero section layout and `.hero_cta` / `.hero_btn` buttons on the landing page |
 | `html/seo.html` | Meta tags injected into every page `<head>` |
+
+Whenever you modify one of the standalone custom CSS files (`landing_page_styles.css`, `projects.css`, `timeline.css`, `software.css`), also bump the `?v=YYYYMMDD` cache-busting query string on its `<link>` tag in the corresponding `.qmd` file (`index.qmd`, `projects/projects-page.qmd`, `speaking/speaking-page.qmd`, or `software/software-page.qmd`) so browsers and GitHub Pages CDN don't pair newly deployed HTML with stale cached CSS.
 
 ### Navbar responsive behaviour
 The navbar logo scales down on mobile screens (max-height 28px below 992px). The hamburger toggle is pushed to the right and the logo stays flush left. These rules are defined in `html/styles.scss` inside a `@media (max-width: 991.98px)` block.
