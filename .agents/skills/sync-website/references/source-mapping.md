@@ -8,8 +8,8 @@ Reference for the `sync-website` skill. Read relevant sections when translating 
 
 | Manual source file(s) | Automated by | Derived files to inspect / update | Rendered targets in `_site/` |
 |---|---|---|---|
-| `resources/Curriculum.xlsx` (`Papers`) | Manual + hint in `detect_changes.R` | `projects/projects.xlsx` (first-author papers); advisory reminder only if missing from Zotero `cv/peer_bib.bib` | `_site/projects/projects-page.html`, `_site/cv/cv-page.html`, `cv/cv.pdf` |
-| `resources/Curriculum.xlsx` (`Conferences`) | Manual + hint | `speaking/conferences.xlsx` | `_site/speaking/speaking-page.html`, `_site/cv/cv-page.html`, `cv/cv.pdf` |
+| External master `Curriculum.xlsx` → `resources/Curriculum.xlsx` (`Papers`) | Auto-pulled by `detect_changes.R` via `.local_config.json` + hint | `projects/projects.xlsx` (first-author papers **only once published, posted as a public preprint, or presented at a conference**; keep in-prep/unpublished papers hidden); advisory reminder only if missing from Zotero `cv/peer_bib.bib` | `_site/projects/projects-page.html`, `_site/cv/cv-page.html`, `cv/cv.pdf` |
+| `resources/Curriculum.xlsx` (`Conferences`) | Manual + hint | `speaking/conferences.xlsx` (**all conferences, including upcoming ones, may appear on the website**) | `_site/speaking/speaking-page.html`, `_site/cv/cv-page.html`, `cv/cv.pdf` |
 | `resources/Curriculum.xlsx` (`Reviews`, `Prizes`, `Grants`) | Manual + hint | `cv/CV.qmd` & `cv/cv-page.qmd`; major awards/PhD milestones → `projects/projects.xlsx` | `_site/cv/cv-page.html`, `cv/cv.pdf`, `_site/projects/projects-page.html` |
 | `resources/<slides or poster>` | Hint in `detect_changes.R` | `speaking/conferences.xlsx` (`Link_1`/`Link_2`) via `https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/blob/main/resources/<URL-encoded-name>` | Not bundled in `_site/` (linked to `main` branch on GitHub) |
 | `projects/projects.xlsx` | Direct R read (`tl-projects`, `osf-projects`) | Check `OSF_ID` links if software OSF cards reference the paper | `_site/projects/projects-page.html`, `_site/software/software-page.html` |
@@ -52,6 +52,15 @@ Reference for the `sync-website` skill. Read relevant sections when translating 
 | `Type` | `Oral`, `Poster`, or blank (`Upcoming`) |
 | `Link_1_name` / `Link_1`, `Link_2_name` / `Link_2` | Pill labels (`Slides`, `Poster`, `Paper`) + URLs (`resources/` links point to `main` on GitHub) |
 
+### Local config: `.agents/skills/sync-website/.local_config.json` (gitignored)
+Stores the machine-local path to your master `Curriculum.xlsx`:
+```json
+{
+  "curriculum_source": "<path-to-master-Curriculum.xlsx>"
+}
+```
+When present, `detect_changes.R` automatically copies newer versions into `resources/Curriculum.xlsx` before checking changes (skip with `--no-pull`).
+
 ---
 
 ## 3. Live External Data Sources Refreshed at Render
@@ -74,4 +83,5 @@ These pages set `freeze: false` and pull fresh external data automatically on ev
 - **`quarto preview` race**: If `quarto preview` is watching the workspace, `quarto render` can hit a `site_libs/` rename error (`os error 2` / `os error 3`). Pause preview or render affected pages individually.
 - **Preserve global settings**: Keep `search: false` and `- "html/*.css"` in `_quarto.yml`. Keep `<link rel="stylesheet" href="...">` paths relative in subdirectory pages (`../html/...css?v=YYYYMMDD`).
 - **Zotero-managed BibTeX (`cv/*.bib`)**: **NEVER manually edit `cv/peer_bib.bib` or any `cv/*.bib` file** — they are managed/exported by Zotero. Only report missing entries as an advisory reminder for the user to re-export.
+- **Public visibility only (papers vs. conferences)**: Papers/manuscripts must **only** be added to `projects/projects.xlsx` (or any website page) once published, posted as a public preprint (arXiv, medRxiv, bioRxiv, Zenodo, OSF), or presented/scheduled at a conference (`speaking/conferences.xlsx`); keep in-preparation/privately submitted manuscripts hidden until then. By contrast, **all conferences — including upcoming ones — can appear on the website** (`speaking/conferences.xlsx`, Talks page, and CV).
 - **Mandatory docs & skill sync**: Always keep `MAINTENANCE.md`, `AGENTS.md`, and `.agents/skills/sync-website/` (`SKILL.md`, `references/source-mapping.md`, `scripts/detect_changes.R`, `scripts/verify_site.R`) updated whenever pages, source files, spreadsheet schemas, CSS files, verification checks, or build/freeze rules change.

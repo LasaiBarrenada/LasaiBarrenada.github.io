@@ -9,12 +9,14 @@ suppressPackageStartupMessages({
 
 args <- commandArgs(trailingOnly = TRUE)
 update_state <- "--update-state" %in% args
+no_pull      <- "--no-pull" %in% args
 
 if (!file.exists("_quarto.yml")) {
   stop("Run detect_changes.R from the website repository root (containing _quarto.yml).")
 }
 
-state_file <- ".agents/skills/sync-website/.sync_state.json"
+state_file        <- ".agents/skills/sync-website/.sync_state.json"
+local_config_file <- ".agents/skills/sync-website/.local_config.json"
 
 norm_path <- function(p) {
   p <- gsub("\\\\", "/", p)
@@ -83,6 +85,34 @@ collect_watched_files <- function() {
   candidates[!duplicated(keys)]
 }
 
+sync_external_curriculum <- function() {
+  if (!file.exists(local_config_file)) return("Not configured")
+  cfg <- tryCatch(fromJSON(local_config_file, simplifyVector = TRUE), error = function(e) NULL)
+  src <- if (!is.null(cfg) && !is.null(cfg$curriculum_source)) trimws(as.character(cfg$curriculum_source)) else ""
+  if (!nzchar(src)) return("Not configured (empty curriculum_source)")
+  if (update_state || no_pull) return(sprintf("Skipped (%s)", src))
+  if (!file.exists(src)) return(sprintf("WARNING: Source file not found (%s)", src))
+
+  src_md5 <- safe_md5(src)
+  dst     <- "resources/Curriculum.xlsx"
+  dst_md5 <- if (file.exists(dst)) safe_md5(dst) else NA_character_
+  if (!file.exists(dst) || is.na(dst_md5) || is.na(src_md5) || src_md5 != dst_md5) {
+    tmp <- copy_safe_temp(src)
+    if (is.null(tmp)) return(sprintf("WARNING: Failed reading locked source (%s)", src))
+    on.exit(unlink(tmp), add = TRUE)
+    dir.create("resources", showWarnings = FALSE, recursive = TRUE)
+    copied <- suppressWarnings(tryCatch(file.copy(tmp, dst, overwrite = TRUE), error = function(e) FALSE))
+    new_md5 <- if (isTRUE(copied) && file.exists(dst)) safe_md5(dst) else NA_character_
+    if (isTRUE(copied) && !is.na(new_md5) && (is.na(src_md5) || new_md5 == src_md5)) {
+      return(sprintf("UPDATED resources/Curriculum.xlsx from %s", src))
+    }
+    return(sprintf("WARNING: Failed writing %s (close Excel if open)", dst))
+  }
+  sprintf("Up-to-date (matches %s)", src)
+}
+
+ext_curriculum_status <- sync_external_curriculum()
+
 watched_files <- sort(collect_watched_files())
 current_head  <- trimws(paste(run_git(c("rev-parse", "HEAD")), collapse = ""))
 current_hashes <- vapply(watched_files, safe_md5, character(1))
@@ -112,8 +142,8 @@ saved_state <- if (file.exists(state_file)) {
 
 # ── Detect changes via 3 layers: git status, git diff since snapshot, MD5 ─────
 is_ignored_output <- function(p) {
-  grepl("^(_site|_freeze|\\.quarto)/", p) ||
-    tolower(p) == tolower(state_file)
+  grepl("^(_site|_freeze|\\.quarto)/", p) |
+    (tolower(p) %in% tolower(c(state_file, local_config_file)))
 }
 
 git_status_lines <- run_git(c("status", "-uall", "--porcelain"))
@@ -197,8 +227,9 @@ if (is.null(saved_state)) {
               saved_state$updated_at,
               substr(saved_state$head_commit, 1, 7)))
 }
-cat(sprintf("Current git HEAD : %s\n", substr(current_head, 1, 7)))
-cat(sprintf("Watched files    : %d\n\n", length(watched_files)))
+cat(sprintf("Current git HEAD   : %s\n", substr(current_head, 1, 7)))
+cat(sprintf("Watched files      : %d\n", length(watched_files)))
+cat(sprintf("External Curriculum: %s\n\n", ext_curriculum_status))
 
 cat("── 1. CHANGED FILES BY CATEGORY ────────────────────────────────────────\n")
 if (length(all_paths) == 0) {
@@ -326,7 +357,8 @@ if (file.exists("resources/Curriculum.xlsx")) {
     cat(sprintf("* Curriculum Papers: %d total, %d first-author | projects.xlsx rows: %d\n",
                 sum(!is.na(papers_df[["Name"]])), length(fa_idx), nrow(proj_df)))
     if (length(missing_fa) > 0) {
-      cat("  -> First-author papers NOT matched in projects/projects.xlsx:\n")
+      cat("  -> First-author papers NOT matched in projects/projects.xlsx\n")
+      cat("     (only add papers once published, posted as a public preprint, or presented at a conference; keep others hidden):\n")
       for (mt in missing_fa) cat("     -", mt, "\n")
     } else {
       cat("  -> All first-author papers in Curriculum.xlsx match projects/projects.xlsx.\n")
@@ -363,6 +395,26 @@ if (file.exists("resources/Curriculum.xlsx")) {
     cat("* Could not read Curriculum.xlsx [Papers] or projects/projects.xlsx.\n")
   }
 
+  # Public-visibility check on projects/projects.xlsx
+  proj_vis_df <- read_xlsx_safe("projects/projects.xlsx", sheet = 1)
+  if (!is.null(proj_vis_df) && nrow(proj_vis_df) > 0) {
+    status_val <- if ("Status" %in% names(proj_vis_df)) trimws(as.character(proj_vis_df[["Status"]])) else rep("", nrow(proj_vis_df))
+    cat_val <- if ("Category" %in% names(proj_vis_df)) trimws(as.character(proj_vis_df[["Category"]])) else rep("", nrow(proj_vis_df))
+    link1_val <- if ("Link_1" %in% names(proj_vis_df)) trimws(as.character(proj_vis_df[["Link_1"]])) else rep("", nrow(proj_vis_df))
+    status_val[is.na(status_val)] <- ""
+    cat_val[is.na(cat_val)] <- ""
+    link1_val[is.na(link1_val)] <- ""
+    is_honor <- cat_val %in% c("Milestone", "Award") | status_val %in% c("Milestone", "Award")
+    unpub_idx <- which(!is_honor & (status_val %in% c("Upcoming", "In preparation") | !nzchar(link1_val)))
+    if (length(unpub_idx) > 0) {
+      cat("  -> WARNING: Non-public/unlinked paper rows in projects/projects.xlsx\n")
+      cat("     (remove unless verified as presented/scheduled at a conference in speaking/conferences.xlsx):\n")
+      for (ui in unpub_idx) {
+        cat("     -", as.character(proj_vis_df[["Title"]][ui]), sprintf("[Status=%s]", status_val[ui]), "\n")
+      }
+    }
+  }
+
   confs_cur <- read_xlsx_safe("resources/Curriculum.xlsx", sheet = "Conferences")
   confs_web <- read_xlsx_safe("speaking/conferences.xlsx", sheet = 1)
   revs_cur  <- read_xlsx_safe("resources/Curriculum.xlsx", sheet = "Reviews")
@@ -372,6 +424,45 @@ if (file.exists("resources/Curriculum.xlsx")) {
   if (!is.null(confs_cur) && !is.null(confs_web)) {
     cat(sprintf("* Curriculum Conferences: %d rows | speaking/conferences.xlsx: %d rows\n",
                 nrow(confs_cur), nrow(confs_web)))
+    type_col <- if ("Type.(Poster/Presentation/Attended)" %in% names(confs_cur)) {
+      trimws(as.character(confs_cur[["Type.(Poster/Presentation/Attended)"]]))
+    } else rep("", nrow(confs_cur))
+    date_num <- suppressWarnings(as.numeric(confs_cur[["Date"]]))
+    date_val <- as.Date(date_num, origin = "1899-12-30")
+    yr_cur   <- suppressWarnings(as.integer(format(date_val, "%Y")))
+    pres_idx <- which(!is.na(type_col) & nzchar(type_col) & !grepl("^attended$", type_col, ignore.case = TRUE))
+    unmatched_confs <- character(0)
+    web_yrs <- suppressWarnings(as.integer(confs_web[["Year"]]))
+    web_codes <- tolower(trimws(as.character(confs_web[["Code_Name"]])))
+    web_names <- tolower(trimws(as.character(confs_web[["Conference.name"]])))
+    for (ci in pres_idx) {
+      cname <- as.character(confs_cur[["Conference.name"]][ci])
+      cy    <- yr_cur[ci]
+      dstr  <- if (!is.na(date_val[ci])) format(date_val[ci], "%Y-%m-%d") else "?"
+      ctype <- type_col[ci]
+      notes <- if ("Notes" %in% names(confs_cur) && !is.na(confs_cur[["Notes"]][ci])) {
+        paste0(" [", trimws(as.character(confs_cur[["Notes"]][ci])), "]")
+      } else ""
+      same_yr <- which(!is.na(web_yrs) & !is.na(cy) & web_yrs == cy)
+      matched_conf <- FALSE
+      cname_low <- tolower(trimws(cname))
+      for (wi in same_yr) {
+        wcode <- sub("[^a-z0-9].*$", "", web_codes[wi])
+        if ((nzchar(wcode) && grepl(wcode, cname_low, fixed = TRUE)) ||
+            (!is.na(web_names[wi]) && overlap_sim(cname_low, web_names[wi]) >= 0.50)) {
+          matched_conf <- TRUE
+          break
+        }
+      }
+      if (!matched_conf) {
+        unmatched_confs <- c(unmatched_confs, sprintf("%s (%s, %s)%s", trimws(cname), dstr, ctype, notes))
+      }
+    }
+    if (length(unmatched_confs) > 0) {
+      cat("  -> Presentation rows in Curriculum.xlsx not matched in speaking/conferences.xlsx\n")
+      cat("     (all conferences, including upcoming ones, may appear on the website):\n")
+      for (uc in unmatched_confs) cat("     -", uc, "\n")
+    }
   }
   if (!is.null(revs_cur)) {
     jrn_col <- if ("Journal" %in% names(revs_cur)) unique(trimws(as.character(revs_cur[["Journal"]]))) else character(0)

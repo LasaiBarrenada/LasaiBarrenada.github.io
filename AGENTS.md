@@ -81,7 +81,7 @@ quarto publish gh-pages   # push to GitHub Pages
 
 ### Workspace Sync Skill (`.agents/skills/sync-website/`)
 - Use the `sync-website` workspace skill whenever rebuilding the site after manual edits to spreadsheets (`resources/Curriculum.xlsx`, `projects/projects.xlsx`, `speaking/conferences.xlsx`), BibTeX exports, `resources/` slides/posters, CV files, or CSS.
-- `scripts/detect_changes.R` detects changed files via git status/diff plus an MD5 snapshot (`.agents/skills/sync-website/.sync_state.json`, gitignored) so gitignored files like `resources/Curriculum.xlsx` are tracked, and prints actionable sync hints.
+- `scripts/detect_changes.R` automatically pulls the latest master `Curriculum.xlsx` from the path configured in `.agents/skills/sync-website/.local_config.json` (gitignored) into `resources/Curriculum.xlsx` (pass `--no-pull` to skip), then detects changed files via git status/diff plus an MD5 snapshot (`.agents/skills/sync-website/.sync_state.json`, gitignored) and prints actionable sync hints.
 - `scripts/verify_site.R` validates built outputs in `_site/` before finishing; the workflow stops before `git commit` / `quarto publish gh-pages` for user review.
 - Keep `.agents/skills/sync-website/` (`SKILL.md`, `references/source-mapping.md`, `scripts/detect_changes.R`, `scripts/verify_site.R`) updated alongside `MAINTENANCE.md` and `AGENTS.md` whenever pages, source files, spreadsheet schemas, CSS files, verification invariants, or build/freeze steps change.
 
@@ -112,6 +112,7 @@ The hero section has:
 
 ## Projects page (`projects/projects-page.qmd`)
 
+- **Public-visibility policy**: Papers/manuscripts must **only** appear on the site once published, posted as a public preprint (e.g., arXiv, medRxiv, bioRxiv, Zenodo, OSF), or presented at a conference (`speaking/conferences.xlsx`). Keep in-preparation or privately submitted manuscripts hidden until they reach one of those milestones.
 - R chunk `tl-projects` reads `projects/projects.xlsx` (including `Category`, `Status`, `First_Author`, and `OSF_ID` columns synced from `resources/Curriculum.xlsx` first-author papers) and renders two non-linear sections inside `.column-body-outset`:
   1. **Milestones & Honours** (`.proj-honours-grid`): Horizontal strip for `Category %in% c("Milestone", "Award")` sorted by `-Year, -Month`. The PhD defended milestone uses `.proj-honour-milestone` (green accent) and `.proj-laurel-pill` with inline SVG laurel branches flanking `"Dr. Barreñada"`; awards use `.proj-honour-award` (gold accent + 🏆).
   2. **Research Projects** (`.proj-filter-bar` + `.proj-grid`): Interactive category filter pills (`All`, `Methodology`, `Clinical Utility`, `Ovarian Cancer`, `Preprints & Upcoming`) above a responsive 2-column Bento grid (1 column below `760px`). Cards display category-colored top accents, status pills (`Published`, `Accepted`, `Preprint`, `Upcoming`), 3-line clamped summaries with `Read more ▸` / `Show less ▾` toggles (auto-hidden when not truncated), and footer link pills.
@@ -123,6 +124,7 @@ The hero section has:
 ## Talks page (`speaking/speaking-page.qmd`)
 
 - Navbar tab is labelled **"Talks"** — the file lives in `speaking/`.
+- **All conferences allowed (including upcoming)**: Any conference presentation or talk—including **upcoming** conferences—may appear on the Talks page and CV (`speaking/conferences.xlsx` supports blank `Type` for `"Upcoming"` badge/styling). (The hide-until-public rule applies to unpublished/in-prep papers, not conferences.)
 - Filter pill bar (`All | Talks | Posters`, `.tl-filter-bar` / `.tl-filter-btn`) filters timeline entries (`data-type` / `data-year`) and automatically hides empty year dividers.
 - Same timeline structure as projects (R chunk `tl-speaking`, year dividers, `html/timeline.css`).
 - **Map**: R chunk `map-data` reads `conferences.xlsx` with `openxlsx`, resolves city coordinates via a local cache (`speaking/geocache.csv`), queries ArcGIS only for uncached cities, and injects coordinates as JS arrays (`conferenceData`, `universityData`). The map is built with **Leaflet.js** + public OpenStreetMap tiles. Rendering stops if geocoding returns missing coordinates. Red circles = conferences (grouped by city so multiple talks in one city share a marker and multi-entry popup); blue pulsing circles = affiliated institutions (KU Leuven, UMC Utrecht, Memorial Sloan Kettering). Popups on click, works on mobile. No travel arcs. Zoom constrained to a single world view (`minZoom: 2`, `maxBounds`).
@@ -220,5 +222,6 @@ Used by the speaking page (`projects/projects-page.qmd` uses `html/projects.css`
 | D3 tooltips on mobile | The Publications network uses `mouseover` for hover tooltips; transparent `hitSel` targets (min radius 20 px) handle mobile taps to filter the list |
 | HTML CV author bolding | Pandoc `citeproc` runs after `post-quarto` Lua filters in HTML output, so `cv-page.qmd` bolds `Barreñada, L.` in `#refs` via JS |
 | Never manually edit `cv/*.bib` | `cv/peer_bib.bib` and other `.bib` files are Zotero-managed; only flag missing entries for Zotero re-export |
+| In-prep / unpublished papers | Only add papers once published, posted as a public preprint, or presented/scheduled at a conference; keep others hidden (**all conferences, including upcoming ones, may appear on the Talks/CV pages**) |
 | Logo SVG needs explicit dimensions | SVGs without `width`/`height` attributes collapse to zero in some browsers |
 | Map geocoding needs internet (first time) | Uncached cities in `speaking/speaking-page.qmd` use `tidygeocoder`; once cached in `speaking/geocache.csv`, renders work offline |

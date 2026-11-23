@@ -19,11 +19,13 @@ Rebuild and synchronize the entire academic Quarto site from manually edited sou
 
 ## Step 1 — Detect Manually Changed Files
 
-Run the change-detection script from the repository root (try sandboxed first; on Windows OneDrive `exebox` errors, retry with `BypassSandbox: true` keeping the same `toolSummary`):
+Run the change-detection script from the repository root (try sandboxed first; on Windows OneDrive `exebox` errors, or when reading the external master `Curriculum.xlsx` outside the workspace, retry with `BypassSandbox: true` keeping the same `toolSummary`):
 
 ```bash
 Rscript .agents/skills/sync-website/scripts/detect_changes.R
 ```
+
+If `.agents/skills/sync-website/.local_config.json` specifies `curriculum_source`, `detect_changes.R` automatically pulls the latest copy from that PC path into `resources/Curriculum.xlsx` (safely even if Excel has it open) before computing MD5 diffs and hints. Pass `--no-pull` to skip pulling from `curriculum_source`; `--update-state` never pulls.
 
 Review the three sections printed by the script:
 1. **Changed files by category**: shows tracked edits (`git status`), commits since the last recorded sync (`git diff`), and checksum diffs from `.agents/skills/sync-website/.sync_state.json` (which detects edits to gitignored `resources/Curriculum.xlsx`).
@@ -39,7 +41,10 @@ Inspect the actual diff or contents of every flagged file before editing downstr
 Apply only the updates warranted by the detected changes, following [references/source-mapping.md](./references/source-mapping.md):
 
 1. **Spreadsheets & slides (`resources/Curriculum.xlsx`, `resources/`, `projects/projects.xlsx`, `speaking/conferences.xlsx`)**:
-   - Sync new first-author papers from `Curriculum.xlsx` (`Papers` sheet) into `projects/projects.xlsx` without overwriting existing hand-written `Summary` prose, `OSF_ID` values, or `Milestone`/`Award` rows.
+   - **Public visibility rule**:
+     - **Papers/manuscripts**: Only add papers from `Curriculum.xlsx` (`Papers` sheet) to `projects/projects.xlsx` (or any website page) once they are **published**, posted as a **public preprint** (e.g., arXiv, medRxiv, bioRxiv, Zenodo, OSF), or **presented/scheduled at a conference** (`speaking/conferences.xlsx`). Keep manuscripts that are still in preparation or privately submitted hidden until they reach one of those public milestones.
+     - **Conferences (Talks & Posters)**: **All conferences, including upcoming ones**, may appear on the website (`speaking/conferences.xlsx`, Talks page, and CV).
+   - Sync new eligible first-author papers from `Curriculum.xlsx` (`Papers` sheet) into `projects/projects.xlsx` without overwriting existing hand-written `Summary` prose, `OSF_ID` values, or `Milestone`/`Award` rows.
    - Link any newly added slides or posters in `resources/` inside `speaking/conferences.xlsx` using `https://github.com/LasaiBarrenada/LasaiBarrenada.github.io/blob/main/resources/<URL-encoded-filename>`. Do **not** add `resources/` to `_quarto.yml` `project: resources:`.
    - Keep `Type` (`Oral`, `Poster`, or blank for upcoming), `Year`, `Month`, and `Location` clean in `speaking/conferences.xlsx`. If a new city lacks coordinates offline, `speaking/speaking-page.qmd` will geocode it into `speaking/geocache.csv` on render.
 2. **Publications & BibTeX (`cv/peer_bib_auto.bib`, `cv/other_bib_auto.bib`, `cv/peer_bib.bib`, `cv/other_bib.bib`)**:
