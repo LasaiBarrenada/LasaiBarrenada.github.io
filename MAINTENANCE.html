@@ -299,6 +299,10 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <td>Edit the license page</td>
 <td><code>license/index.qmd</code></td>
 </tr>
+<tr class="even">
+<td>Sync &amp; rebuild site after manual edits</td>
+<td>Run the <code>sync-website</code> workspace skill (<code>.agents/skills/sync-website/</code>)</td>
+</tr>
 </tbody>
 </table>
 <hr>
@@ -731,7 +735,7 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 </section>
 <section id="add-a-publication-to-the-cv" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-publication-to-the-cv">Add a publication to the CV</h3>
-<p>Publications on the HTML page are rendered automatically from <code>cv/peer_bib.bib</code> using Quarto’s bibliography support (<code>nocite: '@*'</code>). Add the BibTeX entry to the bib file and it will appear on both the HTML page and in the PDF.</p>
+<p>Publications on the HTML and PDF CVs are rendered from <code>cv/peer_bib.bib</code> (<code>nocite: '@*'</code>). <strong><code>cv/peer_bib.bib</code> (and all <code>cv/*.bib</code> files) are managed by Zotero and should NEVER be edited manually by scripts or the AI assistant</strong> — update your Zotero library and re-export the <code>.bib</code> file instead, then re-render.</p>
 <p><strong>BibTeX entry format example:</strong></p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="va">@article</span>{<span class="ot">barrenada2025example</span>,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span>  = {Barreñada, Lasai and Van Calster, Ben},</span>
@@ -1030,6 +1034,18 @@ gtag('config', 'G-3X228H9QKP', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="variables-file-_variables.yml">13. Variables File — <code>_variables.yml</code></h2>
 <p>Small global variables used across the site — notably <code>last_updated</code>, which renders in the page footer via <code>November 2026</code>. Edit directly:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">last_updated</span><span class="kw">:</span><span class="at"> </span><span class="st">"November 2026"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<hr>
+</section>
+<section id="website-sync-skill-.agentsskillssync-website" class="level2">
+<h2 class="anchored" data-anchor-id="website-sync-skill-.agentsskillssync-website">14. Website Sync Skill — <code>.agents/skills/sync-website/</code></h2>
+<p>A workspace skill is available to detect manually edited files across the repo and rebuild the whole site consistently:</p>
+<ul>
+<li><strong><code>SKILL.md</code></strong>: Step-by-step runbook guiding change detection, propagation into derived files (<code>projects/projects.xlsx</code>, <code>speaking/conferences.xlsx</code>, <code>cv/CV.qmd</code> ↔︎ <code>cv/cv-page.qmd</code>, <code>?v=YYYYMMDD</code> CSS links, <code>_variables.yml</code>; <strong>never manually editing Zotero <code>.bib</code> files</strong>), rebuilding <code>cv/cv.pdf</code> and <code>_site/</code>, verifying outputs, syncing docs, updating the snapshot, and stopping for review before publishing (<code>git commit</code> / <code>quarto publish gh-pages</code>).</li>
+<li><strong><code>references/source-mapping.md</code></strong>: Schema details, source → target matrix, live API list, and Windows/Quarto gotchas.</li>
+<li><strong><code>scripts/detect_changes.R</code></strong>: Combines <code>git status</code>, <code>git diff</code> since the last snapshot commit, and an MD5 snapshot (<code>.agents/skills/sync-website/.sync_state.json</code>, gitignored) so gitignored edits such as <code>resources/Curriculum.xlsx</code> are also caught. Also checks unlinked files in <code>resources/</code>, first-author paper coverage, <code>peer_bib_auto.bib</code> vs <code>peer_bib.bib</code>, CSS <code>?v=</code> tags, <code>_variables.yml</code> month, and background <code>quarto</code> processes. Run with <code>--update-state</code> after finishing a rebuild.</li>
+<li><strong><code>scripts/verify_site.R</code></strong>: Runs structural and data checks across <code>_site/</code> (file completeness, <code>?v=</code> links, zero Pandoc escaped HTML, landing CTAs, projects grid, Talks map JSON coordinates, Publications node-to-paper consistency, Software grids, and <code>cv/cv.pdf</code> sync).</li>
+</ul>
+<p><strong>Keep this skill in sync with every site change:</strong> whenever you add, remove, or rename pages, data sources, spreadsheet columns, custom CSS files, verification invariants, or build/freeze steps, update <code>.agents/skills/sync-website/</code> (<code>SKILL.md</code>, <code>references/source-mapping.md</code>, <code>scripts/detect_changes.R</code>, and <code>scripts/verify_site.R</code>) alongside <code>MAINTENANCE.md</code> and <code>AGENTS.md</code>.</p>
 
 
 </section>
