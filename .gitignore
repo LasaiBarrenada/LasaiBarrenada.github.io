@@ -27,3 +27,4 @@ blog/mac-setup/mac_setup_thumbnail.png
 
 /.luarc.json
 resources/Curriculum.xlsx
+.agents/skills/sync-website/.sync_state.json

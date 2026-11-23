@@ -12,7 +12,10 @@ Personal academic Quarto website for Lasai Barreñada, a medical statistician at
 
 ## After every change
 
-**Always update both `MAINTENANCE.md` and `AGENTS.md` at the end of every session (or after any meaningful change).** Both files must stay in sync with the actual state of the site. If you add, remove, or modify any feature, page, style rule, or gotcha, document it in both files before finishing.
+**Always update `MAINTENANCE.md`, `AGENTS.md`, and the `sync-website` skill (`.agents/skills/sync-website/`) at the end of every session (or after any meaningful change).** All three must stay in sync with the actual state of the site:
+- If you add, remove, or modify any feature, page, style rule, or gotcha, document it in `MAINTENANCE.md` and `AGENTS.md` before finishing.
+- If you add, remove, or rename pages, spreadsheets, BibTeX files, `resources/` patterns, custom CSS files, schemas, CSS cache-buster links, CV sync rules, or build/freeze steps, update `.agents/skills/sync-website/` (`SKILL.md`, `references/source-mapping.md`, `scripts/detect_changes.R`, and `scripts/verify_site.R`) accordingly.
+- When a site rebuild finishes cleanly, re-run `Rscript .agents/skills/sync-website/scripts/detect_changes.R --update-state` when updating the baseline snapshot so `.sync_state.json` reflects the updated site.
 
 ---
 
@@ -21,6 +24,7 @@ Personal academic Quarto website for Lasai Barreñada, a medical statistician at
 ```
 _quarto.yml                  # Site config: navbar, footer, theme, freeze, search:false
 _variables.yml               # Global variables, e.g. last_updated date
+.agents/skills/sync-website/ # Workspace skill to detect manual changes & rebuild full site
 index.qmd                    # Landing page (hero, particle canvas, Easter egg)
 projects/
   projects-page.qmd          # Non-linear Milestones & Honours + filterable Bento grid (reads projects.xlsx)
@@ -74,6 +78,12 @@ quarto preview       # local hot-reload at localhost:22222
 quarto publish gh-pages   # push to GitHub Pages
 ```
 `_quarto.yml` lists `"html/*.css"` under `project: resources:` so Quarto always copies custom CSS files (`landing_page_styles.css`, `projects.css`, `timeline.css`, `software.css`) to `_site/html/`. Their `<link>` tags in `index.qmd`, `projects/projects-page.qmd`, `speaking/speaking-page.qmd`, and `software/software-page.qmd` include `?v=20261122` cache-busting query strings — bump `?v=YYYYMMDD` whenever editing any CSS file in `html/`.
+
+### Workspace Sync Skill (`.agents/skills/sync-website/`)
+- Use the `sync-website` workspace skill whenever rebuilding the site after manual edits to spreadsheets (`resources/Curriculum.xlsx`, `projects/projects.xlsx`, `speaking/conferences.xlsx`), BibTeX exports, `resources/` slides/posters, CV files, or CSS.
+- `scripts/detect_changes.R` detects changed files via git status/diff plus an MD5 snapshot (`.agents/skills/sync-website/.sync_state.json`, gitignored) so gitignored files like `resources/Curriculum.xlsx` are tracked, and prints actionable sync hints.
+- `scripts/verify_site.R` validates built outputs in `_site/` before finishing; the workflow stops before `git commit` / `quarto publish gh-pages` for user review.
+- Keep `.agents/skills/sync-website/` (`SKILL.md`, `references/source-mapping.md`, `scripts/detect_changes.R`, `scripts/verify_site.R`) updated alongside `MAINTENANCE.md` and `AGENTS.md` whenever pages, source files, spreadsheet schemas, CSS files, verification invariants, or build/freeze steps change.
 
 ### Search
 Disabled globally with `search: false` in `_quarto.yml`. Do NOT add it back without being asked — it was intentionally removed.
@@ -163,6 +173,7 @@ The hero section has:
 
 - `cv/cv-page.qmd` has `freeze: false`, reads Conference Presentations directly from `speaking/conferences.xlsx` (`cv-conferences` chunk), includes Fellowships/Grants/Peer Review synced with `cv/cv.qmd`, and bolds `"Barreñada, L."` inside `#refs` via an inline `DOMContentLoaded` script (because Pandoc's `citeproc` runs after `post-quarto` Lua filters in HTML mode).
 - `cv/cv.qmd` reads Conference Presentations dynamically from `speaking/conferences.xlsx` (`cv-pdf-conferences` chunk) and uses `highlight-author.lua` for PDF author bolding.
+- ⚠️ **Never manually edit `cv/peer_bib.bib` (or other `cv/*.bib` files)** — they are exported/managed by Zotero. Only flag missing entries as an advisory reminder for the user to re-export from Zotero.
 
 ---
 
@@ -208,5 +219,6 @@ Used by the speaking page (`projects/projects-page.qmd` uses `html/projects.css`
 | Mobile menu overlaps content | Container-fluid must use `flex-wrap: wrap` (not `nowrap`) — the collapse div needs to drop to a second row |
 | D3 tooltips on mobile | The Publications network uses `mouseover` for hover tooltips; transparent `hitSel` targets (min radius 20 px) handle mobile taps to filter the list |
 | HTML CV author bolding | Pandoc `citeproc` runs after `post-quarto` Lua filters in HTML output, so `cv-page.qmd` bolds `Barreñada, L.` in `#refs` via JS |
+| Never manually edit `cv/*.bib` | `cv/peer_bib.bib` and other `.bib` files are Zotero-managed; only flag missing entries for Zotero re-export |
 | Logo SVG needs explicit dimensions | SVGs without `width`/`height` attributes collapse to zero in some browsers |
 | Map geocoding needs internet (first time) | Uncached cities in `speaking/speaking-page.qmd` use `tidygeocoder`; once cached in `speaking/geocache.csv`, renders work offline |

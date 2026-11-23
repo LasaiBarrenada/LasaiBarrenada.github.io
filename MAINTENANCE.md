@@ -31,6 +31,7 @@ Personal academic website built with [Quarto](https://quarto.org/).
 | Change page footer text | `_quarto.yml` → `page-footer` |
 | Update "last updated" date | `_variables.yml` |
 | Edit the license page | `license/index.qmd` |
+| Sync & rebuild site after manual edits | Run the `sync-website` workspace skill (`.agents/skills/sync-website/`) |
 
 ---
 
@@ -311,7 +312,7 @@ Role description (City) \hfill MM/YYYY–MM/YYYY
 Then re-render `cv/cv.qmd` to regenerate the PDF.
 
 ### Add a publication to the CV
-Publications on the HTML page are rendered automatically from `cv/peer_bib.bib` using Quarto's bibliography support (`nocite: '@*'`). Add the BibTeX entry to the bib file and it will appear on both the HTML page and in the PDF.
+Publications on the HTML and PDF CVs are rendered from `cv/peer_bib.bib` (`nocite: '@*'`). **`cv/peer_bib.bib` (and all `cv/*.bib` files) are managed by Zotero and should NEVER be edited manually by scripts or the AI assistant** — update your Zotero library and re-export the `.bib` file instead, then re-render.
 
 **BibTeX entry format example:**
 ```bibtex
@@ -493,3 +494,16 @@ Small global variables used across the site — notably `last_updated`, which re
 ```yaml
 last_updated: "November 2026"
 ```
+
+---
+
+## 14. Website Sync Skill — `.agents/skills/sync-website/`
+
+A workspace skill is available to detect manually edited files across the repo and rebuild the whole site consistently:
+
+- **`SKILL.md`**: Step-by-step runbook guiding change detection, propagation into derived files (`projects/projects.xlsx`, `speaking/conferences.xlsx`, `cv/CV.qmd` ↔ `cv/cv-page.qmd`, `?v=YYYYMMDD` CSS links, `_variables.yml`; **never manually editing Zotero `.bib` files**), rebuilding `cv/cv.pdf` and `_site/`, verifying outputs, syncing docs, updating the snapshot, and stopping for review before publishing (`git commit` / `quarto publish gh-pages`).
+- **`references/source-mapping.md`**: Schema details, source → target matrix, live API list, and Windows/Quarto gotchas.
+- **`scripts/detect_changes.R`**: Combines `git status`, `git diff` since the last snapshot commit, and an MD5 snapshot (`.agents/skills/sync-website/.sync_state.json`, gitignored) so gitignored edits such as `resources/Curriculum.xlsx` are also caught. Also checks unlinked files in `resources/`, first-author paper coverage, `peer_bib_auto.bib` vs `peer_bib.bib`, CSS `?v=` tags, `_variables.yml` month, and background `quarto` processes. Run with `--update-state` after finishing a rebuild.
+- **`scripts/verify_site.R`**: Runs structural and data checks across `_site/` (file completeness, `?v=` links, zero Pandoc escaped HTML, landing CTAs, projects grid, Talks map JSON coordinates, Publications node-to-paper consistency, Software grids, and `cv/cv.pdf` sync).
+
+**Keep this skill in sync with every site change:** whenever you add, remove, or rename pages, data sources, spreadsheet columns, custom CSS files, verification invariants, or build/freeze steps, update `.agents/skills/sync-website/` (`SKILL.md`, `references/source-mapping.md`, `scripts/detect_changes.R`, and `scripts/verify_site.R`) alongside `MAINTENANCE.md` and `AGENTS.md`.
